@@ -1,0 +1,87 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:account.invoice:"
+msgid ""
+"%s has no any %s bank account.\n"
+"Please set up one if you want to use this payment type."
+msgstr ""
+"%s no te cap compte bancari %s.\n"
+"Si us plau, establiu un si voleu utilitzar aquest tipus de pagament."
+
+msgctxt "error:account.invoice:"
+msgid "This invoice has no bank account associated, but its payment type requires it."
+msgstr "Aquesta factura no té compte bancari associat, però el seu tipus de pagament ho requereix."
+
+msgctxt "error:account.move.line:"
+msgid ""
+"%s has no any %s bank account.\n"
+"Please set up one if you want to use this payment type."
+msgstr ""
+"%s no te cap compte bancari %s.\n"
+"Si us plau, establiu un si voleu utilitzar aquest tipus de pagament."
+
+msgctxt "error:account.move.line:"
+msgid "Line \"%s\" (%d) already reconciled."
+msgstr "L'apunt \"%s\" (%d) ja està conciliat."
+
+msgctxt "error:account.move.line:"
+msgid "Move line cannot be created because there is no journal defined."
+msgstr "No es pot crear l'apunt comptable perquè no està definit el diari. "
+
+msgctxt "error:account.move.line:"
+msgid "Wrong credit/debit values."
+msgstr "Valor haver/deure incorrecte."
+
+msgctxt "error:account.move.line:"
+msgid "You can not add/modify lines in closed journal period \"%s\"."
+msgstr "No podeu afegir/modificar apunts al diari tancat de període \"%s\"."
+
+msgctxt "error:account.move.line:"
+msgid "You can not create a move line with account \"%s\" because it is a view account."
+msgstr "No podeu crear un apunt comptable amb compte \"%s\" perquè és un compte vista."
+
+msgctxt "error:account.move.line:"
+msgid "You can not create a move line with account \"%s\" because it is inactive."
+msgstr "No podeu crear un apunt comptable amb compte \"%s\" perquè no està actiu."
+
+msgctxt "error:account.move.line:"
+msgid "You can not modify line \"%s\" because it is reconciled."
+msgstr "No podeu modifica l'apunt \"%s\" perquè està conciliat."
+
+msgctxt "error:account.move.line:"
+msgid "You can not modify lines of move \"%s\" because it is already posted."
+msgstr "No podeu modificar els apunts de l'assentament \"%s\" perquè ja està confirmat."
+
+msgctxt "field:account.invoice,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Compte bancari de"
+
+msgctxt "field:account.invoice,bank_account:"
+msgid "Bank Account"
+msgstr "Compte bancari"
+
+msgctxt "field:account.move.line,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Compte bancari de"
+
+msgctxt "field:account.move.line,bank_account:"
+msgid "Bank Account"
+msgstr "Compte bancari"
+
+msgctxt "field:account.payment.type,account_bank:"
+msgid "Account Bank"
+msgstr "Compte bancari"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "None"
+msgstr "Cap"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Party"
+msgstr "Tercer"

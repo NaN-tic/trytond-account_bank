@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!-- This file is part of account_bank module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<tryton>
+    <data>
+
+    <!-- account.payment.type -->
+        <record model="ir.ui.view" id="account_payment_type_view_tree">
+            <field name="model">account.payment.type</field>
+            <field name="inherit"
+                ref="account_payment_type.account_payment_type_view_tree"/>
+            <field name="name">account_payment_type_tree_view</field>
+        </record>
+        <record model="ir.ui.view" id="account_payment_type_view_form">
+            <field name="model">account.payment.type</field>
+            <field name="inherit"
+                ref="account_payment_type.account_payment_type_view_form"/>
+            <field name="name">account_payment_type_form_view</field>
+        </record>
+
+    <!-- account.invoice -->
+        <record model="ir.ui.view" id="invoice_view_form">
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="account_invoice.invoice_view_form"/>
+            <field name="name">invoice_form</field>
+        </record>
+
+    <!-- account.move.line -->
+        <record model="ir.ui.view" id="move_line_view_form">
+            <field name="model">account.move.line</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="account.move_line_view_form"/>
+            <field name="priority" eval="40"/>
+            <field name="name">move_line_form</field>
+        </record>
+        <record model="ir.ui.view" id="move_line_view_form_move">
+            <field name="model">account.move.line</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="account.move_line_view_form_move"/>
+            <field name="priority" eval="45"/>
+            <field name="name">move_line_form</field>
+        </record>
+
+    </data>
+</tryton>

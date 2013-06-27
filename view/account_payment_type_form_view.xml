@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<data>
+    <xpath expr="/form/field[@name='company']" position="after">
+        <label name="account_bank"/>
+        <field name="account_bank"/>
+    </xpath>
+</data>

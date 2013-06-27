@@ -1,0 +1,87 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:account.invoice:"
+msgid ""
+"%s has no any %s bank account.\n"
+"Please set up one if you want to use this payment type."
+msgstr ""
+"%s no tiene ninguna cuenta bancaria %s.\n"
+"Por favor establezca una si quiere utilizar este tipo de pago."
+
+msgctxt "error:account.invoice:"
+msgid "This invoice has no bank account associated, but its payment type requires it."
+msgstr "Esta factura no tiene cuenta bancaria asociada, pero el tipo de pago lo requiere."
+
+msgctxt "error:account.move.line:"
+msgid ""
+"%s has no any %s bank account.\n"
+"Please set up one if you want to use this payment type."
+msgstr ""
+"%s no tiene ninguna cuenta bancaria %s.\n"
+"Por favor establezca una si quiere utilizar este tipo de pago."
+
+msgctxt "error:account.move.line:"
+msgid "Line \"%s\" (%d) already reconciled."
+msgstr "Apunte \"%s\" (%d) ya conciliado."
+
+msgctxt "error:account.move.line:"
+msgid "Move line cannot be created because there is no journal defined."
+msgstr "El apunte contable no se puede crear porque no hay un diario definido."
+
+msgctxt "error:account.move.line:"
+msgid "Wrong credit/debit values."
+msgstr "Valores haber/debe incorrectos."
+
+msgctxt "error:account.move.line:"
+msgid "You can not add/modify lines in closed journal period \"%s\"."
+msgstr "No puede añadir/modificar apuntes en el diario cerrado del periodo \"%s\"."
+
+msgctxt "error:account.move.line:"
+msgid "You can not create a move line with account \"%s\" because it is a view account."
+msgstr "No puede crear un apunte con cuenta \"%s\" porque es una cuenta vista."
+
+msgctxt "error:account.move.line:"
+msgid "You can not create a move line with account \"%s\" because it is inactive."
+msgstr "No puede crear un apunte con cuenta \"%s\" porque no está activa."
+
+msgctxt "error:account.move.line:"
+msgid "You can not modify line \"%s\" because it is reconciled."
+msgstr "No puede modificar el apunte \"%s\" porque está conciliado."
+
+msgctxt "error:account.move.line:"
+msgid "You can not modify lines of move \"%s\" because it is already posted."
+msgstr "No puede modificar apuntes del asiento \"%s\" porque ya está confirmado."
+
+msgctxt "field:account.invoice,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Cuenta bancaria de"
+
+msgctxt "field:account.invoice,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.move.line,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Cuenta bancaria de"
+
+msgctxt "field:account.move.line,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.payment.type,account_bank:"
+msgid "Account Bank"
+msgstr "Cuenta bancaria"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Party"
+msgstr "Tercero"

@@ -41,7 +41,7 @@ setup(name='trytonspain_account_bank',
         ],
     package_data={
         'trytond.modules.account_bank': info.get('xml', []) \
-            + ['tryton.cfg', 'locale/*.po'],
+            + ['tryton.cfg', 'view/*.xml', 'locale/*.po'],
         },
     classifiers=[
         'Development Status :: 5 - Production/Stable',

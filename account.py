@@ -69,7 +69,8 @@ class Invoice:
                 company = Transaction().context.get('company', False)
                 return Company(company).party.id
 
-    def _get_bank_account(self, payment_type, party, company):
+    @classmethod
+    def _get_bank_account(cls, payment_type, party, company):
         pool = Pool()
         Company = pool.get('company.company')
         Party = pool.get('party.party')
@@ -81,7 +82,7 @@ class Invoice:
                 if default_bank:
                     return default_bank.id
                 else:
-                    self.raise_user_error('party_without_bank_account',
+                    cls.raise_user_error('party_without_bank_account',
                         (party.name, payment_type.kind))
             elif account_bank == 'company' and company:
                     party = Company(company).party
@@ -90,7 +91,7 @@ class Invoice:
                     if default_bank:
                         return default_bank.id
                     else:
-                        self.raise_user_error('party_without_bank_account',
+                        cls.raise_user_error('party_without_bank_account',
                             (party.name, payment_type.kind))
 
     def on_change_payment_type(self):
@@ -130,6 +131,24 @@ class Invoice:
         if self.bank_account:
             res['bank_account'] = self.bank_account
         return res
+
+    @classmethod
+    def create(cls, vlist):
+        pool = Pool()
+        PaymentType = pool.get('account.payment.type')
+        Party = pool.get('party.party')
+        Company = pool.get('company.company')
+        vlist = [x.copy() for x in vlist]
+        for values in vlist:
+            if (not 'bank_account' in values and 'payment_type' in values
+                    and 'party' in values):
+                party = Party(values['party'])
+                company = Company(values.get('company',
+                    Transaction().context.get('company'))).party
+                payment_type = PaymentType(values['payment_type'])
+                values['bank_account'] = cls._get_bank_account(payment_type,
+                    party, company)
+        return super(Invoice, cls).create(vlist)
 
     @classmethod
     @ModelView.button

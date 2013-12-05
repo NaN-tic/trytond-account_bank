@@ -74,11 +74,12 @@ class Invoice:
         pool = Pool()
         Company = pool.get('company.company')
         Party = pool.get('party.party')
-        if hasattr(Party, 'get_%s_bank_account' % payment_type.kind):
+        if hasattr(Party, 'get_bank_account'):
+            print "payment_type: ", payment_type
+            print "payment_type.name: ", payment_type.name
             account_bank = payment_type.account_bank
             if account_bank == 'party' and party:
-                default_bank = getattr(Party, 'get_%s_bank_account' % \
-                    payment_type.kind)(party)
+                default_bank = party.get_bank_account(payment_type.kind)
                 if default_bank:
                     return default_bank.id
                 else:
@@ -86,8 +87,7 @@ class Invoice:
                         (party.name, payment_type.kind))
             elif account_bank == 'company' and company:
                     party = Company(company).party
-                    default_bank = getattr(Party, 'get_%s_bank_account' % \
-                        payment_type.kind)(party)
+                    default_bank = party.get_bank_account(payment_type.kind)
                     if default_bank:
                         return default_bank.id
                     else:

@@ -75,8 +75,6 @@ class Invoice:
         Company = pool.get('company.company')
         Party = pool.get('party.party')
         if hasattr(Party, 'get_bank_account'):
-            print "payment_type: ", payment_type
-            print "payment_type.name: ", payment_type.name
             account_bank = payment_type.account_bank
             if account_bank == 'party' and party:
                 default_bank = party.get_bank_account(payment_type.kind)
@@ -176,7 +174,7 @@ class Line:
         'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
-            ('owners', '=', Eval('account_bank_from')),
+            # TODO: ('owners', '=', Eval('account_bank_from')),
             ],
         states={
                 'readonly': Bool(Eval('reconciliation')),

@@ -76,21 +76,15 @@ class Invoice:
         Party = pool.get('party.party')
         if hasattr(Party, 'get_bank_account'):
             account_bank = payment_type.account_bank
-            if account_bank == 'party' and party:
-                default_bank = party.get_bank_account(payment_type.kind)
-                if default_bank:
-                    return default_bank.id
-                else:
+            if account_bank == 'company':
+                party = company and Company(company).party
+            if account_bank in ('company', 'party') and party:
+                default_bank_id = party.get_bank_account('%s_bank_account'
+                    % payment_type.kind)
+                if not default_bank_id:
                     cls.raise_user_error('party_without_bank_account',
                         (party.name, payment_type.kind))
-            elif account_bank == 'company' and company:
-                    party = Company(company).party
-                    default_bank = party.get_bank_account(payment_type.kind)
-                    if default_bank:
-                        return default_bank.id
-                    else:
-                        cls.raise_user_error('party_without_bank_account',
-                            (party.name, payment_type.kind))
+                return default_bank_id
 
     def on_change_payment_type(self):
         '''

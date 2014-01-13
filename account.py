@@ -74,18 +74,18 @@ class Invoice:
         pool = Pool()
         Company = pool.get('company.company')
         Party = pool.get('party.party')
-        if hasattr(Party, 'get_bank_account') and hasattr(payment_type,
-                'account_bank'):
+
+        party_fname = '%s_bank_account' % payment_type.kind
+        if hasattr(Party, party_fname):
             account_bank = payment_type.account_bank
             if account_bank == 'company':
                 party = company and Company(company).party
             if account_bank in ('company', 'party') and party:
-                default_bank_id = party.get_bank_account('%s_bank_account'
-                    % payment_type.kind)
-                if not default_bank_id:
+                default_bank = getattr(party, party_fname)
+                if not default_bank:
                     cls.raise_user_error('party_without_bank_account',
                         (party.name, payment_type.kind))
-                return default_bank_id
+                return default_bank
 
     def on_change_payment_type(self):
         '''
@@ -94,26 +94,27 @@ class Invoice:
         res = {'bank_account': None}
         payment_type = self.payment_type
         party = self.party
-        company = Transaction().context.get('company', False)
+        company = Transaction().context.get('company')
         if payment_type:
-            res['bank_account'] = self._get_bank_account(payment_type, party,
-                company)
+            bank_account = self._get_bank_account(payment_type, party, company)
+            res['bank_account'] = bank_account and bank_account.id or None
         return res
 
     def on_change_party(self):
         '''
         Add account bank to account invoice when changes party.
         '''
-        res = super(Invoice, self).on_change_party()
-        res['bank_account'] = None
         pool = Pool()
         PaymentType = pool.get('account.payment.type')
+
+        res = super(Invoice, self).on_change_party()
+        res['bank_account'] = None
         party = self.party
-        company = Transaction().context.get('company', False)
+        company = Transaction().context.get('company')
         if res.get('payment_type'):
             payment_type = PaymentType(res['payment_type'])
-            res['bank_account'] = self._get_bank_account(payment_type, party,
-                company)
+            bank_account = self._get_bank_account(payment_type, party, company)
+            res['bank_account'] = bank_account and bank_account.id or None
         return res
 
     def _get_move_line(self, date, amount):
@@ -139,8 +140,10 @@ class Invoice:
                 company = Company(values.get('company',
                     Transaction().context.get('company'))).party
                 payment_type = PaymentType(values['payment_type'])
-                values['bank_account'] = cls._get_bank_account(payment_type,
-                    party, company)
+                bank_account = cls._get_bank_account(payment_type, party,
+                    company)
+                values['bank_account'] = (bank_account and bank_account.id
+                    or None)
         return super(Invoice, cls).create(vlist)
 
     @classmethod
@@ -152,11 +155,11 @@ class Invoice:
         has one
         '''
         for invoice in invoices:
-            account_bank = invoice.payment_type and \
-                invoice.payment_type.account_bank or False
-            if invoice.payment_type and account_bank != 'none' \
-                    and not (account_bank in ('party', 'company') \
-                        and invoice.bank_account):
+            account_bank = (invoice.payment_type and
+                invoice.payment_type.account_bank or 'none')
+            if (invoice.payment_type and account_bank != 'none'
+                    and not (account_bank in ('party', 'company')
+                        and invoice.bank_account)):
                 cls.raise_user_error('invoice_without_bank_account')
             super(Invoice, cls).post(invoices)
 
@@ -192,25 +195,18 @@ class Line:
         pool = Pool()
         Company = pool.get('company.company')
         Party = pool.get('party.party')
-        if hasattr(Party, 'get_%s_bank_account' % payment_type.kind):
+
+        party_fname = '%s_bank_account' % payment_type.kind
+        if hasattr(Party, party_fname):
             account_bank = payment_type.account_bank
-            if account_bank == 'party' and party:
-                default_bank = getattr(Party, 'get_%s_bank_account' % \
-                    payment_type.kind)(party)
-                if default_bank:
-                    return default_bank.id
-                else:
+            if account_bank == 'company':
+                party = company and Company(company).party
+            if account_bank in ('company', 'party') and party:
+                default_bank = getattr(party, party_fname)
+                if not default_bank:
                     self.raise_user_error('party_without_bank_account',
                         (party.name, payment_type.kind))
-            elif account_bank == 'company' and company:
-                    party = Company(company).party
-                    default_bank = getattr(Party, 'get_%s_bank_account' % \
-                        payment_type.kind)(party)
-                    if default_bank:
-                        return default_bank.id
-                    else:
-                        self.raise_user_error('party_without_bank_account',
-                            (party.name, payment_type.kind))
+                return default_bank
 
     def on_change_party(self):
         '''
@@ -218,14 +214,15 @@ class Line:
         '''
         pool = Pool()
         PaymentType = pool.get('account.payment.type')
+
         res = super(Line, self).on_change_party()
         party = self.party
         company = Transaction().context.get('company', False)
         res['bank_account'] = None
         if res.get('payment_type'):
             payment_type = PaymentType(res['payment_type'])
-            res['bank_account'] = self._get_bank_account(payment_type, party,
-                company)
+            bank_account = self._get_bank_account(payment_type, party, company)
+            res['bank_account'] = bank_account and bank_account.id or None
         return res
 
     def on_change_payment_type(self):
@@ -237,8 +234,8 @@ class Line:
         party = self.party
         company = Transaction().context.get('company', False)
         if payment_type:
-            res['bank_account'] = self._get_bank_account(payment_type, party,
-                company)
+            bank_account = self._get_bank_account(payment_type, party, company)
+            res['bank_account'] = bank_account and bank_account.id or None
         return res
 
     def on_change_with_account_bank_from(self, name=None):

@@ -139,11 +139,12 @@ class Invoice:
                 party = Party(values['party'])
                 company = Company(values.get('company',
                     Transaction().context.get('company'))).party
-                payment_type = PaymentType(values['payment_type'])
-                bank_account = cls._get_bank_account(payment_type, party,
-                    company)
-                values['bank_account'] = (bank_account and bank_account.id
-                    or None)
+                if values.get('payment_type'):
+                    payment_type = PaymentType(values['payment_type'])
+                    bank_account = cls._get_bank_account(payment_type, party,
+                        company)
+                    values['bank_account'] = (bank_account and bank_account.id
+                        or None)
         return super(Invoice, cls).create(vlist)
 
     @classmethod

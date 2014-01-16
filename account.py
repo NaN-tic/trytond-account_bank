@@ -47,9 +47,6 @@ class Invoice:
         super(Invoice, cls).__setup__()
         cls.payment_type.on_change = ['payment_type', 'party']
         cls._error_messages.update({
-                'party_without_bank_account': ('%s has no any %s bank '
-                    'account.\nPlease set up one if you want to use this '
-                    'payment type.'),
                 'invoice_without_bank_account': ('This invoice has no bank '
                     'account associated, but its payment type requires it.')
                 })
@@ -82,9 +79,6 @@ class Invoice:
                 party = company and Company(company).party
             if account_bank in ('company', 'party') and party:
                 default_bank = getattr(party, party_fname)
-                if not default_bank:
-                    cls.raise_user_error('party_without_bank_account',
-                        (party.name, payment_type.kind))
                 return default_bank
 
     def on_change_payment_type(self):

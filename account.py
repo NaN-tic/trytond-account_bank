@@ -156,7 +156,7 @@ class Invoice:
                     and not (account_bank in ('party', 'company')
                         and invoice.bank_account)):
                 cls.raise_user_error('invoice_without_bank_account')
-            super(Invoice, cls).post(invoices)
+        super(Invoice, cls).post(invoices)
 
 
 class Line:

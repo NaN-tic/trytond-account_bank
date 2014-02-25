@@ -39,6 +39,7 @@ class Invoice:
             ],
         states={
             'readonly': ~Eval('state').in_(['draft', 'validated']),
+            'invisible': ~Bool(Eval('account_bank_from')),
             },
         depends=['party', 'payment_type', 'account_bank_from'])
 
@@ -167,11 +168,10 @@ class Line:
         'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
-            ('owners', '=', Eval('account_bank_from')),
+            # TODO: ('owners', '=', Eval('account_bank_from')),
             ],
         states={
                 'readonly': Bool(Eval('reconciliation')),
-                'invisible': ~Bool(Eval('account_bank_from')),
             },
         depends=['party', 'payment_type', 'account_bank_from'])
 

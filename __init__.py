@@ -9,5 +9,10 @@ def register():
     Pool.register(
         PaymentType,
         Invoice,
+        Reconciliation,
         Line,
+        PartialReconcileStart,
         module='account_bank', type_='model')
+    Pool.register(
+        PartialReconcile,
+        module='account_bank', type_='wizard')

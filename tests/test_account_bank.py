@@ -7,6 +7,8 @@ import os
 import sys
 import trytond.tests.test_tryton
 import unittest
+import doctest
+from trytond.backend.sqlite.database import Database as SQLiteDatabase
 DIR = os.path.abspath(os.path.normpath(os.path.join(__file__,
     '..', '..', '..', '..', '..', 'trytond')))
 if os.path.isdir(DIR):
@@ -25,7 +27,7 @@ class AccountBankTestCase(unittest.TestCase):
         '''
         Test views.
         '''
-        test_view('account')
+        test_view('account_bank')
 
     def test0006depends(self):
         '''
@@ -34,10 +36,23 @@ class AccountBankTestCase(unittest.TestCase):
         test_depends()
 
 
+def doctest_dropdb(test):
+    database = SQLiteDatabase().connect()
+    cursor = database.cursor(autocommit=True)
+    try:
+        database.drop(cursor, ':memory:')
+        cursor.commit()
+    finally:
+        cursor.close()
+
+
 def suite():
     suite = trytond.tests.test_tryton.suite()
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
         AccountBankTestCase))
+    suite.addTests(doctest.DocFileSuite('scenario_partial_reconcile.rst',
+            setUp=doctest_dropdb, tearDown=doctest_dropdb, encoding='utf-8',
+            optionflags=doctest.REPORT_ONLY_FIRST_FAILURE))
     return suite
 
 if __name__ == '__main__':

@@ -303,7 +303,7 @@ class Line(BankMixin):
             return False
         domain = [
             ('account', '=', self.account.id),
-            ('reconcliation', '=', None),
+            ('reconciliation', '=', None),
             ]
         if self.party:
             domain.append(('party', '=', self.party.id))

@@ -151,8 +151,6 @@ class Invoice:
         return super(Invoice, cls).create(vlist)
 
     @classmethod
-    @ModelView.button
-    @Workflow.transition('posted')
     def post(cls, invoices):
         '''
         Check up invoices that requires bank account because its payment type,

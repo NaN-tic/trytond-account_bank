@@ -194,7 +194,8 @@ class Reconciliation:
             moves |= set(l.move for l in reconciliation.lines)
         invoices = []
         for move in moves:
-            if move.origin and isinstance(move.origin, Invoice):
+            if (move.origin and isinstance(move.origin, Invoice)
+                    and move.origin.state == 'posted'):
                 invoices.append(move.origin)
         if invoices:
             Invoice.process(invoices)

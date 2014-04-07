@@ -124,11 +124,11 @@ msgstr "Inici reconciliació parcial"
 
 msgctxt "model:ir.action,name:act_partial_reconcile_lines"
 msgid "Partial Reconcile Lines"
-msgstr "Conciliació parcial d'apunts."
+msgstr "Conciliació parcial d'apunts"
 
 msgctxt "selection:account.move.line,account_kind:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:account.payment.type,account_bank:"
 msgid "Company"

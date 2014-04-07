@@ -313,39 +313,32 @@ class Line(BankMixin):
 
     @classmethod
     def search_reverse_moves(cls, name, clause):
-# Following query isn't working on python-sql, see
-# https://code.google.com/p/python-sql/issues/detail?id=17&can=1
-#        table = cls.__table__()
-#        subtable = cls.__table__()
-#
-#        zero = Literal(0)
-#        query = table.select(table.id, where=Exists(
-#                subtable.select(subtable.id,
-#                    where=((table.id != subtable.id) &
-#                        (table.account == subtable.account) &
-#                        (table.party == subtable.party) &
-#                        (((table.debit != zero) & (subtable.credit != zero))
-#                            | ((table.credit != zero) &
-#                                (subtable.debit != zero))) &
-#                        (table.reconciliation == None) &
-#                        (subtable.reconciliation == None))
-#                    )))
-#End not working query
         operator = 'in' if clause[2] else 'not in'
-#TODO: When issue is fixed uncomment the next line and remove uneeded code.
-#        return [('id', operator, query)]
-        query = ''
-        query += 'SELECT "a"."id" '
-        query += 'FROM "account_move_line" AS "a" '
-        query += 'INNER JOIN "account_move_line" AS "b" ON '
-        query += '"a"."id" != "b"."id" AND '
-        query += '    "a"."account" = "b"."account" AND '
-        query += '        "a"."party" = "b"."party" AND '
-        query += '            (("a"."debit" != 0 AND "b"."credit" != 0) OR '
-        query += '            ("a"."credit" != 0 AND "b"."debit" != 0)) AND '
-        query += '                "a"."reconciliation" IS NULL AND '
-        query += '                    "b"."reconciliation" IS NULL '
-
+        query = """
+            SELECT
+                id
+            FROM
+                account_move_line l
+            WHERE
+                (account, party) IN (
+                    SELECT
+                        aa.id,
+                        aml.party
+                    FROM
+                        account_account aa,
+                        account_move_line aml
+                    WHERE
+                        aa.reconcile
+                        AND aa.id = aml.account
+                        AND aml.reconciliation IS NULL
+                    GROUP BY
+                        aa.id,
+                        aml.party
+                    HAVING
+                        bool_or(aml.debit <> 0)
+                        AND bool_or(aml.credit <> 0)
+                    )
+            """
         cursor = Transaction().cursor
         cursor.execute(query)
         return [('id', operator, [x[0] for x in cursor.fetchall()])]

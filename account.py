@@ -4,7 +4,7 @@
 from decimal import Decimal
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval, Bool
+from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateTransition, StateView, Button
 
@@ -13,54 +13,123 @@ __all__ = [
     'Invoice',
     'Reconciliation',
     'Line',
-    'PartialReconcileStart',
-    'PartialReconcile',
+    'CompensationMoveStart',
+    'CompensationMove',
     ]
 __metaclass__ = PoolMeta
+
+ACCOUNT_BANK_KIND = [
+    ('none', 'None'),
+    ('party', 'Party'),
+    ('company', 'Company'),
+    ('other', 'Other'),
+    ]
 
 
 class PaymentType:
     __name__ = 'account.payment.type'
 
-    account_bank = fields.Selection([
-        ('none', 'None'),
-        ('party', 'Party'),
-        ('company', 'Company'),
-        ], 'Account Bank', select=True, required=True)
+    account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank',
+        select=True, required=True)
+    party = fields.Many2One('party.party', 'Party',
+        states={
+            'required': Eval('account_bank') == 'other',
+            'invisible': Eval('account_bank') != 'other',
+            },
+        depends=['account_bank'])
+    bank_account = fields.Many2One('bank.account', 'Bank Account',
+        domain=[
+            If(Eval('party', None) == None,
+                ('id', '=', -1),
+                ('owners.id', '=', Eval('party')),
+                ),
+            ],
+        states={
+            'required': Eval('account_bank') == 'other',
+            'invisible': Eval('account_bank') != 'other',
+            },
+        depends=['party', 'account_bank'])
 
     @staticmethod
     def default_account_bank():
         return 'none'
 
 
-class Invoice:
-    __name__ = 'account.invoice'
-
+class BankMixin:
+    account_bank = fields.Function(fields.Selection(ACCOUNT_BANK_KIND,
+            'Account Bank', on_change_with=['payment_type']),
+        'on_change_with_account_bank')
     account_bank_from = fields.Function(fields.Many2One('party.party',
             'Account Bank From', on_change_with=['party', 'payment_type']),
         'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
-            ('owners', '=', Eval('account_bank_from')),
+            If(Eval('account_bank_from', None) == None,
+                ('id', '=', -1),
+                ('owners.id', '=', Eval('account_bank_from')),
+                ),
             ],
         states={
-            'readonly': ~Eval('state').in_(['draft', 'validated']),
-            'invisible': ~Bool(Eval('account_bank_from')),
+                'readonly': Eval('account_bank') == 'other',
+                'invisible': ~Bool(Eval('account_bank_from')),
             },
-        depends=['party', 'payment_type', 'account_bank_from'])
+        depends=['party', 'payment_type', 'account_bank_from', 'account_bank'])
 
     @classmethod
     def __setup__(cls):
-        super(Invoice, cls).__setup__()
-        cls.payment_type.on_change = ['payment_type', 'party']
+        super(BankMixin, cls).__setup__()
         cls._error_messages.update({
-                'invoice_without_bank_account': ('This invoice has no bank '
-                    'account associated, but its payment type requires it.')
+                'party_without_bank_account': ('%s has no any %s bank '
+                    'account.\nPlease set up one if you want to use this '
+                    'payment type.'),
                 })
+
+    def on_change_with_account_bank(self, name=None):
+        if self.payment_type:
+            return self.payment_type.account_bank
+
+    @classmethod
+    def _get_bank_account(cls, payment_type, party, company):
+        pool = Pool()
+        Company = pool.get('company.company')
+        Party = pool.get('party.party')
+
+        if payment_type.account_bank == 'other':
+            return payment_type.bank_account
+
+        party_fname = '%s_bank_account' % payment_type.kind
+        if hasattr(Party, party_fname):
+            account_bank = payment_type.account_bank
+            if account_bank == 'company':
+                party_company_fname = ('%s_company_bank_account' %
+                    payment_type.kind)
+                company_bank = getattr(party, party_company_fname, None)
+                if company_bank:
+                    return company_bank
+                party = company and Company(company).party
+            if account_bank in ('company', 'party') and party:
+                default_bank = getattr(party, party_fname)
+                if not default_bank:
+                    cls.raise_user_error('party_without_bank_account',
+                        (party.name, payment_type.kind))
+                return default_bank
+
+    def on_change_payment_type(self):
+        '''
+        Add account bank to account invoice when changes payment_type.
+        '''
+        res = {'bank_account': None}
+        payment_type = self.payment_type
+        party = self.party
+        company = Transaction().context.get('company', False)
+        if payment_type:
+            bank_account = self._get_bank_account(payment_type, party, company)
+            res['bank_account'] = bank_account and bank_account.id or None
+        return res
 
     def on_change_with_account_bank_from(self, name=None):
         '''
-        Sets the party where get bank account for this invoice.
+        Sets the party where get bank account for this move line.
         '''
         pool = Pool()
         Company = pool.get('company.company')
@@ -72,51 +141,28 @@ class Invoice:
             elif payment_type.account_bank == 'company':
                 company = Transaction().context.get('company', False)
                 return Company(company).party.id
+            elif payment_type.account_bank == 'other':
+                return payment_type.party.id
+
+
+class Invoice(BankMixin):
+    __name__ = 'account.invoice'
 
     @classmethod
-    def _get_bank_account(cls, payment_type, party, company):
-        pool = Pool()
-        Company = pool.get('company.company')
-        Party = pool.get('party.party')
-
-        party_fname = '%s_bank_account' % payment_type.kind
-        if hasattr(Party, party_fname):
-            account_bank = payment_type.account_bank
-            if account_bank == 'company':
-                party = company and Company(company).party
-            if account_bank in ('company', 'party') and party:
-                default_bank = getattr(party, party_fname)
-                return default_bank
-
-    def on_change_payment_type(self):
-        '''
-        Add account bank to account invoice when changes payment_type.
-        '''
-        res = {'bank_account': None}
-        payment_type = self.payment_type
-        party = self.party
-        company = Transaction().context.get('company')
-        if payment_type:
-            bank_account = self._get_bank_account(payment_type, party, company)
-            res['bank_account'] = bank_account and bank_account.id or None
-        return res
-
-    def on_change_party(self):
-        '''
-        Add account bank to account invoice when changes party.
-        '''
-        pool = Pool()
-        PaymentType = pool.get('account.payment.type')
-
-        res = super(Invoice, self).on_change_party()
-        res['bank_account'] = None
-        party = self.party
-        company = Transaction().context.get('company')
-        if res.get('payment_type'):
-            payment_type = PaymentType(res['payment_type'])
-            bank_account = self._get_bank_account(payment_type, party, company)
-            res['bank_account'] = bank_account and bank_account.id or None
-        return res
+    def __setup__(cls):
+        super(Invoice, cls).__setup__()
+        cls.payment_type.on_change = ['payment_type', 'party']
+        readonly = ~Eval('state').in_(['draft', 'validated'])
+        previous_readonly = cls.bank_account.states.get('readonly')
+        if previous_readonly:
+            readonly = readonly | previous_readonly
+        cls.bank_account.states.update({
+                'readonly': readonly,
+                })
+        cls._error_messages.update({
+                'invoice_without_bank_account': ('This invoice has no bank '
+                    'account associated, but its payment type requires it.')
+                })
 
     def _get_move_line(self, date, amount):
         '''
@@ -158,7 +204,7 @@ class Invoice:
             account_bank = (invoice.payment_type and
                 invoice.payment_type.account_bank or 'none')
             if (invoice.payment_type and account_bank != 'none'
-                    and not (account_bank in ('party', 'company')
+                    and not (account_bank in ('party', 'company', 'other')
                         and invoice.bank_account)):
                 cls.raise_user_error('invoice_without_bank_account')
         super(Invoice, cls).post(invoices)
@@ -213,74 +259,6 @@ class Reconciliation:
             Invoice.process(invoices)
 
 
-class BankMixin:
-    account_bank_from = fields.Function(fields.Many2One('party.party',
-            'Account Bank From', on_change_with=['party', 'payment_type']),
-        'on_change_with_account_bank_from')
-    bank_account = fields.Many2One('bank.account', 'Bank Account',
-        domain=[
-            # TODO: ('owners', '=', Eval('account_bank_from')),
-            ],
-        states={
-                'readonly': Bool(Eval('reconciliation')),
-            },
-        depends=['party', 'payment_type', 'account_bank_from'])
-
-    @classmethod
-    def __setup__(cls):
-        super(BankMixin, cls).__setup__()
-        cls._error_messages.update({
-                'party_without_bank_account': ('%s has no any %s bank '
-                    'account.\nPlease set up one if you want to use this '
-                    'payment type.'),
-                })
-
-    def _get_bank_account(self, payment_type, party, company):
-        pool = Pool()
-        Company = pool.get('company.company')
-        Party = pool.get('party.party')
-
-        party_fname = '%s_bank_account' % payment_type.kind
-        if hasattr(Party, party_fname):
-            account_bank = payment_type.account_bank
-            if account_bank == 'company':
-                party = company and Company(company).party
-            if account_bank in ('company', 'party') and party:
-                default_bank = getattr(party, party_fname)
-                if not default_bank:
-                    self.raise_user_error('party_without_bank_account',
-                        (party.name, payment_type.kind))
-                return default_bank
-
-    def on_change_payment_type(self):
-        '''
-        Add account bank to account invoice when changes payment_type.
-        '''
-        res = {'bank_account': None}
-        payment_type = self.payment_type
-        party = self.party
-        company = Transaction().context.get('company', False)
-        if payment_type:
-            bank_account = self._get_bank_account(payment_type, party, company)
-            res['bank_account'] = bank_account and bank_account.id or None
-        return res
-
-    def on_change_with_account_bank_from(self, name=None):
-        '''
-        Sets the party where get bank account for this move line.
-        '''
-        pool = Pool()
-        Company = pool.get('company.company')
-        if self.payment_type and self.party:
-            payment_type = self.payment_type
-            party = self.party
-            if payment_type.account_bank == 'party':
-                return party.id
-            elif payment_type.account_bank == 'company':
-                company = Transaction().context.get('company', False)
-                return Company(company).party.id
-
-
 class Line(BankMixin):
     __name__ = 'account.move.line'
 
@@ -292,6 +270,13 @@ class Line(BankMixin):
         super(Line, cls).__setup__()
         if hasattr(cls, '_check_modify_exclude'):
             cls._check_modify_exclude.append('bank_account')
+        readonly = Bool(Eval('reconciliation'))
+        previous_readonly = cls.bank_account.states.get('readonly')
+        if previous_readonly:
+            readonly = readonly | previous_readonly
+        cls.bank_account.states.update({
+                'readonly': readonly,
+                })
         cls.payment_type.on_change = ['payment_type', 'party']
 
     def get_reverse_moves(self, name):
@@ -361,9 +346,9 @@ class Line(BankMixin):
         return res
 
 
-class PartialReconcileStart(ModelView, BankMixin):
-    'Partial Reconcile Start'
-    __name__ = 'account.move.partial_reconcile.start'
+class CompensationMoveStart(ModelView, BankMixin):
+    'Create Compensation Move Start'
+    __name__ = 'account.move.compensation_move.start'
     maturity_date = fields.Date('Maturity Date')
     party = fields.Many2One('party.party', 'Party', readonly=True)
     payment_kind = fields.Char('Payment Kind')
@@ -376,7 +361,7 @@ class PartialReconcileStart(ModelView, BankMixin):
 
     @classmethod
     def __setup__(cls):
-        super(PartialReconcileStart, cls).__setup__()
+        super(CompensationMoveStart, cls).__setup__()
         cls._error_messages.update({
                 'normal_reconcile': ('Selected moves are balanced. Use concile'
                     ' wizard insted of partial one'),
@@ -394,8 +379,9 @@ class PartialReconcileStart(ModelView, BankMixin):
     def default_get(cls, fields, with_rec_name=True):
         pool = Pool()
         Line = pool.get('account.move.line')
+        PaymentType = pool.get('account.payment.type')
 
-        res = super(PartialReconcileStart, cls).default_get(fields,
+        res = super(CompensationMoveStart, cls).default_get(fields,
             with_rec_name)
 
         party = None
@@ -413,21 +399,39 @@ class PartialReconcileStart(ModelView, BankMixin):
                 company = line.account.company
         if company and company.currency.is_zero(amount):
             cls.raise_user_error('normal_reconcile')
-        if party:
-            res['party'] = party.id
         if amount > 0:
             res['payment_kind'] = 'receivable'
         else:
             res['payment_kind'] = 'payable'
         res['bank_account'] = None
+        if party:
+            res['party'] = party.id
+            if (res['payment_kind'] == 'receivable' and
+                    party.customer_payment_type):
+                res['payment_type'] = party.customer_payment_type.id
+            elif (res['payment_kind'] == 'payable' and
+                    party.supplier_payment_type):
+                res['payment_type'] = party.supplier_payment_type.id
+            if 'payment_type' in res:
+                payment_type = PaymentType(res['payment_type'])
+                res['account_bank'] = payment_type.account_bank
+                self = cls()
+                self.payment_type = payment_type
+                self.party = party
+                res['account_bank_from'] = (
+                    self.on_change_with_account_bank_from())
+                bank_account = cls._get_bank_account(payment_type, party,
+                    company)
+                if bank_account:
+                    res['bank_account'] = bank_account.id
         return res
 
 
-class PartialReconcile(Wizard):
-    'Partial Reconcile'
-    __name__ = 'account.move.partial_reconcile'
-    start = StateView('account.move.partial_reconcile.start',
-        'account_bank.partial_reconcile_lines_start_view_form', [
+class CompensationMove(Wizard):
+    'Create Compensation Move'
+    __name__ = 'account.move.compensation_move'
+    start = StateView('account.move.compensation_move.start',
+        'account_bank.compensation_move_lines_start_view_form', [
             Button('Cancel', 'end', 'tryton-cancel'),
             Button('Reconcile', 'reconcile', 'tryton-ok', default=True),
             ])

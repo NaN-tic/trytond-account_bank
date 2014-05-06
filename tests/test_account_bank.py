@@ -50,7 +50,7 @@ def suite():
     suite = trytond.tests.test_tryton.suite()
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
         AccountBankTestCase))
-    suite.addTests(doctest.DocFileSuite('scenario_partial_reconcile.rst',
+    suite.addTests(doctest.DocFileSuite('scenario_compensation_move.rst',
             setUp=doctest_dropdb, tearDown=doctest_dropdb, encoding='utf-8',
             optionflags=doctest.REPORT_ONLY_FIRST_FAILURE))
     return suite

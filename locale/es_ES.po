@@ -4,11 +4,33 @@ msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "error:account.invoice:"
 msgid ""
+"%s has no any %s bank account.\n"
+"Please set up one if you want to use this payment type."
+msgstr ""
+"%s no tiene ninguna cuenta bancaria %s.\n"
+"Por favor establezca una si quiere utilizar este tipo de pago."
+
+msgctxt "error:account.invoice:"
+msgid ""
 "This invoice has no bank account associated, but its payment type requires "
 "it."
 msgstr ""
 "Esta factura no tiene cuenta bancaria asociada, pero el tipo de pago lo "
 "requiere."
+
+msgctxt "error:account.move.compensation_move.start:"
+msgid ""
+"Parties can not be mixed while partialy reconciling. Party \"%s\" of line "
+"\"%s\" is diferent from previous party \"%s\""
+msgstr ""
+"No se puede mezclar los terceros en el efecto de compensación. El tercero "
+"\"%s\" del apunte \"%s\" es distinto del tercero anterior \"%s\"."
+
+msgctxt "error:account.move.compensation_move.start:"
+msgid "Selected moves are balanced. Use concile wizard insted of partial one"
+msgstr ""
+"Los apuuntes seleccionados estan balanceados. Utilize el assistente de "
+"conciliación para conciliarlos."
 
 msgctxt "error:account.move.line:"
 msgid ""
@@ -50,19 +72,9 @@ msgctxt "error:account.move.line:"
 msgid "You can not modify lines of move \"%s\" because it is already posted."
 msgstr "No puede modificar apuntes del asiento \"%s\" porque ya está confirmado."
 
-msgctxt "error:account.move.partial_reconcile.start:"
-msgid ""
-"Parties can not be mixed while partialy reconciling. Party \"%s\" of line "
-"\"%s\" is diferent from previous party \"%s\""
-msgstr ""
-"No se pueden mezclar terceros en la reconciliación parcial. El tercero "
-"\"%s\" de la línea \"%s\" es distinto del utilizado anteriormente \"%s\"."
-
-msgctxt "error:account.move.partial_reconcile.start:"
-msgid "Selected moves are balanced. Use concile wizard insted of partial one"
-msgstr ""
-"Los movimientos seleccionados estan balanceados. Utilice el assistente de "
-"conciliación en vez del assitente de conciliación parcial. "
+msgctxt "field:account.invoice,account_bank:"
+msgid "Account Bank"
+msgstr "Cuenta bancaria"
 
 msgctxt "field:account.invoice,account_bank_from:"
 msgid "Account Bank From"
@@ -70,6 +82,42 @@ msgstr "Cuenta bancaria de"
 
 msgctxt "field:account.invoice,bank_account:"
 msgid "Bank Account"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.move.compensation_move.start,account_bank:"
+msgid "Account Bank"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.move.compensation_move.start,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Cuenta bancaria de"
+
+msgctxt "field:account.move.compensation_move.start,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.move.compensation_move.start,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:account.move.compensation_move.start,maturity_date:"
+msgid "Maturity Date"
+msgstr "Fecha vencimiento"
+
+msgctxt "field:account.move.compensation_move.start,party:"
+msgid "Party"
+msgstr "Terceros"
+
+msgctxt "field:account.move.compensation_move.start,payment_kind:"
+msgid "Payment Kind"
+msgstr "Tipo de Pago"
+
+msgctxt "field:account.move.compensation_move.start,payment_type:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "field:account.move.line,account_bank:"
+msgid "Account Bank"
 msgstr "Cuenta bancaria"
 
 msgctxt "field:account.move.line,account_bank_from:"
@@ -84,45 +132,73 @@ msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
 msgstr "Con movimientos inversos"
 
-msgctxt "field:account.move.partial_reconcile.start,account_bank_from:"
-msgid "Account Bank From"
-msgstr "Cuenta bancaria de"
-
-msgctxt "field:account.move.partial_reconcile.start,bank_account:"
-msgid "Bank Account"
-msgstr "Cuenta bancaria"
-
-msgctxt "field:account.move.partial_reconcile.start,id:"
-msgid "ID"
-msgstr "Identificador"
-
-msgctxt "field:account.move.partial_reconcile.start,maturity_date:"
-msgid "Maturity Date"
-msgstr "Fecha vencimiento"
-
-msgctxt "field:account.move.partial_reconcile.start,party:"
-msgid "Party"
-msgstr "Tercero"
-
-msgctxt "field:account.move.partial_reconcile.start,payment_kind:"
-msgid "Payment Kind"
-msgstr "Tipo de Pago"
-
-msgctxt "field:account.move.partial_reconcile.start,payment_type:"
-msgid "Payment Type"
-msgstr "Tipo de pago"
-
 msgctxt "field:account.payment.type,account_bank:"
 msgid "Account Bank"
 msgstr "Cuenta bancaria"
 
-msgctxt "model:account.move.partial_reconcile.start,name:"
-msgid "Partial Reconcile Start"
-msgstr "Inicio reconciliación parcial"
+msgctxt "field:account.payment.type,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
 
-msgctxt "model:ir.action,name:act_partial_reconcile_lines"
-msgid "Partial Reconcile Lines"
-msgstr "Reconciliación parcial de apuntes"
+msgctxt "field:account.payment.type,party:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "model:account.move.compensation_move.start,name:"
+msgid "Create Compensation Move Start"
+msgstr "Inicio crear efecto de compensación"
+
+msgctxt "model:ir.action,name:act_compensation_move_lines"
+msgid "Create compensation move"
+msgstr "Crear efecto de compensación"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Party"
+msgstr "Terceros"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Party"
+msgstr "Terceros"
 
 msgctxt "selection:account.move.line,account_kind:"
 msgid ""
@@ -137,17 +213,21 @@ msgid "None"
 msgstr "Ninguno"
 
 msgctxt "selection:account.payment.type,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.payment.type,account_bank:"
 msgid "Party"
 msgstr "Tercero"
 
-msgctxt "view:account.move.partial_reconcile.start:"
-msgid "Partial Reconcile"
-msgstr "Conciliación parcial"
+msgctxt "view:account.move.compensation_move.start:"
+msgid "Create Compensation Move"
+msgstr "Crear efecto de compensación"
 
-msgctxt "wizard_button:account.move.partial_reconcile,start,end:"
+msgctxt "wizard_button:account.move.compensation_move,start,end:"
 msgid "Cancel"
 msgstr "Cancel·la"
 
-msgctxt "wizard_button:account.move.partial_reconcile,start,reconcile:"
+msgctxt "wizard_button:account.move.compensation_move,start,reconcile:"
 msgid "Reconcile"
 msgstr "Conciliar"

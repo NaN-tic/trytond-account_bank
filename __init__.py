@@ -11,8 +11,8 @@ def register():
         Invoice,
         Reconciliation,
         Line,
-        PartialReconcileStart,
+        CompensationMoveStart,
         module='account_bank', type_='model')
     Pool.register(
-        PartialReconcile,
+        CompensationMove,
         module='account_bank', type_='wizard')

@@ -3,5 +3,9 @@
     <xpath expr="/form/field[@name='company']" position="after">
         <label name="account_bank"/>
         <field name="account_bank"/>
+        <label name="party"/>
+        <field name="party"/>
+        <label name="bank_account"/>
+        <field name="bank_account"/>
     </xpath>
 </data>

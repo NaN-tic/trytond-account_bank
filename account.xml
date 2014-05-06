@@ -43,21 +43,21 @@ copyright notices and license terms. -->
             <field name="name">move_line_form</field>
         </record>
 
-        <record model="ir.ui.view" id="partial_reconcile_lines_start_view_form">
-            <field name="model">account.move.partial_reconcile.start</field>
+        <record model="ir.ui.view" id="compensation_move_lines_start_view_form">
+            <field name="model">account.move.compensation_move.start</field>
             <field name="type">form</field>
-            <field name="name">partial_reconcile_lines_start_form</field>
+            <field name="name">compensation_move_lines_start_form</field>
         </record>
-        <record model="ir.action.wizard" id="act_partial_reconcile_lines">
-            <field name="name">Partial Reconcile Lines</field>
-            <field name="wiz_name">account.move.partial_reconcile</field>
+        <record model="ir.action.wizard" id="act_compensation_move_lines">
+            <field name="name">Create compensation move</field>
+            <field name="wiz_name">account.move.compensation_move</field>
             <field name="model">account.move.line</field>
         </record>
         <record model="ir.action.keyword"
-                id="act_partial_reconcile_lines_keyword">
+                id="act_compensation_move_lines_keyword">
             <field name="keyword">form_action</field>
             <field name="model">account.move.line,-1</field>
-            <field name="action" ref="act_partial_reconcile_lines"/>
+            <field name="action" ref="act_compensation_move_lines"/>
         </record>
 
     </data>

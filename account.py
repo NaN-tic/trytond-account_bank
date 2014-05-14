@@ -363,10 +363,10 @@ class CompensationMoveStart(ModelView, BankMixin):
     def __setup__(cls):
         super(CompensationMoveStart, cls).__setup__()
         cls._error_messages.update({
-                'normal_reconcile': ('Selected moves are balanced. Use concile'
-                    ' wizard insted of partial one'),
-                'different_parties': ('Parties can not be mixed while partialy'
-                    ' reconciling. Party "%s" of line "%s" is diferent from '
+                'normal_reconcile': ('Selected moves are balanced. Use concile '
+                    'wizard insted of partial one.'),
+                'different_parties': ('Parties can not be mixed while partialy '
+                    'reconciling. Party "%s" of line "%s" is diferent from '
                     'previous party "%s"'),
                 })
 

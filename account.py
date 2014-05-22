@@ -364,10 +364,10 @@ class CompensationMoveStart(ModelView, BankMixin):
         super(CompensationMoveStart, cls).__setup__()
         cls._error_messages.update({
                 'normal_reconcile': ('Selected moves are balanced. Use concile '
-                    'wizard insted of partial one.'),
-                'different_parties': ('Parties can not be mixed while partialy '
-                    'reconciling. Party "%s" of line "%s" is diferent from '
-                    'previous party "%s"'),
+                    'wizard instead of creating a compensation move.'),
+                'different_parties': ('Parties can not be mixed to create a '
+                    'compensation move. Party "%s" in line "%s" is different '
+                    'from previous party "%s"'),
                 })
 
     @staticmethod
@@ -433,11 +433,11 @@ class CompensationMove(Wizard):
     start = StateView('account.move.compensation_move.start',
         'account_bank.compensation_move_lines_start_view_form', [
             Button('Cancel', 'end', 'tryton-cancel'),
-            Button('Reconcile', 'reconcile', 'tryton-ok', default=True),
+            Button('Create', 'create_move', 'tryton-ok', default=True),
             ])
-    reconcile = StateTransition()
+    create_move = StateTransition()
 
-    def transition_reconcile(self):
+    def transition_create_move(self):
         pool = Pool()
         Move = pool.get('account.move')
         Line = pool.get('account.move.line')
@@ -483,7 +483,7 @@ class CompensationMove(Wizard):
             line.bank_account == extra_line.bank_account)
 
     def get_counterpart_line(self, line):
-        'Returns the counterpart line to create for line'
+        'Returns the counterpart line to create from line'
         pool = Pool()
         Line = pool.get('account.move.line')
 
@@ -499,7 +499,7 @@ class CompensationMove(Wizard):
         return new_line
 
     def get_move(self, lines):
-        'Returns the new move to create for lines'
+        'Returns the new move to create from lines'
         pool = Pool()
         Move = pool.get('account.move')
         Period = pool.get('account.period')

@@ -57,10 +57,10 @@ class PaymentType:
 
 class BankMixin:
     account_bank = fields.Function(fields.Selection(ACCOUNT_BANK_KIND,
-            'Account Bank', on_change_with=['payment_type']),
+            'Account Bank'),
         'on_change_with_account_bank')
     account_bank_from = fields.Function(fields.Many2One('party.party',
-            'Account Bank From', on_change_with=['party', 'payment_type']),
+            'Account Bank From'),
         'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
@@ -84,6 +84,7 @@ class BankMixin:
                     'payment type.'),
                 })
 
+    @fields.depends('payment_type')
     def on_change_with_account_bank(self, name=None):
         if self.payment_type:
             return self.payment_type.account_bank
@@ -114,6 +115,7 @@ class BankMixin:
                         (party.name, payment_type.kind))
                 return default_bank
 
+    @fields.depends('payment_type', 'party')
     def on_change_payment_type(self):
         '''
         Add account bank to account invoice when changes payment_type.
@@ -127,6 +129,7 @@ class BankMixin:
             res['bank_account'] = bank_account and bank_account.id or None
         return res
 
+    @fields.depends('payment_type', 'party')
     def on_change_with_account_bank_from(self, name=None):
         '''
         Sets the party where get bank account for this move line.

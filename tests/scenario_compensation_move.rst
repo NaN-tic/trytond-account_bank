@@ -261,7 +261,7 @@ Partialy reconcile both lines::
     >>> compensation_move.form.maturity_date = today
     >>> compensation_move.form.payment_type = receivable_payment_type
     >>> compensation_move.form.bank_account = None
-    >>> compensation_move.execute('reconcile')
+    >>> compensation_move.execute('create_move')
     >>> credit_note.reload()
     >>> credit_note.amount_to_pay == Decimal('0.0')
     True

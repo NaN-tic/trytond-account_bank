@@ -359,8 +359,7 @@ class CompensationMoveStart(ModelView, BankMixin):
         domain=[
             ('kind', '=', Eval('payment_kind'))
             ],
-        depends=['payment_kind'],
-        on_change=['party', 'payment_type'])
+        depends=['payment_kind'])
 
     @classmethod
     def __setup__(cls):

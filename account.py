@@ -154,7 +154,6 @@ class Invoice(BankMixin):
     @classmethod
     def __setup__(cls):
         super(Invoice, cls).__setup__()
-        cls.payment_type.on_change = ['payment_type', 'party']
         readonly = ~Eval('state').in_(['draft', 'validated'])
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:

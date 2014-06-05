@@ -279,7 +279,6 @@ class Line(BankMixin):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
-        cls.payment_type.on_change = ['payment_type', 'party']
 
     def get_reverse_moves(self, name):
         if (not self.account or not self.account.kind in

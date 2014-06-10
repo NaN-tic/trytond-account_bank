@@ -376,13 +376,13 @@ class CompensationMoveStart(ModelView, BankMixin):
         return pool.get('ir.date').today()
 
     @classmethod
-    def default_get(cls, fields, with_rec_name=True):
+    def default_get(cls, fields, with_rec_name=True, with_on_change=False):
         pool = Pool()
         Line = pool.get('account.move.line')
         PaymentType = pool.get('account.payment.type')
 
         res = super(CompensationMoveStart, cls).default_get(fields,
-            with_rec_name)
+            with_rec_name, with_on_change)
 
         party = None
         company = None

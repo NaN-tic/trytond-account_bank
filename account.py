@@ -162,8 +162,9 @@ class Invoice(BankMixin):
                 'readonly': readonly,
                 })
         cls._error_messages.update({
-                'invoice_without_bank_account': ('This invoice has no bank '
-                    'account associated, but its payment type requires it.')
+                'invoice_without_bank_account': ('Invoice "%(invoice)s" has no '
+                    'bank account associated but payment type '
+                    '"%(payment_type)s" requires it.'),
                 })
 
     def _get_move_line(self, date, amount):
@@ -208,7 +209,11 @@ class Invoice(BankMixin):
             if (invoice.payment_type and account_bank != 'none'
                     and not (account_bank in ('party', 'company', 'other')
                         and invoice.bank_account)):
-                cls.raise_user_error('invoice_without_bank_account')
+                cls.raise_user_error('invoice_without_bank_account', {
+                        'invoice': invoice.rec_name,
+                        'payment_type': invoice.payment_type.rec_name,
+                        })
+
         super(Invoice, cls).post(invoices)
 
     def get_lines_to_pay(self, name):

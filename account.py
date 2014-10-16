@@ -116,17 +116,17 @@ class BankMixin:
                 return default_bank
 
     @fields.depends('payment_type', 'party')
-    def on_change_payment_type(self):
+    def on_change_with_bank_account(self):
         '''
-        Add account bank to account invoice when changes payment_type.
+        Add account bank when changes payment_type or party.
         '''
-        res = {'bank_account': None}
+        res = None
         payment_type = self.payment_type
         party = self.party
         company = Transaction().context.get('company', False)
         if payment_type:
             bank_account = self._get_bank_account(payment_type, party, company)
-            res['bank_account'] = bank_account and bank_account.id or None
+            res = bank_account and bank_account.id or None
         return res
 
     @fields.depends('payment_type', 'party')

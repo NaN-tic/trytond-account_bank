@@ -50,6 +50,12 @@ class PaymentType:
             },
         depends=['party', 'account_bank'])
 
+    @classmethod
+    def __setup__(cls):
+        super(PaymentType, cls).__setup__()
+        cls._check_modify_fields |= set(['account_bank', 'party',
+                'bank_account'])
+
     @staticmethod
     def default_account_bank():
         return 'none'

@@ -232,6 +232,7 @@ Create credit note::
     >>> credit_note.type = 'out_credit_note'
     >>> credit_note.party = party
     >>> credit_note.payment_term = payment_term
+    >>> credit_note.payment_type = payable_payment_type
     >>> line = InvoiceLine()
     >>> credit_note.lines.append(line)
     >>> line.product = product
@@ -294,7 +295,6 @@ Create a move that pays the pending amount::
     >>> line.account = account_cash
     >>> line.debit = Decimal('196.0')
     >>> line.credit = Decimal('0.0')
-    >>> line.party = party
     >>> move.save()
     >>> Move.post([move.id], config.context)
     >>> invoice.reload()

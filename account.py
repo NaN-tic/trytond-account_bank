@@ -1,11 +1,16 @@
 # This file is part of account_bank module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
+from sql import Cast
+from sql.operators import Concat
+from sql.conditionals import Case
 from decimal import Decimal
+
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
+from trytond.tools import grouped_slice, reduce_ids
 from trytond.wizard import Wizard, StateTransition, StateView, Button
 
 __all__ = [
@@ -222,19 +227,40 @@ class Invoice(BankMixin):
 
         super(Invoice, cls).post(invoices)
 
-    def get_lines_to_pay(self, name):
-        super(Invoice, self).get_lines_to_pay(name)
-        Line = Pool().get('account.move.line')
-        if self.type in ('out_invoice', 'out_credit_note'):
-            kind = 'receivable'
-        else:
-            kind = 'payable'
-        lines = Line.search([
-                ('origin', '=', ('account.invoice', self.id)),
-                ('account.kind', '=', kind),
-                ('maturity_date', '!=', None),
-                ])
-        return [x.id for x in lines]
+    @classmethod
+    def get_lines_to_pay(cls, invoices, name):
+        pool = Pool()
+        Move = pool.get('account.move')
+        Line = pool.get('account.move.line')
+        Account = pool.get('account.account')
+        line = Line.__table__()
+        account = Account.__table__()
+        move = Move.__table__()
+        invoice = cls.__table__()
+        cursor = Transaction().cursor
+        _, origin_type = Move.origin.sql_type()
+
+        lines = super(Invoice, cls).get_lines_to_pay(invoices, name)
+        for sub_ids in grouped_slice(invoices):
+            red_sql = reduce_ids(invoice.id, sub_ids)
+            query = invoice.join(move,
+                condition=((move.origin == Concat('account.invoice,',
+                                Cast(invoice.id, origin_type))))
+                    ).join(line, condition=(line.move == move.id)
+                    ).join(account, condition=(
+                        (line.account == account.id) &
+                        Case((invoice.type.in_(
+                                ['out_invoice', 'out_credit_note']),
+                            account.kind == 'receivable'),
+                            else_=account.kind == 'payable'))).select(
+                    invoice.id, line.id,
+                    where=(line.maturity_date != None) & red_sql,
+                    order_by=(invoice.id, line.maturity_date))
+            cursor.execute(*query)
+            for invoice_id, line_id in cursor.fetchall():
+                if not line_id in lines[invoice_id]:
+                    lines[invoice_id].append(line_id)
+        return lines
 
 
 class Reconciliation:
@@ -282,7 +308,7 @@ class Line(BankMixin):
     def __setup__(cls):
         super(Line, cls).__setup__()
         if hasattr(cls, '_check_modify_exclude'):
-            cls._check_modify_exclude.append('bank_account')
+            cls._check_modify_exclude.add('bank_account')
         readonly = Bool(Eval('reconciliation'))
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:
@@ -387,13 +413,13 @@ class CompensationMoveStart(ModelView, BankMixin):
         return pool.get('ir.date').today()
 
     @classmethod
-    def default_get(cls, fields, with_rec_name=True, with_on_change=True):
+    def default_get(cls, fields, with_rec_name=True):
         pool = Pool()
         Line = pool.get('account.move.line')
         PaymentType = pool.get('account.payment.type')
 
         res = super(CompensationMoveStart, cls).default_get(fields,
-            with_rec_name, with_on_change)
+            with_rec_name)
 
         party = None
         company = None

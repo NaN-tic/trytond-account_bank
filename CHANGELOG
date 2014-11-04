@@ -1,3 +1,4 @@
+Version 3.4.0 - 2014-11-03
 * Add Accoun Bank, Party and Bank Account fields of Payment Type as not
   editable if there is documents that use the type
 

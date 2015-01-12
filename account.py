@@ -383,6 +383,16 @@ class Line(BankMixin):
             res['bank_account'] = bank_account and bank_account.id or None
         return res
 
+    @classmethod
+    def copy(cls, lines, default=None):
+        if default is None:
+            default = {}
+        if (Transaction().context.get('cancel_move') and not 'bank_account' in
+                default):
+            default['bank_account'] = None
+        print 'copy', default
+        return super(Line, cls).copy(lines, default)
+
 
 class CompensationMoveStart(ModelView, BankMixin):
     'Create Compensation Move Start'

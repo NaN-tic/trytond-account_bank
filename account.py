@@ -116,9 +116,6 @@ class BankMixin:
                 party = company and Company(company).party
             if account_bank in ('company', 'party') and party:
                 default_bank = getattr(party, party_fname)
-                if not default_bank:
-                    cls.raise_user_error('party_without_bank_account',
-                        (party.name, payment_type.kind))
                 return default_bank
 
     @fields.depends('payment_type', 'party')

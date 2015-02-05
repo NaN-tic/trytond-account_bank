@@ -215,8 +215,7 @@ class Invoice(BankMixin):
             account_bank = (invoice.payment_type and
                 invoice.payment_type.account_bank or 'none')
             if (invoice.payment_type and account_bank != 'none'
-                    and not (account_bank in ('party', 'company', 'other')
-                        and invoice.bank_account)):
+                    and not invoice.bank_account):
                 cls.raise_user_error('invoice_without_bank_account', {
                         'invoice': invoice.rec_name,
                         'payment_type': invoice.payment_type.rec_name,

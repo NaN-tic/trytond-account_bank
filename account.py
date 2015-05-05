@@ -131,7 +131,7 @@ class BankMixin:
         res = None
         payment_type = self.payment_type
         party = self.party
-        company = Transaction().context.get('company', False)
+        company = Transaction().context.get('company')
         if payment_type:
             bank_account = self._get_bank_account(payment_type, party, company)
             res = bank_account and bank_account.id or None
@@ -189,14 +189,13 @@ class Invoice(BankMixin):
         pool = Pool()
         PaymentType = pool.get('account.payment.type')
         Party = pool.get('party.party')
-        Company = pool.get('company.company')
         vlist = [x.copy() for x in vlist]
         for values in vlist:
             if (not 'bank_account' in values and 'payment_type' in values
                     and 'party' in values):
                 party = Party(values['party'])
-                company = Company(values.get('company',
-                    Transaction().context.get('company'))).party
+                company = values.get('company',
+                    Transaction().context.get('company'))
                 if values.get('payment_type'):
                     payment_type = PaymentType(values['payment_type'])
                     bank_account = cls._get_bank_account(payment_type, party,
@@ -371,7 +370,7 @@ class Line(BankMixin):
 
         res = super(Line, self).on_change_party()
         party = self.party
-        company = Transaction().context.get('company', False)
+        company = Transaction().context.get('company')
         res['bank_account'] = None
         if res.get('payment_type'):
             payment_type = PaymentType(res['payment_type'])
@@ -386,7 +385,6 @@ class Line(BankMixin):
         if (Transaction().context.get('cancel_move') and not 'bank_account' in
                 default):
             default['bank_account'] = None
-        print 'copy', default
         return super(Line, cls).copy(lines, default)
 
 
@@ -464,7 +462,7 @@ class CompensationMoveStart(ModelView, BankMixin):
                 res['account_bank_from'] = (
                     self.on_change_with_account_bank_from())
                 bank_account = cls._get_bank_account(payment_type, party,
-                    company)
+                    company.id)
                 if bank_account:
                     res['bank_account'] = bank_account.id
         return res

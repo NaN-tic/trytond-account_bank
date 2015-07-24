@@ -185,23 +185,29 @@ class Invoice(BankMixin):
         return res
 
     @classmethod
-    def create(cls, vlist):
+    def compute_default_bank_account(cls, values):
         pool = Pool()
         PaymentType = pool.get('account.payment.type')
         Party = pool.get('party.party')
+        changes = {}
+        if (not 'bank_account' in values and 'payment_type' in values
+                and 'party' in values):
+            party = Party(values['party'])
+            company = values.get('company',
+                Transaction().context.get('company'))
+            if values.get('payment_type'):
+                payment_type = PaymentType(values['payment_type'])
+                bank_account = cls._get_bank_account(payment_type, party,
+                    company)
+                changes['bank_account'] = (bank_account and bank_account.id
+                    or None)
+        return changes
+
+    @classmethod
+    def create(cls, vlist):
         vlist = [x.copy() for x in vlist]
         for values in vlist:
-            if (not 'bank_account' in values and 'payment_type' in values
-                    and 'party' in values):
-                party = Party(values['party'])
-                company = values.get('company',
-                    Transaction().context.get('company'))
-                if values.get('payment_type'):
-                    payment_type = PaymentType(values['payment_type'])
-                    bank_account = cls._get_bank_account(payment_type, party,
-                        company)
-                    values['bank_account'] = (bank_account and bank_account.id
-                        or None)
+            values.update(cls.compute_default_bank_account(values))
         return super(Invoice, cls).create(vlist)
 
     @classmethod

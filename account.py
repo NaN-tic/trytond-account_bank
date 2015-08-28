@@ -100,42 +100,37 @@ class BankMixin:
         if self.payment_type:
             return self.payment_type.account_bank
 
-    @classmethod
-    def _get_bank_account(cls, payment_type, party, company):
+    def _get_bank_account(self):
         pool = Pool()
-        Company = pool.get('company.company')
         Party = pool.get('party.party')
 
-        if payment_type.account_bank == 'other':
-            return payment_type.bank_account
+        if self.party and self.payment_type:
+            if self.payment_type.account_bank == 'other':
+                self.bank_account = self.payment_type.bank_account
+            else:
+                party_fname = '%s_bank_account' % self.payment_type.kind
+                if hasattr(Party, party_fname):
+                    account_bank = self.payment_type.account_bank
+                    if account_bank == 'company':
+                        party_company_fname = ('%s_company_bank_account' %
+                            self.payment_type.kind)
+                        company_bank = getattr(self.party, party_company_fname, None)
+                        if company_bank:
+                            self.bank_account = company_bank
+                            return
 
-        party_fname = '%s_bank_account' % payment_type.kind
-        if hasattr(Party, party_fname):
-            account_bank = payment_type.account_bank
-            if account_bank == 'company':
-                party_company_fname = ('%s_company_bank_account' %
-                    payment_type.kind)
-                company_bank = getattr(party, party_company_fname, None)
-                if company_bank:
-                    return company_bank
-                party = company and Company(company).party
-            if account_bank in ('company', 'party') and party:
-                default_bank = getattr(party, party_fname)
-                return default_bank
+                    if account_bank in ('company', 'party') and self.company:
+                        default_bank = getattr(self.company.party, party_fname)
+                        self.bank_account = default_bank
+                        return
 
-    @fields.depends('payment_type', 'party')
+    @fields.depends('party', 'payment_type', 'bank_account')
     def on_change_with_bank_account(self):
         '''
         Add account bank when changes payment_type or party.
         '''
-        res = None
-        payment_type = self.payment_type
-        party = self.party
-        company = Transaction().context.get('company')
-        if payment_type:
-            bank_account = self._get_bank_account(payment_type, party, company)
-            res = bank_account and bank_account.id or None
-        return res
+        self._get_bank_account()
+        return self.bank_account.id if self.bank_account else None
 
     @fields.depends('payment_type', 'party')
     def on_change_with_account_bank_from(self, name=None):
@@ -144,6 +139,7 @@ class BankMixin:
         '''
         pool = Pool()
         Company = pool.get('company.company')
+
         if self.payment_type and self.party:
             payment_type = self.payment_type
             party = self.party
@@ -187,20 +183,23 @@ class Invoice(BankMixin):
     @classmethod
     def compute_default_bank_account(cls, values):
         pool = Pool()
-        PaymentType = pool.get('account.payment.type')
         Party = pool.get('party.party')
+        Company = pool.get('company.company')
+
+        payment_type = values.get('payment_type')
+        bank_account = values.get('bank_account')
+        party = values.get('party')
+        company = values.get('company', Transaction().context.get('company'))
+
         changes = {}
-        if (not 'bank_account' in values and 'payment_type' in values
-                and 'party' in values):
-            party = Party(values['party'])
-            company = values.get('company',
-                Transaction().context.get('company'))
-            if values.get('payment_type'):
-                payment_type = PaymentType(values['payment_type'])
-                bank_account = cls._get_bank_account(payment_type, party,
-                    company)
-                changes['bank_account'] = (bank_account and bank_account.id
-                    or None)
+        if not bank_account and payment_type and party and company:
+            invoice = cls()
+            invoice.party = Party(party)
+            invoice.company = Company(company)
+            invoice.payment_type = None
+            invoice._get_bank_account()
+            changes['bank_account'] = invoice.bank_account.id \
+                if invoice.bank_account else None
         return changes
 
     @classmethod
@@ -367,22 +366,14 @@ class Line(BankMixin):
         cursor.execute(query)
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
+    @fields.depends('party', 'payment_type')
     def on_change_party(self):
         '''
         Add account bank to account move line when changes party.
         '''
-        pool = Pool()
-        PaymentType = pool.get('account.payment.type')
-
-        res = super(Line, self).on_change_party()
-        party = self.party
-        company = Transaction().context.get('company')
-        res['bank_account'] = None
-        if res.get('payment_type'):
-            payment_type = PaymentType(res['payment_type'])
-            bank_account = self._get_bank_account(payment_type, party, company)
-            res['bank_account'] = bank_account and bank_account.id or None
-        return res
+        super(Line, self).on_change_party()
+        if self.payment_type and self.party:
+            self._get_bank_account()
 
     @classmethod
     def copy(cls, lines, default=None):
@@ -462,15 +453,15 @@ class CompensationMoveStart(ModelView, BankMixin):
             if 'payment_type' in res:
                 payment_type = PaymentType(res['payment_type'])
                 res['account_bank'] = payment_type.account_bank
+
                 self = cls()
                 self.payment_type = payment_type
                 self.party = party
+                self._get_bank_account()
                 res['account_bank_from'] = (
                     self.on_change_with_account_bank_from())
-                bank_account = cls._get_bank_account(payment_type, party,
-                    company.id)
-                if bank_account:
-                    res['bank_account'] = bank_account.id
+                res['bank_account'] = self.bank_account.id \
+                    if self.bank_account else None
         return res
 
 
@@ -499,7 +490,7 @@ class CompensationMove(Wizard):
             move_lines.append(self.get_counterpart_line(line))
 
         if not lines or not move_lines:
-            return
+            return 'end'
 
         move = self.get_move(lines)
         extra_lines, origin = self.get_extra_lines(lines)

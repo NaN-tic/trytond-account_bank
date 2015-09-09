@@ -8,6 +8,8 @@ from .account import *
 def register():
     Pool.register(
         PaymentType,
+        BankAccount,
+        Party,
         Invoice,
         Reconciliation,
         Line,

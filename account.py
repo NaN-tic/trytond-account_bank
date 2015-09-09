@@ -13,14 +13,8 @@ from trytond.transaction import Transaction
 from trytond.tools import grouped_slice, reduce_ids
 from trytond.wizard import Wizard, StateTransition, StateView, Button
 
-__all__ = [
-    'PaymentType',
-    'Invoice',
-    'Reconciliation',
-    'Line',
-    'CompensationMoveStart',
-    'CompensationMove',
-    ]
+__all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',
+    'Line', 'CompensationMoveStart', 'CompensationMove']
 __metaclass__ = PoolMeta
 
 ACCOUNT_BANK_KIND = [
@@ -33,7 +27,6 @@ ACCOUNT_BANK_KIND = [
 
 class PaymentType:
     __name__ = 'account.payment.type'
-
     account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank',
         select=True, required=True)
     party = fields.Many2One('party.party', 'Party',
@@ -64,6 +57,79 @@ class PaymentType:
     @staticmethod
     def default_account_bank():
         return 'none'
+
+
+class BankAccount:
+    __name__ = 'bank.account'
+
+    @classmethod
+    def __setup__(cls):
+        super(BankAccount, cls).__setup__()
+        cls._check_owners_fields = set(['owners'])
+        cls._check_owners_related_models = set([
+                ('account.move.line', 'bank_account', 'party'),
+                ('account.invoice', 'bank_account', 'party'),
+                ])
+        cls._error_messages.update({
+                'modifiy_with_related_model': ('It is not possible to modify '
+                    'the owner of bank account "%(account)s" as it is used on '
+                    'en el %(field)s del %(model)s "%(name)s"'),
+                })
+
+    @classmethod
+    def write(cls, *args):
+        actions = iter(args)
+        all_accounts = []
+        for accounts, values in zip(actions, actions):
+            if set(values.keys()) & cls._check_owners_fields:
+                all_accounts += accounts
+        super(BankAccount, cls).write(*args)
+        cls.check_owners(all_accounts)
+
+    @classmethod
+    def check_owners(cls, accounts):
+        pool = Pool()
+        IrModel = pool.get('ir.model')
+        Field = pool.get('ir.model.field')
+        account_ids = [a.id for a in accounts]
+        for value in cls._check_owners_related_models:
+            model_name, field_name, owners_field = value
+            Model = pool.get(model_name)
+            records = Model.search([(field_name, 'in', account_ids)])
+            model, = IrModel.search([('model', '=', model_name)])
+            field, = Field.search([
+                    ('model.model', '=', model_name),
+                    ('name', '=', field_name),
+                    ], limit=1)
+            for record in records:
+                target = getattr(record, owners_field)
+                account = getattr(record, field_name)
+                if target not in account.owners:
+                    error_args = {
+                        'account': account.rec_name,
+                        'model': model.name,
+                        'field': field.field_description,
+                        'name': record.rec_name,
+                        }
+                    cls.raise_user_error('modifiy_with_related_model',
+                        error_args)
+
+
+class Party:
+    __name__ = 'party.party'
+
+    @classmethod
+    def write(cls, *args):
+        pool = Pool()
+        BankAccount = pool.get('bank.account')
+        actions = iter(args)
+        all_accounts = []
+        for parties, values in zip(actions, actions):
+            if set(values.keys()) & set(['bank_accounts']):
+                all_accounts += list(set(
+                        [a for p in parties for a in p.bank_accounts]))
+        super(Party, cls).write(*args)
+        BankAccount.check_owners(all_accounts)
 
 
 class BankMixin:

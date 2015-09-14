@@ -77,14 +77,6 @@ msgstr ""
 "No podeu modificar els apunts de l'assentament \"%s\" perquè ja està "
 "confirmat."
 
-msgctxt "error:bank.account:"
-msgid ""
-"It is not possible to modify the owner of bank account \"%(account)s\" as it"
-" is used on en el %(field)s del %(model)s \"%(name)s\""
-msgstr ""
-"No es pot modificar el propietari del compte bancari \"%(account)s\" perquè "
-"es fa servir en el camp %(field)s del %(model)s \"%(name)s\"."
-
 msgctxt "field:account.invoice,account_bank:"
 msgid "Account Bank"
 msgstr "Compte bancari"
@@ -144,6 +136,34 @@ msgstr "Compte bancari"
 msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
 msgstr "Amb apunts inversos"
+
+msgctxt "field:account.move.partial_reconcile.start,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Compte bancari de"
+
+msgctxt "field:account.move.partial_reconcile.start,bank_account:"
+msgid "Bank Account"
+msgstr "Compte bancari"
+
+msgctxt "field:account.move.partial_reconcile.start,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:account.move.partial_reconcile.start,maturity_date:"
+msgid "Maturity Date"
+msgstr "Data de venciment"
+
+msgctxt "field:account.move.partial_reconcile.start,party:"
+msgid "Party"
+msgstr "Tercer"
+
+msgctxt "field:account.move.partial_reconcile.start,payment_kind:"
+msgid "Payment Kind"
+msgstr "Classe de pagament"
+
+msgctxt "field:account.move.partial_reconcile.start,payment_type:"
+msgid "Payment Type"
+msgstr "Tipus de pagament"
 
 msgctxt "field:account.payment.type,account_bank:"
 msgid "Account Bank"
@@ -215,7 +235,7 @@ msgstr "Tercer"
 
 msgctxt "selection:account.move.line,account_kind:"
 msgid ""
-msgstr " "
+msgstr ""
 
 msgctxt "selection:account.payment.type,account_bank:"
 msgid "Company"
@@ -242,5 +262,9 @@ msgid "Create"
 msgstr "Crea"
 
 msgctxt "wizard_button:account.move.compensation_move,start,end:"
+msgid "Cancel"
+msgstr "Cancel·la"
+
+msgctxt "wizard_button:account.move.partial_reconcile,start,end:"
 msgid "Cancel"
 msgstr "Cancel·la"

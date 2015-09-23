@@ -170,6 +170,7 @@ class BankMixin:
         pool = Pool()
         Party = pool.get('party.party')
 
+        self.bank_account = None
         if self.party and self.payment_type:
             if self.payment_type.account_bank == 'other':
                 self.bank_account = self.payment_type.bank_account
@@ -184,7 +185,6 @@ class BankMixin:
                         if company_bank:
                             self.bank_account = company_bank
                             return
-
                     if account_bank in ('company', 'party') and self.company:
                         default_bank = getattr(self.company.party, party_fname)
                         self.bank_account = default_bank

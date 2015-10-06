@@ -185,7 +185,8 @@ class BankMixin:
                         if company_bank:
                             self.bank_account = company_bank
                             return
-                    if account_bank in ('company', 'party') and self.company:
+                    if account_bank in ('company', 'party') and \
+                            hasattr(self, 'company') and self.company:
                         default_bank = getattr(self.company.party, party_fname)
                         self.bank_account = default_bank
                         return

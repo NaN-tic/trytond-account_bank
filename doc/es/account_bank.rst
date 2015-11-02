@@ -1,4 +1,4 @@
-.. inheritref:: account_bank/account_invoice:title:accounting_with_bank
+.. inheritref:: account_bank/account_bank:section:accounting_with_bank
 
 ======================
 Contabilidad con banco

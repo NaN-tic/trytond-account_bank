@@ -274,6 +274,17 @@ class Invoice(BankMixin):
             values.update(cls.compute_default_bank_account(values))
         return super(Invoice, cls).create(vlist)
 
+    @fields.depends('payment_type', 'party', 'company')
+    def on_change_party(self):
+        '''
+        Add account bank to invoice line when changes party.
+        '''
+        super(Invoice, self).on_change_party()
+        self.bank_account = None
+        if self.payment_type:
+            self._get_bank_account(self.payment_type,
+                self.party, self.company)
+
     @classmethod
     def post(cls, invoices):
         '''

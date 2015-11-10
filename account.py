@@ -263,7 +263,8 @@ class Invoice(BankMixin):
             invoice.party = Party(party)
             invoice.company = Company(company)
             invoice.payment_type = None
-            changes['bank_account'] = invoice._get_bank_account()
+            changes['bank_account'] = invoice.bank_account.id \
+                if invoice.bank_account else None
         return changes
 
     @classmethod

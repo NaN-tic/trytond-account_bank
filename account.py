@@ -284,8 +284,7 @@ class Invoice(BankMixin):
         super(Invoice, self).on_change_party()
         self.bank_account = None
         if self.payment_type:
-            self._get_bank_account(self.payment_type,
-                self.party, self.company)
+            self._get_bank_account()
 
     @classmethod
     def post(cls, invoices):

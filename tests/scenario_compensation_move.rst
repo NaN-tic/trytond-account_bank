@@ -49,43 +49,10 @@ Create chart of accounts::
 
     >>> _ = create_chart(company)
     >>> accounts = get_accounts(company)
+    >>> receivable = accounts['receivable']
     >>> revenue = accounts['revenue']
     >>> expense = accounts['expense']
     >>> cash = accounts['cash']
-
-    >>> Journal = Model.get('account.journal')
-    >>> cash_journal, = Journal.find([('type', '=', 'cash')])
-    >>> cash_journal.credit_account = cash
-    >>> cash_journal.debit_account = cash
-    >>> cash_journal.save()
-
-    >>> Account = Model.get('account.account')
-    >>> receivable, = Account.find([
-    ...         ('kind', '=', 'receivable'),
-    ...         ('company', '=', company.id),
-    ...         ])
-    >>> payable, = Account.find([
-    ...         ('kind', '=', 'payable'),
-    ...         ('company', '=', company.id),
-    ...         ])
-    >>> revenue, = Account.find([
-    ...         ('kind', '=', 'revenue'),
-    ...         ('company', '=', company.id),
-    ...         ])
-    >>> expense, = Account.find([
-    ...         ('kind', '=', 'expense'),
-    ...         ('company', '=', company.id),
-    ...         ])
-    >>> account_tax, = Account.find([
-    ...         ('kind', '=', 'other'),
-    ...         ('company', '=', company.id),
-    ...         ('name', '=', 'Main Tax'),
-    ...         ])
-    >>> account_cash, = Account.find([
-    ...         ('kind', '=', 'other'),
-    ...         ('company', '=', company.id),
-    ...         ('name', '=', 'Main Cash'),
-    ...         ])
 
 Create tax::
 
@@ -237,7 +204,7 @@ Create a move that pays the pending amount::
     >>> line.party = party
     >>> line = MoveLine()
     >>> move.lines.append(line)
-    >>> line.account = account_cash
+    >>> line.account = cash
     >>> line.debit = Decimal('196.0')
     >>> line.credit = Decimal('0.0')
     >>> move.save()

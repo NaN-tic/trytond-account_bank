@@ -150,7 +150,8 @@ class BankMixin:
                 'readonly': Eval('account_bank') == 'other',
                 'invisible': ~Bool(Eval('account_bank_from')),
             },
-        depends=['party', 'payment_type', 'account_bank_from', 'account_bank'])
+        depends=['party', 'payment_type', 'account_bank_from', 'account_bank'],
+        ondelete='RESTRICT')
 
     @classmethod
     def __setup__(cls):

@@ -75,8 +75,8 @@ msgid "You can not modify lines of move \"%s\" because it is already posted."
 msgstr "No puede modificar apuntes del asiento \"%s\" porque ya está confirmado."
 
 msgctxt "field:account.invoice,account_bank:"
-msgid "Account Bank"
-msgstr "Cuenta bancaria"
+msgid "Account Bank Kind"
+msgstr "Tipo cuenta bancaria"
 
 msgctxt "field:account.invoice,account_bank_from:"
 msgid "Account Bank From"

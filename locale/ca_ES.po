@@ -78,8 +78,8 @@ msgstr ""
 "confirmat."
 
 msgctxt "field:account.invoice,account_bank:"
-msgid "Account Bank"
-msgstr "Compte bancari"
+msgid "Account Bank Kind"
+msgstr "Tipus compte bancari"
 
 msgctxt "field:account.invoice,account_bank_from:"
 msgid "Account Bank From"

@@ -27,7 +27,7 @@ ACCOUNT_BANK_KIND = [
 
 class PaymentType:
     __name__ = 'account.payment.type'
-    account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank',
+    account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank Kind',
         select=True, required=True)
     party = fields.Many2One('party.party', 'Party',
         states={

@@ -67,8 +67,8 @@ class BankAccount:
         super(BankAccount, cls).__setup__()
         cls._check_owners_fields = set(['owners'])
         cls._check_owners_related_models = set([
-                ('account.move.line', 'bank_account', 'party'),
-                ('account.invoice', 'bank_account', 'party'),
+                ('account.move.line', 'bank_account'),
+                ('account.invoice', 'bank_account'),
                 ])
         cls._error_messages.update({
                 'modifiy_with_related_model': ('It is not possible to modify '
@@ -93,7 +93,7 @@ class BankAccount:
         Field = pool.get('ir.model.field')
         account_ids = [a.id for a in accounts]
         for value in cls._check_owners_related_models:
-            model_name, field_name, owners_field = value
+            model_name, field_name = value
             Model = pool.get(model_name)
             records = Model.search([(field_name, 'in', account_ids)])
             model, = IrModel.search([('model', '=', model_name)])
@@ -102,7 +102,7 @@ class BankAccount:
                     ('name', '=', field_name),
                     ], limit=1)
             for record in records:
-                target = getattr(record, owners_field)
+                target = record.account_bank_from
                 account = getattr(record, field_name)
                 if target not in account.owners:
                     error_args = {

@@ -252,6 +252,12 @@ class Invoice(BankMixin):
         return res
 
     @classmethod
+    def compute_default_payment_type(cls, values):
+        changes = super(Invoice, cls).compute_default_payment_type(cls, values)
+        changes.update(cls.compute_default_bank_account(values))
+        return changes
+
+    @classmethod
     def compute_default_bank_account(cls, values):
         pool = Pool()
         PaymentType = pool.get('account.payment.type')

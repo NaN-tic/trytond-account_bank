@@ -253,7 +253,7 @@ class Invoice(BankMixin):
 
     @classmethod
     def compute_default_payment_type(cls, values):
-        changes = super(Invoice, cls).compute_default_payment_type(cls, values)
+        changes = super(Invoice, cls).compute_default_payment_type(values)
         changes.update(cls.compute_default_bank_account(values))
         return changes
 

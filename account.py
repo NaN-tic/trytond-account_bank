@@ -334,8 +334,7 @@ class Invoice(BankMixin):
                     ).join(line, condition=(line.move == move.id)
                     ).join(account, condition=(
                         (line.account == account.id) &
-                        Case((invoice.type.in_(
-                                ['out_invoice', 'out_credit_note']),
+                        Case((invoice.type == 'out',
                             account.kind == 'receivable'),
                             else_=account.kind == 'payable'))).select(
                     invoice.id, line.id,

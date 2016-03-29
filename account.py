@@ -15,7 +15,6 @@ from trytond.wizard import Wizard, StateTransition, StateView, Button
 
 __all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',
     'Line', 'CompensationMoveStart', 'CompensationMove']
-__metaclass__ = PoolMeta
 
 ACCOUNT_BANK_KIND = [
     ('none', 'None'),
@@ -26,6 +25,7 @@ ACCOUNT_BANK_KIND = [
 
 
 class PaymentType:
+    __metaclass__ = PoolMeta
     __name__ = 'account.payment.type'
     account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank Kind',
         select=True, required=True)
@@ -60,6 +60,7 @@ class PaymentType:
 
 
 class BankAccount:
+    __metaclass__ = PoolMeta
     __name__ = 'bank.account'
 
     @classmethod
@@ -116,6 +117,7 @@ class BankAccount:
 
 
 class Party:
+    __metaclass__ = PoolMeta
     __name__ = 'party.party'
 
     @classmethod
@@ -132,7 +134,7 @@ class Party:
         BankAccount.check_owners(all_accounts)
 
 
-class BankMixin:
+class BankMixin(object):
     account_bank = fields.Function(fields.Selection(ACCOUNT_BANK_KIND,
             'Account Bank'),
         'on_change_with_account_bank')
@@ -225,6 +227,7 @@ class BankMixin:
 
 
 class Invoice(BankMixin):
+    __metaclass__ = PoolMeta
     __name__ = 'account.invoice'
 
     @classmethod
@@ -346,6 +349,7 @@ class Invoice(BankMixin):
 
 
 class Reconciliation:
+    __metaclass__ = PoolMeta
     __name__ = 'account.move.reconciliation'
 
     @classmethod
@@ -381,6 +385,7 @@ class Reconciliation:
 
 
 class Line(BankMixin):
+    __metaclass__ = PoolMeta
     __name__ = 'account.move.line'
 
     reverse_moves = fields.Function(fields.Boolean('With Reverse Moves'),

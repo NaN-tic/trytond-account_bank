@@ -140,27 +140,27 @@ Create credit note::
     >>> Invoice = Model.get('account.invoice')
     >>> InvoiceLine = Model.get('account.invoice.line')
     >>> credit_note = Invoice()
-    >>> credit_note.type = 'out_credit_note'
+    >>> credit_note.type = 'out'
     >>> credit_note.party = party
     >>> credit_note.payment_term = payment_term
     >>> credit_note.payment_type = payable_payment_type
     >>> line = InvoiceLine()
     >>> credit_note.lines.append(line)
     >>> line.product = product
-    >>> line.quantity = 1
+    >>> line.quantity = -1
     >>> line.unit_price = Decimal(40)
-    >>> credit_note.untaxed_amount == Decimal(40)
+    >>> credit_note.untaxed_amount == Decimal(-40)
     True
-    >>> credit_note.tax_amount == Decimal(4)
+    >>> credit_note.tax_amount == Decimal(-4)
     True
-    >>> credit_note.total_amount == Decimal(44)
+    >>> credit_note.total_amount == Decimal(-44)
     True
     >>> credit_note.save()
     >>> Invoice.post([credit_note.id], config.context)
     >>> credit_note.reload()
     >>> credit_note.state
     u'posted'
-    >>> credit_note.amount_to_pay == Decimal(44)
+    >>> credit_note.amount_to_pay == Decimal(-44)
     True
 
 

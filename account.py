@@ -184,7 +184,8 @@ class BankMixin(object):
                     if account_bank == 'company':
                         party_company_fname = ('%s_company_bank_account' %
                             self.payment_type.kind)
-                        company_bank = getattr(self.party, party_company_fname, None)
+                        company_bank = getattr(self.party, party_company_fname,
+                            None)
                         if company_bank:
                             self.bank_account = company_bank
                             return
@@ -241,8 +242,8 @@ class Invoice(BankMixin):
                 'readonly': readonly,
                 })
         cls._error_messages.update({
-                'invoice_without_bank_account': ('Invoice "%(invoice)s" has no '
-                    'bank account associated but payment type '
+                'invoice_without_bank_account': ('Invoice "%(invoice)s" has '
+                    'no bank account associated but payment type '
                     '"%(payment_type)s" requires it.'),
                 })
 
@@ -250,10 +251,10 @@ class Invoice(BankMixin):
         '''
         Add account bank to move line when post invoice.
         '''
-        res = super(Invoice, self)._get_move_line(date, amount)
+        line = super(Invoice, self)._get_move_line(date, amount)
         if self.bank_account:
-            res['bank_account'] = self.bank_account
-        return res
+            line.bank_account = self.bank_account
+        return line
 
     @classmethod
     def compute_default_bank_account(cls, values):
@@ -342,7 +343,7 @@ class Invoice(BankMixin):
                     order_by=(invoice.id, line.maturity_date))
             cursor.execute(*query)
             for invoice_id, line_id in cursor.fetchall():
-                if not line_id in lines[invoice_id]:
+                if line_id not in lines[invoice_id]:
                     lines[invoice_id].append(line_id)
         return lines
 
@@ -404,8 +405,8 @@ class Line(BankMixin):
                 })
 
     def get_reverse_moves(self, name):
-        if (not self.account or not self.account.kind in
-                ['receivable', 'payable']):
+        if (not self.account
+                or self.account.kind not in ['receivable', 'payable']):
             return False
         domain = [
             ('account', '=', self.account.id),
@@ -465,8 +466,8 @@ class Line(BankMixin):
     def copy(cls, lines, default=None):
         if default is None:
             default = {}
-        if (Transaction().context.get('cancel_move') and not 'bank_account' in
-                default):
+        if (Transaction().context.get('cancel_move')
+                and 'bank_account' not in default):
             default['bank_account'] = None
         return super(Line, cls).copy(lines, default)
 
@@ -487,8 +488,8 @@ class CompensationMoveStart(ModelView, BankMixin):
     def __setup__(cls):
         super(CompensationMoveStart, cls).__setup__()
         cls._error_messages.update({
-                'normal_reconcile': ('Selected moves are balanced. Use concile '
-                    'wizard instead of creating a compensation move.'),
+                'normal_reconcile': ('Selected moves are balanced. Use '
+                    'concile wizard instead of creating a compensation move.'),
                 'different_parties': ('Parties can not be mixed to create a '
                     'compensation move. Party "%s" in line "%s" is different '
                     'from previous party "%s"'),
@@ -570,8 +571,8 @@ class CompensationMove(Wizard):
         lines = Line.browse(Transaction().context.get('active_ids'))
 
         for line in lines:
-            if (not line.account.kind in ('payable', 'receivable') or
-                    line.reconciliation):
+            if (line.account.kind not in ('payable', 'receivable')
+                    or line.reconciliation):
                 continue
             move_lines.append(self.get_counterpart_line(line))
 

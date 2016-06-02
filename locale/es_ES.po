@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -74,9 +74,17 @@ msgctxt "error:account.move.line:"
 msgid "You can not modify lines of move \"%s\" because it is already posted."
 msgstr "No puede modificar apuntes del asiento \"%s\" porque ya está confirmado."
 
+msgctxt "error:bank.account:"
+msgid ""
+"It is not possible to modify the owner of bank account \"%(account)s\" as it"
+" is used on en el %(field)s del %(model)s \"%(name)s\""
+msgstr ""
+"No se puede modificar el titular de la cuenta bancaria \"%(account)s\" que "
+"ya se usa a %(field)s del %(model)s \"%(name)s\"."
+
 msgctxt "field:account.invoice,account_bank:"
-msgid "Account Bank Kind"
-msgstr "Tipo cuenta bancaria"
+msgid "Account Bank"
+msgstr "Cuenta bancaria"
 
 msgctxt "field:account.invoice,account_bank_from:"
 msgid "Account Bank From"
@@ -134,37 +142,9 @@ msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
 msgstr "Con apuntes inversos"
 
-msgctxt "field:account.move.partial_reconcile.start,account_bank_from:"
-msgid "Account Bank From"
-msgstr "Cuenta bancaria de"
-
-msgctxt "field:account.move.partial_reconcile.start,bank_account:"
-msgid "Bank Account"
-msgstr "Cuenta bancaria"
-
-msgctxt "field:account.move.partial_reconcile.start,id:"
-msgid "ID"
-msgstr "ID"
-
-msgctxt "field:account.move.partial_reconcile.start,maturity_date:"
-msgid "Maturity Date"
-msgstr "Fecha vencimiento"
-
-msgctxt "field:account.move.partial_reconcile.start,party:"
-msgid "Party"
-msgstr "Tercero"
-
-msgctxt "field:account.move.partial_reconcile.start,payment_kind:"
-msgid "Payment Kind"
-msgstr "Clase de pago"
-
-msgctxt "field:account.move.partial_reconcile.start,payment_type:"
-msgid "Payment Type"
-msgstr "Tipo de pago"
-
 msgctxt "field:account.payment.type,account_bank:"
-msgid "Account Bank"
-msgstr "Cuenta bancaria"
+msgid "Account Bank Kind"
+msgstr "Tipo cuenta bancaria"
 
 msgctxt "field:account.payment.type,bank_account:"
 msgid "Bank Account"
@@ -259,9 +239,5 @@ msgid "Create"
 msgstr "Crear"
 
 msgctxt "wizard_button:account.move.compensation_move,start,end:"
-msgid "Cancel"
-msgstr "Cancelar"
-
-msgctxt "wizard_button:account.move.partial_reconcile,start,end:"
 msgid "Cancel"
 msgstr "Cancelar"

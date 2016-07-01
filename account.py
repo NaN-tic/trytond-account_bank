@@ -199,15 +199,17 @@ class BankMixin(object):
                         self.bank_account = default_bank
                         return
 
-    @fields.depends('party', 'payment_type')
+    @fields.depends('party', 'payment_type', methods=['payment_type'])
     def on_change_with_bank_account(self):
         '''
         Add account bank when changes payment_type or party.
         '''
+        if hasattr(self, 'on_change_with_payment_type'):
+            self.payment_type = self.on_change_with_payment_type()
         self._get_bank_account()
         return self.bank_account.id if self.bank_account else None
 
-    @fields.depends('payment_type', 'party')
+    @fields.depends('payment_type', 'party', methods=['payment_type'])
     def on_change_with_account_bank_from(self, name=None):
         '''
         Sets the party where get bank account for this move line.
@@ -215,6 +217,8 @@ class BankMixin(object):
         pool = Pool()
         Company = pool.get('company.company')
 
+        if hasattr(self, 'on_change_with_payment_type'):
+            self.payment_type = self.on_change_with_payment_type()
         if self.payment_type and self.party:
             payment_type = self.payment_type
             party = self.party

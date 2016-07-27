@@ -185,14 +185,13 @@ class BankMixin:
                         company_bank = getattr(self.party, party_company_fname, None)
                         if company_bank:
                             self.bank_account = company_bank
-                            return
-                    if account_bank == 'party' and self.party:
-                        default_bank = getattr(self.party, party_fname)
-                        self.bank_account = default_bank
+                        elif hasattr(self, 'company') and self.company:
+                            default_bank = getattr(
+                                self.company.party, party_fname)
+                            self.bank_account = default_bank
                         return
-                    if account_bank == 'company' and \
-                            hasattr(self, 'company') and self.company:
-                        default_bank = getattr(self.company.party, party_fname)
+                    elif account_bank == 'party' and self.party:
+                        default_bank = getattr(self.party, party_fname)
                         self.bank_account = default_bank
                         return
 
@@ -257,6 +256,7 @@ class Invoice(BankMixin):
         pool = Pool()
         Party = pool.get('party.party')
         Company = pool.get('company.company')
+        PaymentType = pool.get('account.payment.type')
 
         payment_type = values.get('payment_type')
         bank_account = values.get('bank_account')
@@ -268,7 +268,7 @@ class Invoice(BankMixin):
             invoice = cls()
             invoice.party = Party(party)
             invoice.company = Company(company)
-            invoice.payment_type = None
+            invoice.payment_type = PaymentType(payment_type)
             invoice._get_bank_account()
             changes['bank_account'] = invoice.bank_account.id \
                 if invoice.bank_account else None

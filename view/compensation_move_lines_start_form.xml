@@ -6,8 +6,4 @@
     <field name="party"/>
     <label name="maturity_date"/>
     <field name="maturity_date"/>
-    <label name="payment_type"/>
-    <field name="payment_type"/>
-    <label name="bank_account"/>
-    <field name="bank_account"/>
 </form>

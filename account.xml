@@ -27,22 +27,6 @@ copyright notices and license terms. -->
             <field name="name">invoice_form</field>
         </record>
 
-    <!-- account.move.line -->
-        <record model="ir.ui.view" id="move_line_view_form">
-            <field name="model">account.move.line</field>
-            <field name="type" eval="None"/>
-            <field name="inherit" ref="account.move_line_view_form"/>
-            <field name="priority" eval="40"/>
-            <field name="name">move_line_form</field>
-        </record>
-        <record model="ir.ui.view" id="move_line_view_form_move">
-            <field name="model">account.move.line</field>
-            <field name="type" eval="None"/>
-            <field name="inherit" ref="account.move_line_view_form_move"/>
-            <field name="priority" eval="45"/>
-            <field name="name">move_line_form</field>
-        </record>
-
         <record model="ir.ui.view" id="compensation_move_lines_start_view_form">
             <field name="model">account.move.compensation_move.start</field>
             <field name="type">form</field>

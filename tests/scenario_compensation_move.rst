@@ -119,12 +119,12 @@ Create invoice::
     >>> line.description = 'Test'
     >>> line.quantity = 1
     >>> line.unit_price = Decimal(20)
-    >>> invoice.untaxed_amount == Decimal(220)
-    True
-    >>> invoice.tax_amount == Decimal(20)
-    True
-    >>> invoice.total_amount == Decimal(240)
-    True
+    >>> invoice.untaxed_amount
+    Decimal('220.00')
+    >>> invoice.tax_amount
+    Decimal('20.00')
+    >>> invoice.total_amount
+    Decimal('240.00')
     >>> invoice.payment_type == receivable_payment_type
     True
     >>> invoice.save()
@@ -172,15 +172,13 @@ Partialy reconcile both lines::
     >>> compensation_move = Wizard('account.move.compensation_move',
     ...     models=lines)
     >>> compensation_move.form.maturity_date = today
-    >>> compensation_move.form.payment_type = receivable_payment_type
-    >>> compensation_move.form.bank_account = None
     >>> compensation_move.execute('create_move')
     >>> credit_note.reload()
-    >>> credit_note.amount_to_pay == Decimal('0.0')
-    True
+    >>> credit_note.amount_to_pay
+    Decimal('0.0')
     >>> invoice.reload()
-    >>> invoice.amount_to_pay == Decimal('196.0')
-    True
+    >>> invoice.amount_to_pay
+    Decimal('196.00')
 
 
 Create a move that pays the pending amount::
@@ -207,11 +205,10 @@ Create a move that pays the pending amount::
     >>> line.account = cash
     >>> line.debit = Decimal('196.0')
     >>> line.credit = Decimal('0.0')
-    >>> move.save()
-    >>> Move.post([move.id], config.context)
+    >>> move.click('post')
     >>> invoice.reload()
-    >>> invoice.amount_to_pay == Decimal('196.0')
-    True
+    >>> invoice.amount_to_pay
+    Decimal('196.00')
     >>> lines = MoveLine.find([
     ...     ('account', '=', receivable.id)])
     >>> to_reconcile = [l for l in lines if not l.reconciliation]
@@ -220,7 +217,7 @@ Create a move that pays the pending amount::
     >>> reconcile_lines.state == 'end'
     True
     >>> invoice.reload()
-    >>> invoice.amount_to_pay == Decimal('0.0')
-    True
+    >>> invoice.amount_to_pay
+    Decimal('0.0')
     >>> invoice.state
     u'paid'

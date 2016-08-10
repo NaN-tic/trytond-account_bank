@@ -1,3 +1,5 @@
+* Remove bank_account from Account Move Lines
+
 Version 4.0.0 - 2016-05-03
 * Correctly read bank accounts from company
 

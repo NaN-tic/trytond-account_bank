@@ -35,14 +35,6 @@ msgstr ""
 "conciliació per a conciliar-los enlloc de crear un efecte de compensació."
 
 msgctxt "error:account.move.line:"
-msgid ""
-"%s has no any %s bank account.\n"
-"Please set up one if you want to use this payment type."
-msgstr ""
-"%s no té cap compte bancari %s.\n"
-"Si us plau, establiu un si voleu utilitzar aquest tipus de pagament."
-
-msgctxt "error:account.move.line:"
 msgid "Line \"%s\" (%d) already reconciled."
 msgstr "L'apunt \"%s\" (%d) ja està conciliat."
 
@@ -97,18 +89,6 @@ msgctxt "field:account.invoice,bank_account:"
 msgid "Bank Account"
 msgstr "Compte bancari"
 
-msgctxt "field:account.move.compensation_move.start,account_bank:"
-msgid "Account Bank"
-msgstr "Compte bancari"
-
-msgctxt "field:account.move.compensation_move.start,account_bank_from:"
-msgid "Account Bank From"
-msgstr "Compte bancari de"
-
-msgctxt "field:account.move.compensation_move.start,bank_account:"
-msgid "Bank Account"
-msgstr "Compte bancari"
-
 msgctxt "field:account.move.compensation_move.start,id:"
 msgid "ID"
 msgstr "ID"
@@ -120,26 +100,6 @@ msgstr "Data de venciment"
 msgctxt "field:account.move.compensation_move.start,party:"
 msgid "Party"
 msgstr "Tercer"
-
-msgctxt "field:account.move.compensation_move.start,payment_kind:"
-msgid "Payment Kind"
-msgstr "Classe de pagament"
-
-msgctxt "field:account.move.compensation_move.start,payment_type:"
-msgid "Payment Type"
-msgstr "Tipus de pagament"
-
-msgctxt "field:account.move.line,account_bank:"
-msgid "Account Bank"
-msgstr "Compte bancari"
-
-msgctxt "field:account.move.line,account_bank_from:"
-msgid "Account Bank From"
-msgstr "Compte bancari de"
-
-msgctxt "field:account.move.line,bank_account:"
-msgid "Bank Account"
-msgstr "Compte bancari"
 
 msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
@@ -180,42 +140,6 @@ msgstr "Un altre"
 msgctxt "selection:account.invoice,account_bank:"
 msgid "Party"
 msgstr "Tercer"
-
-msgctxt "selection:account.move.compensation_move.start,account_bank:"
-msgid "Company"
-msgstr "Empresa"
-
-msgctxt "selection:account.move.compensation_move.start,account_bank:"
-msgid "None"
-msgstr "Cap"
-
-msgctxt "selection:account.move.compensation_move.start,account_bank:"
-msgid "Other"
-msgstr "Un altre"
-
-msgctxt "selection:account.move.compensation_move.start,account_bank:"
-msgid "Party"
-msgstr "Tercer"
-
-msgctxt "selection:account.move.line,account_bank:"
-msgid "Company"
-msgstr "Empresa"
-
-msgctxt "selection:account.move.line,account_bank:"
-msgid "None"
-msgstr "Cap"
-
-msgctxt "selection:account.move.line,account_bank:"
-msgid "Other"
-msgstr "Un altre"
-
-msgctxt "selection:account.move.line,account_bank:"
-msgid "Party"
-msgstr "Tercer"
-
-msgctxt "selection:account.move.line,account_kind:"
-msgid ""
-msgstr ""
 
 msgctxt "selection:account.payment.type,account_bank:"
 msgid "Company"

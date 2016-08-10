@@ -4,6 +4,10 @@
 <form string="Create Compensation Move">
     <label name="party"/>
     <field name="party"/>
+    <label name="account"/>
+    <field name="account"/>
+    <label name="date"/>
+    <field name="date"/>
     <label name="maturity_date"/>
     <field name="maturity_date"/>
     <label name="payment_type"/>

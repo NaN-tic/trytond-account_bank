@@ -1,4 +1,4 @@
-#
+# 
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -9,6 +9,14 @@ msgid ""
 msgstr ""
 "%s no tiene ninguna cuenta bancaria %s.\n"
 "Por favor establezca una si quiere utilizar este tipo de pago."
+
+msgctxt "error:account.invoice:"
+msgid ""
+"Invoice \"%(invoice)s\" cannot be moved to \"Draft\" state because it is "
+"already used in statement line \"%(statement_line)s\"."
+msgstr ""
+"La factura \"%(invoice)s\" no se puede pasar a estado \"Borrador\" porqué se"
+" utiliza en la línea de extracto \"%(statement_line)s\"."
 
 msgctxt "error:account.invoice:"
 msgid ""
@@ -94,6 +102,10 @@ msgctxt "field:account.invoice,bank_account:"
 msgid "Bank Account"
 msgstr "Cuenta bancaria"
 
+msgctxt "field:account.move.compensation_move.start,account:"
+msgid "Account"
+msgstr "Cuenta"
+
 msgctxt "field:account.move.compensation_move.start,account_bank:"
 msgid "Account Bank"
 msgstr "Cuenta bancaria"
@@ -105,6 +117,10 @@ msgstr "Cuenta bancaria de"
 msgctxt "field:account.move.compensation_move.start,bank_account:"
 msgid "Bank Account"
 msgstr "Cuenta bancaria"
+
+msgctxt "field:account.move.compensation_move.start,date:"
+msgid "Date"
+msgstr "Fecha"
 
 msgctxt "field:account.move.compensation_move.start,id:"
 msgid "ID"

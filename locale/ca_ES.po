@@ -1,4 +1,4 @@
-#
+# 
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -9,6 +9,14 @@ msgid ""
 msgstr ""
 "%s no té cap compte bancari %s.\n"
 "Si us plau, establiu un si voleu utilitzar aquest tipus de pagament."
+
+msgctxt "error:account.invoice:"
+msgid ""
+"Invoice \"%(invoice)s\" cannot be moved to \"Draft\" state because it is "
+"already used in statement line \"%(statement_line)s\"."
+msgstr ""
+"La factura \"%(invoice)s\" no es pot passar a estat \"Esborrany\" perquè ja "
+"s'utilitza en la línia d'extracte \"%(statement_line)s\"."
 
 msgctxt "error:account.invoice:"
 msgid ""
@@ -89,6 +97,14 @@ msgctxt "field:account.invoice,bank_account:"
 msgid "Bank Account"
 msgstr "Compte bancari"
 
+msgctxt "field:account.move.compensation_move.start,account:"
+msgid "Account"
+msgstr "Compte"
+
+msgctxt "field:account.move.compensation_move.start,date:"
+msgid "Date"
+msgstr "Data"
+
 msgctxt "field:account.move.compensation_move.start,id:"
 msgid "ID"
 msgstr "ID"
@@ -119,11 +135,11 @@ msgstr "Tercer"
 
 msgctxt "model:account.move.compensation_move.start,name:"
 msgid "Create Compensation Move Start"
-msgstr "Inici crea efecte de compensació"
+msgstr "Inici crea assentament de compensació"
 
 msgctxt "model:ir.action,name:act_compensation_move_lines"
 msgid "Create compensation move"
-msgstr "Crea efecte de compensació"
+msgstr "Crea assentament de compensació"
 
 msgctxt "selection:account.invoice,account_bank:"
 msgid "Company"
@@ -159,7 +175,7 @@ msgstr "Tercer"
 
 msgctxt "view:account.move.compensation_move.start:"
 msgid "Create Compensation Move"
-msgstr "Crea efecte de compensació"
+msgstr "Crea assentament de compensació"
 
 msgctxt "wizard_button:account.move.compensation_move,start,create_move:"
 msgid "Create"

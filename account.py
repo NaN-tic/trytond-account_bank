@@ -384,6 +384,8 @@ class Line:
 
     reverse_moves = fields.Function(fields.Boolean('With Reverse Moves'),
         'get_reverse_moves', searcher='search_reverse_moves')
+    netting_moves = fields.Function(fields.Boolean('With Netting Moves'),
+        'get_netting_moves', searcher='search_netting_moves')
 
     def get_reverse_moves(self, name):
         if (not self.account
@@ -434,6 +436,53 @@ class Line:
         cursor.execute(query)
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
+    def get_netting_moves(self, name):
+        if (not self.account or not self.account.kind in
+                ['receivable', 'payable']):
+            return False
+        if not self.account.party_required:
+            return False
+        domain = [
+            ('party', '=', self.party.id),
+            ('reconciliation', '=', None),
+            ]
+        if self.credit > Decimal('0.0'):
+            domain.append(('debit', '>', 0))
+        if self.debit > Decimal('0.0'):
+            domain.append(('credit', '>', 0))
+        moves = self.search(domain, limit=1)
+        return len(moves) > 0
+
+    @classmethod
+    def search_netting_moves(cls, name, clause):
+        operator = 'in' if clause[2] else 'not in'
+        query = """
+            SELECT
+                id
+            FROM
+                account_move_line l
+            WHERE
+                party IN (
+                    SELECT
+                        aml.party
+                    FROM
+                        account_account aa,
+                        account_move_line aml
+                    WHERE
+                        aa.reconcile
+                        AND aa.id = aml.account
+                        AND aml.reconciliation IS NULL
+                    GROUP BY
+                        aml.party
+                    HAVING
+                        bool_or(aml.debit <> 0)
+                        AND bool_or(aml.credit <> 0)
+                    )
+            """
+        cursor = Transaction().cursor
+        cursor.execute(query)
+        return [('id', operator, [x[0] for x in cursor.fetchall()])]
+
 
 class CompensationMoveStart(ModelView):
     'Create Compensation Move Start'
@@ -476,7 +525,8 @@ class CompensationMoveStart(ModelView):
         company = None
         amount = Decimal('0.0')
 
-        for line in Line.browse(Transaction().context.get('active_ids', [])):
+        lines = Line.browse(Transaction().context.get('active_ids', []))
+        for line in lines:
             amount += line.debit - line.credit
             if not party:
                 party = line.party
@@ -485,7 +535,8 @@ class CompensationMoveStart(ModelView):
                         line.rec_name, party.rec_name))
             if not company:
                 company = line.account.company
-        if company and company.currency.is_zero(amount):
+        if (company and company.currency.is_zero(amount)
+                and len(set([x.account for x in lines])) == 1):
             cls.raise_user_error('normal_reconcile')
         return defaults
             res['account'] = (party.account_receivable.id

@@ -1,0 +1,22 @@
+language: python
+install:
+    - pip install tox
+services:
+    - postgresql
+script:
+    - tox
+env:
+    global:
+        - POSTGRESQL_URI=postgresql://postgres:@localhost:5432/
+    matrix:
+        - TOXENV=py27-sqlite
+        - TOXENV=py27-postgresql
+        - TOXENV=py34-sqlite
+        - TOXENV=py34-postgresql
+notifications:
+    irc:
+        channels:
+            - "chat.freenode.net#trytonspain-ci"
+        on_success: change
+        on_failure: always
+        skip_join: true

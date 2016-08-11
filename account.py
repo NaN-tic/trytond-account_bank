@@ -538,11 +538,15 @@ class CompensationMoveStart(ModelView):
         if (company and company.currency.is_zero(amount)
                 and len(set([x.account for x in lines])) == 1):
             cls.raise_user_error('normal_reconcile')
+        if party:
+            defaults['party'] = party.id
+            if amount > 0:
+                defaults['account'] = (party.account_receivable.id
+                    if party.account_receivable else None)
+            else:
+                defaults['account'] = (party.account_payable.id
+                    if party.account_payable else None)
         return defaults
-            res['account'] = (party.account_receivable.id
-                if party.account_receivable else None)
-            res['account'] = (party.account_payable.id
-                if party.account_payable else None)
 
 
 class CompensationMove(Wizard):

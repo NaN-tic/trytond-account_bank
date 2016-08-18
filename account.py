@@ -479,7 +479,7 @@ class Line:
                         AND bool_or(aml.credit <> 0)
                     )
             """
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         cursor.execute(query)
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 

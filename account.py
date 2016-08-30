@@ -248,7 +248,7 @@ class Invoice(BankMixin):
         '''
         line = super(Invoice, self)._get_move_line(date, amount)
         if self.bank_account:
-            line['bank_account'] = self.bank_account
+            line.bank_account = self.bank_account
         return line
 
     @classmethod

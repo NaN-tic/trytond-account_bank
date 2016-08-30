@@ -250,10 +250,10 @@ class Invoice(BankMixin):
         '''
         Add account bank to move line when post invoice.
         '''
-        res = super(Invoice, self)._get_move_line(date, amount)
+        line = super(Invoice, self)._get_move_line(date, amount)
         if self.bank_account:
-            res['bank_account'] = self.bank_account
-        return res
+            line.bank_account = self.bank_account
+        return line
 
     @classmethod
     def compute_default_bank_account(cls, values):

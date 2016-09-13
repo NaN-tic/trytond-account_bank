@@ -313,40 +313,6 @@ class Invoice(BankMixin):
 
         super(Invoice, cls).post(invoices)
 
-    @classmethod
-    def get_lines_to_pay(cls, invoices, name):
-        pool = Pool()
-        Move = pool.get('account.move')
-        Line = pool.get('account.move.line')
-        Account = pool.get('account.account')
-        line = Line.__table__()
-        account = Account.__table__()
-        move = Move.__table__()
-        invoice = cls.__table__()
-        cursor = Transaction().connection.cursor()
-        _, origin_type = Move.origin.sql_type()
-
-        lines = super(Invoice, cls).get_lines_to_pay(invoices, name)
-        for sub_ids in grouped_slice(invoices):
-            red_sql = reduce_ids(invoice.id, sub_ids)
-            query = invoice.join(move,
-                condition=((move.origin == Concat('account.invoice,',
-                                Cast(invoice.id, origin_type))))
-                    ).join(line, condition=(line.move == move.id)
-                    ).join(account, condition=(
-                        (line.account == account.id) &
-                        Case((invoice.type == 'out',
-                            account.kind == 'receivable'),
-                            else_=account.kind == 'payable'))).select(
-                    invoice.id, line.id,
-                    where=(line.maturity_date != None) & red_sql,
-                    order_by=(invoice.id, line.maturity_date))
-            cursor.execute(*query)
-            for invoice_id, line_id in cursor.fetchall():
-                if line_id not in lines[invoice_id]:
-                    lines[invoice_id].append(line_id)
-        return lines
-
 
 class Reconciliation:
     __metaclass__ = PoolMeta

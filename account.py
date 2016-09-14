@@ -545,11 +545,11 @@ class CompensationMoveStart(ModelView, BankMixin):
         if amount > 0:
             res['payment_kind'] = 'receivable'
             res['account'] = (party.account_receivable.id
-                if party.account_receivable else None)
+                if party and party.account_receivable else None)
         else:
             res['payment_kind'] = 'payable'
             res['account'] = (party.account_payable.id
-                if party.account_payable else None)
+                if party and party.account_payable else None)
         res['bank_account'] = None
         if party:
             res['party'] = party.id

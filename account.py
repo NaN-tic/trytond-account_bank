@@ -316,7 +316,6 @@ class Invoice(BankMixin):
 
         super(Invoice, cls).post(invoices)
 
-                                ['out_invoice', 'out_credit_note']),
 
 class Reconciliation:
     __name__ = 'account.move.reconciliation'

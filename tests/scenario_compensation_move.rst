@@ -165,7 +165,7 @@ Partialy reconcile both lines::
     Decimal('0.0')
     >>> invoice.reload()
     >>> invoice.amount_to_pay
-    Decimal('196.00')
+    Decimal('0.0')
 
 
 Create a move that pays the pending amount::
@@ -195,7 +195,7 @@ Create a move that pays the pending amount::
     >>> move.click('post')
     >>> invoice.reload()
     >>> invoice.amount_to_pay
-    Decimal('196.00')
+    Decimal('0.0')
     >>> lines = MoveLine.find([
     ...     ('account', '=', receivable.id)])
     >>> to_reconcile = [l for l in lines if not l.reconciliation]

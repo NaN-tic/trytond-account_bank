@@ -107,11 +107,11 @@ msgstr "Data"
 
 msgctxt "field:account.move.compensation_move.start,id:"
 msgid "ID"
-msgstr "Identificador"
+msgstr "ID"
 
 msgctxt "field:account.move.compensation_move.start,maturity_date:"
 msgid "Maturity Date"
-msgstr "Data de venciment"
+msgstr "Data venciment"
 
 msgctxt "field:account.move.compensation_move.start,party:"
 msgid "Party"

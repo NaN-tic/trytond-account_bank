@@ -10,7 +10,6 @@ from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
-from trytond.tools import grouped_slice, reduce_ids
 from trytond.wizard import Wizard, StateTransition, StateView, Button
 
 __all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',
@@ -150,7 +149,7 @@ class BankMixin(object):
         states={
                 'readonly': Eval('account_bank') == 'other',
                 'invisible': ~Bool(Eval('account_bank_from')),
-            },
+        },
         depends=['party', 'payment_type', 'account_bank_from', 'account_bank'],
         ondelete='RESTRICT')
 
@@ -407,8 +406,8 @@ class Line:
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
     def get_netting_moves(self, name):
-        if (not self.account or not self.account.kind in
-                ['receivable', 'payable']):
+        if (not self.account
+                or self.account.kind not in ['receivable', 'payable']):
             return False
         if not self.account.party_required:
             return False

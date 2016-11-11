@@ -1,9 +1,9 @@
 # This file is part of account_bank module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from sql import Cast
-from sql.operators import Concat
-from sql.conditionals import Case
+from sql import Null
+from sql.aggregate import BoolOr
+from sql.operators import In
 from decimal import Decimal
 
 from trytond.model import ModelView, fields
@@ -372,34 +372,38 @@ class Line:
 
     @classmethod
     def search_reverse_moves(cls, name, clause):
+        pool = Pool()
+        Account = pool.get('account.account')
+        MoveLine = pool.get('account.move.line')
         operator = 'in' if clause[2] else 'not in'
-        query = """
-            SELECT
-                id
-            FROM
-                account_move_line l
-            WHERE
-                (account, party) IN (
-                    SELECT
-                        aa.id,
-                        aml.party
-                    FROM
-                        account_account aa,
-                        account_move_line aml
-                    WHERE
-                        aa.reconcile
-                        AND aa.id = aml.account
-                        AND aml.reconciliation IS NULL
-                    GROUP BY
-                        aa.id,
-                        aml.party
-                    HAVING
-                        bool_or(aml.debit <> 0)
-                        AND bool_or(aml.credit <> 0)
-                    )
-            """
+        lines = MoveLine.__table__()
+        move_line = MoveLine.__table__()
+        account = Account.__table__()
         cursor = Transaction().connection.cursor()
-        cursor.execute(query)
+
+        reverse = move_line.join(account, condition=(
+                account.id == move_line.account)).select(
+                    move_line.account, move_line.party,
+                    where=(account.reconcile
+                        & (move_line.reconciliation == Null)),
+                    group_by=(move_line.account, move_line.party),
+                    having=((BoolOr((move_line.debit) != Decimal(0)))
+                        & (BoolOr((move_line.credit) != Decimal(0))))
+                    )
+        query = lines.select(lines.id, where=(
+                In((lines.account, lines.party), reverse)))
+        # Fetch the data otherwise its too slow
+        cursor.execute(*query)
+
+        query = move_line.join(account, condition=(
+                account.id == move_line.account)).select(
+                    move_line.party,
+                    where=(account.reconcile
+                        & (move_line.reconciliation == Null)),
+                    group_by=(move_line.party,),
+                    having=((BoolOr((move_line.debit) != Decimal(0)))
+                        & (BoolOr((move_line.credit) != Decimal(0))))
+                    )
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
     def get_netting_moves(self, name):
@@ -421,33 +425,23 @@ class Line:
 
     @classmethod
     def search_netting_moves(cls, name, clause):
+        pool = Pool()
+        Account = pool.get('account.account')
+        MoveLine = pool.get('account.move.line')
         operator = 'in' if clause[2] else 'not in'
-        query = """
-            SELECT
-                id
-            FROM
-                account_move_line l
-            WHERE
-                party IN (
-                    SELECT
-                        aml.party
-                    FROM
-                        account_account aa,
-                        account_move_line aml
-                    WHERE
-                        aa.reconcile
-                        AND aa.id = aml.account
-                        AND aml.reconciliation IS NULL
-                    GROUP BY
-                        aml.party
-                    HAVING
-                        bool_or(aml.debit <> 0)
-                        AND bool_or(aml.credit <> 0)
+
+        move_line = MoveLine.__table__()
+        account = Account.__table__()
+        query = move_line.join(account, condition=(
+                account.id == move_line.account)).select(
+                    move_line.party,
+                    where=(account.reconcile
+                        & (move_line.reconciliation == Null)),
+                    group_by=(move_line.party,),
+                    having=((BoolOr((move_line.debit) != Decimal(0)))
+                        & (BoolOr((move_line.credit) != Decimal(0))))
                     )
-            """
-        cursor = Transaction().connection.cursor()
-        cursor.execute(query)
-        return [('id', operator, [x[0] for x in cursor.fetchall()])]
+        return [('party', operator, query)]
 
 
 class CompensationMoveStart(ModelView):

@@ -394,15 +394,6 @@ class Line:
         # Fetch the data otherwise its too slow
         cursor.execute(*query)
 
-        query = move_line.join(account, condition=(
-                account.id == move_line.account)).select(
-                    move_line.party,
-                    where=(account.reconcile
-                        & (move_line.reconciliation == Null)),
-                    group_by=(move_line.party,),
-                    having=((BoolOr((move_line.debit) != Decimal(0)))
-                        & (BoolOr((move_line.credit) != Decimal(0))))
-                    )
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
     def get_netting_moves(self, name):

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- This file is part account_payment_payment_type module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/field[@name=&quot;kind&quot;]"
+            position="after">
+        <label name="payment_type"/>
+        <field name="payment_type"/>
+        <label name="amount"/>
+        <field name="amount"/>
+        <field name="payments" colspan="4"/>
+    </xpath>
+</data>

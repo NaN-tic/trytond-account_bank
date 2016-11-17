@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- This file is part account_payment_payment_type module for Tryton.
+The COPYRIGHT file at the top level of this repository contains the full
+copyright notices and license terms. -->
+<data>
+    <xpath expr="/tree/field[@name=&quot;state&quot;]"
+            position="before">
+        <field name="group"/>
+    </xpath>
+</data>

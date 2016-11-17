@@ -43,6 +43,12 @@ copyright notices and license terms. -->
             <field name="model">account.move.line,-1</field>
             <field name="action" ref="act_compensation_move_lines"/>
         </record>
+        <record model="ir.ui.view" id="move_line_view_list">
+            <field name="model">account.move.line</field>
+            <field name="priority" eval="20"/>
+            <field name="inherit" ref="account_payment.move_line_view_list"/>
+            <field name="name">move_line_list</field>
+        </record>
 
     </data>
 </tryton>

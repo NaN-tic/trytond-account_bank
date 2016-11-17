@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -98,10 +98,10 @@ msgctxt "field:account.move.compensation_move.start,account:"
 msgid "Account"
 msgstr "Cuenta"
 
-
 msgctxt "field:account.move.compensation_move.start,date:"
 msgid "Date"
 msgstr "Fecha"
+
 msgctxt "field:account.move.compensation_move.start,id:"
 msgid "ID"
 msgstr "ID"
@@ -113,6 +113,10 @@ msgstr "Fecha vencimiento"
 msgctxt "field:account.move.compensation_move.start,party:"
 msgid "Party"
 msgstr "Terceros"
+
+msgctxt "field:account.move.line,netting_moves:"
+msgid "With Netting Moves"
+msgstr "Con movimientos a compensar"
 
 msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
@@ -137,6 +141,21 @@ msgstr "Inicio crear efecto de compensación"
 msgctxt "model:ir.action,name:act_compensation_move_lines"
 msgid "Create compensation move"
 msgstr "Crear efecto de compensación"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_netting"
+msgid "Netting"
+msgstr "A compensar"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_payable_with_reverse"
+msgid "Payable with reverse moves"
+msgstr "A pagar con apuntes inversos"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_receivable_with_reverse"
+msgid "Receivable with reverse moves"
+msgstr "A cobrar con apuntes inversos"
 
 msgctxt "selection:account.invoice,account_bank:"
 msgid "Company"
@@ -173,6 +192,10 @@ msgstr "Tercero"
 msgctxt "view:account.move.compensation_move.start:"
 msgid "Create Compensation Move"
 msgstr "Crear efecto de compensación"
+
+msgctxt "view:account.payment.journal:"
+msgid "Sender data"
+msgstr "Datos del emisor"
 
 msgctxt "wizard_button:account.move.compensation_move,start,create_move:"
 msgid "Create"

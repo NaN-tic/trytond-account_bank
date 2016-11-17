@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -117,6 +117,10 @@ msgctxt "field:account.move.compensation_move.start,party:"
 msgid "Party"
 msgstr "Tercer"
 
+msgctxt "field:account.move.line,netting_moves:"
+msgid "With Netting Moves"
+msgstr "Amb movimients a compensar"
+
 msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
 msgstr "Amb apunts inversos"
@@ -140,6 +144,21 @@ msgstr "Inici crea assentament de compensació"
 msgctxt "model:ir.action,name:act_compensation_move_lines"
 msgid "Create compensation move"
 msgstr "Crea assentament de compensació"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_netting"
+msgid "Netting"
+msgstr "A compensar"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_payable_with_reverse"
+msgid "Payable with reverse moves"
+msgstr "A pagar amb apunts inversos"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_receivable_with_reverse"
+msgid "Receivable with reverse moves"
+msgstr "A cobrar amb apunts inversos"
 
 msgctxt "selection:account.invoice,account_bank:"
 msgid "Company"
@@ -176,6 +195,10 @@ msgstr "Tercer"
 msgctxt "view:account.move.compensation_move.start:"
 msgid "Create Compensation Move"
 msgstr "Crea assentament de compensació"
+
+msgctxt "view:account.payment.journal:"
+msgid "Sender data"
+msgstr "Dades de l'emissor"
 
 msgctxt "wizard_button:account.move.compensation_move,start,create_move:"
 msgid "Create"

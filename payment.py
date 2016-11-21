@@ -114,9 +114,7 @@ class Payment:
         super(Payment, self).on_change_line()
         self.bank_account = None
         party = self.party
-        if self.line and self.line.bank_account:
-            self.bank_account = self.line.bank_account.id
-        elif party and self.kind:
+        if self.party and self.kind:
             default_bank_account = getattr(party, self.kind + '_bank_account')
             self.bank_account = (default_bank_account and
                 default_bank_account.id or None)

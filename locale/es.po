@@ -108,7 +108,7 @@ msgstr "ID"
 
 msgctxt "field:account.move.compensation_move.start,maturity_date:"
 msgid "Maturity Date"
-msgstr "Fecha vencimiento"
+msgstr "Fecha de vencimiento"
 
 msgctxt "field:account.move.compensation_move.start,party:"
 msgid "Party"

@@ -153,15 +153,6 @@ class BankMixin(object):
         depends=['party', 'payment_type', 'account_bank_from', 'account_bank'],
         ondelete='RESTRICT')
 
-    @classmethod
-    def __setup__(cls):
-        super(BankMixin, cls).__setup__()
-        cls._error_messages.update({
-                'party_without_bank_account': ('%s has no any %s bank '
-                    'account.\nPlease set up one if you want to use this '
-                    'payment type.'),
-                })
-
     @fields.depends('payment_type')
     def on_change_with_account_bank(self, name=None):
         if self.payment_type:

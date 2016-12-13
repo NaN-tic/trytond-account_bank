@@ -3,12 +3,9 @@
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <data>
-    <xpath expr="/form/field[@name=&quot;process_method&quot;]"
-            position="after">
+    <xpath expr="/form/field[@name='process_method']" position="after">
         <separator string="Sender data" colspan="4" id="presenter_data"/>
         <label name="party"/>
         <field name="party"/>
-        <label name="payment_type"/>
-        <field name="payment_type"/>
     </xpath>
 </data>

@@ -3,9 +3,7 @@
 The COPYRIGHT file at the top level of this repository contains the full
 copyright notices and license terms. -->
 <data>
-    <xpath expr="/tree/field[@name=&quot;kind&quot;]"
-            position="after">
-        <field name="payment_type"/>
+    <xpath expr="/tree/field[@name='payment_type']" position="after">
         <field name="amount"/>
     </xpath>
 </data>

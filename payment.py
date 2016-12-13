@@ -14,9 +14,6 @@ _ZERO = Decimal('0.0')
 class Journal:
     __metaclass__ = PoolMeta
     __name__ = 'account.payment.journal'
-
-    payment_type = fields.Many2One('account.payment.type', 'Payment Type',
-        required=True)
     party = fields.Many2One('party.party', 'Party',
         help=('The party who sends the payment group, if it is different from '
         'the company.'))
@@ -25,10 +22,6 @@ class Journal:
 class Group:
     __metaclass__ = PoolMeta
     __name__ = 'account.payment.group'
-
-    payment_type = fields.Function(fields.Many2One('account.payment.type',
-            'Payment Type'),
-        'on_change_with_payment_type')
     currency_digits = fields.Function(fields.Integer('Currency Digits'),
         'on_change_with_currency_digits')
     amount = fields.Function(fields.Numeric('Total', digits=(16,

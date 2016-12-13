@@ -43,3 +43,13 @@ class PartyDefaultBankAccount:
             return self.company.party.id if self.company else None
         if self.payment_type.account_bank == 'other':
             return self.payment_type.party.id
+
+    @fields.depends('party', 'company', 'payment_type', 'bank_account')
+    def on_change_payment_type(self, name=None):
+        if not self.bank_account:
+            return
+        bank_account_owner = self.on_change_with_bank_account_owner()
+        if (not bank_account_owner
+                or (bank_account_owner not in [o.id for
+                        o in self.bank_account.owners])):
+            self.bank_account = None

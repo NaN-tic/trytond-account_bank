@@ -1,3 +1,4 @@
+* Allow to modify the bank account when payment type is of other kind
 * Remove bank_account for payment type
 * Add payment_type as filter of default bank accounts
 

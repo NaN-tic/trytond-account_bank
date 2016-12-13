@@ -117,7 +117,6 @@ class BankMixin(object):
                 ),
             ],
         states={
-                'readonly': Eval('account_bank') == 'other',
                 'invisible': ~Bool(Eval('account_bank_from')),
         },
         depends=['party', 'payment_type', 'account_bank_from', 'account_bank'],

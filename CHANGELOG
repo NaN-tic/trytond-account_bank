@@ -1,3 +1,6 @@
+* Remove bank_account for payment type
+* Add payment_type as filter of default bank accounts
+
 Version 4.2.0 - 2016-11-28
 * Bug fixes (see mercurial logs for details)
 * Remove bank_account from Account Move Lines

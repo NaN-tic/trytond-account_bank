@@ -8,7 +8,5 @@ copyright notices and license terms. -->
         <field name="account_bank"/>
         <label name="party"/>
         <field name="party"/>
-        <label name="bank_account"/>
-        <field name="bank_account"/>
     </xpath>
 </data>

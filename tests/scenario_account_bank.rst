@@ -177,3 +177,19 @@ And also the company bank account for company payment types::
     >>> invoice.payment_type = other_company_transfer
     >>> invoice.bank_account == second_company_account
     True
+
+Create payment journal for customer transfer::
+
+    >>> payment_journal = customer_transfer.journals.new()
+    >>> payment_journal.name = 'Manual'
+    >>> payment_journal.process_method = 'manual'
+    >>> payment_journal.save()
+
+The default bank accounts are used on payments also::
+
+    >>> Payment = Model.get('account.payment')
+    >>> payment = Payment()
+    >>> payment.journal = payment_journal
+    >>> payment.party = party
+    >>> payment.bank_account == second_party_account
+    True

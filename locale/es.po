@@ -122,9 +122,21 @@ msgctxt "field:account.move.line,second_currency_required:"
 msgid "Second Currency Required"
 msgstr "Segona moneda obligatoria"
 
+msgctxt "field:account.payment,account_bank:"
+msgid "Account Bank"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.payment,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Cuenta bancaria de"
+
 msgctxt "field:account.payment,bank_account:"
 msgid "Bank Account"
 msgstr "Cuenta bancaria"
+
+msgctxt "field:account.payment,payment_type:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
 
 msgctxt "field:account.payment.group,amount:"
 msgid "Total"
@@ -201,6 +213,22 @@ msgstr "Otro"
 msgctxt "selection:account.invoice,account_bank:"
 msgid "Party"
 msgstr "Tercero"
+
+msgctxt "selection:account.payment,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.payment,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.payment,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.payment,account_bank:"
+msgid "Party"
+msgstr "Terceros"
 
 msgctxt "selection:account.payment.type,account_bank:"
 msgid "Company"

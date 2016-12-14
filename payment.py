@@ -5,6 +5,7 @@ from decimal import Decimal
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
+from .account import BankMixin
 
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
@@ -53,64 +54,28 @@ class Group:
             return amount
 
 
-class Payment:
+class Payment(BankMixin):
     __metaclass__ = PoolMeta
     __name__ = 'account.payment'
-    bank_account = fields.Many2One('bank.account', 'Bank Account',
-        states={
-            'readonly': Eval('state') != 'draft',
-            },
-        domain=[
-            ('owners', '=', Eval('party'))
-            ],
-        depends=['party', 'kind'])
+    payment_type = fields.Function(fields.Many2One('account.payment.type',
+            'Payment Type'), 'on_change_with_payment_type')
 
     @classmethod
     def __setup__(cls):
         super(Payment, cls).__setup__()
-        if 'party' not in cls.kind.on_change:
-            cls.kind.on_change.add('party')
-        if 'kind' not in cls.party.on_change:
-            cls.party.on_change.add('kind')
-        if 'kind' not in cls.line.on_change:
-            cls.line.on_change.add('kind')
-        if 'party' not in cls.line.on_change:
-            cls.line.on_change.add('party')
+        if 'payment_type' not in cls.journal.depends:
+            cls.journal.depends.append('payment_type')
         cls._error_messages.update({
                 'no_mandate_for_party': ('No valid mandate for payment '
                     '"%(payment)s" of party "%(party)s" with amount '
                     '"%(amount)s".'),
                 })
 
-    @fields.depends('party', 'kind')
-    def on_change_kind(self):
-        super(Payment, self).on_change_kind()
-        self.bank_account = None
-        party = self.party
-        if self.kind and party:
-            default_bank_account = getattr(party, self.kind + '_bank_account')
-            self.bank_account = (default_bank_account and
-                default_bank_account.id or None)
-
-    @fields.depends('party', 'kind')
-    def on_change_party(self):
-        super(Payment, self).on_change_party()
-        self.bank_account = None
-        party = self.party
-        if party and self.kind:
-            default_bank_account = getattr(party, self.kind + '_bank_account')
-            self.bank_account = (default_bank_account and
-                default_bank_account.id or None)
-
-    @fields.depends('party', 'line')
-    def on_change_line(self):
-        super(Payment, self).on_change_line()
-        self.bank_account = None
-        party = self.party
-        if self.party and self.kind:
-            default_bank_account = getattr(party, self.kind + '_bank_account')
-            self.bank_account = (default_bank_account and
-                default_bank_account.id or None)
+    @fields.depends('journal')
+    def on_change_with_payment_type(self, name=None):
+        if self.journal:
+            return self.journal.payment_type.id
+        return None
 
     @classmethod
     def get_sepa_mandates(cls, payments):

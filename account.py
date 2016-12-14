@@ -68,6 +68,7 @@ class BankAccount:
         cls._check_owners_fields = set(['owners'])
         cls._check_owners_related_models = set([
                 ('account.invoice', 'bank_account'),
+                ('account.payment', 'bank_account'),
                 ])
         cls._error_messages.update({
                 'modifiy_with_related_model': ('It is not possible to modify '

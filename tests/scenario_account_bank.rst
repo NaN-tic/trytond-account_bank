@@ -4,6 +4,7 @@ Account Bank Scenario
 
 Imports::
 
+    >>> from decimal import Decimal
     >>> from proteus import Model, Wizard
     >>> from trytond.tests.tools import activate_modules
     >>> from trytond.modules.company.tests.tools import create_company, \
@@ -192,4 +193,24 @@ The default bank accounts are used on payments also::
     >>> payment.journal = payment_journal
     >>> payment.party = party
     >>> payment.bank_account == second_party_account
+    True
+
+The invoice bank account is used as default when creating the payments::
+
+    >>> invoice = Invoice()
+    >>> invoice.party = party
+    >>> line = invoice.lines.new()
+    >>> line.account = revenue
+    >>> line.description = 'Test'
+    >>> line.unit_price = Decimal(10.0)
+    >>> line.quantity = 1.0
+    >>> invoice.payment_type = customer_transfer
+    >>> invoice.bank_account = party_account
+    >>> invoice.click('post')
+    >>> line, = [l for l in invoice.move.lines if l.account == receivable]
+    >>> pay_line = Wizard('account.move.line.pay', [line])
+    >>> pay_line.form.journal = payment_journal
+    >>> pay_line.execute('start')
+    >>> payment, = line.payments
+    >>> payment.bank_account == party_account
     True

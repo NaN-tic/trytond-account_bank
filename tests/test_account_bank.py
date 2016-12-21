@@ -18,11 +18,11 @@ def suite():
     suite = trytond.tests.test_tryton.suite()
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
         AccountBankTestCase))
-    suite.addTests(doctest.DocFileSuite('scenario_compensation_move.rst',
+    suite.addTests(doctest.DocFileSuite('scenario_account_bank.rst',
             tearDown=doctest_teardown, encoding='utf-8',
             checker=doctest_checker,
             optionflags=doctest.REPORT_ONLY_FIRST_FAILURE))
-    suite.addTests(doctest.DocFileSuite('scenario_account_bank.rst',
+    suite.addTests(doctest.DocFileSuite('scenario_compensation_move.rst',
             tearDown=doctest_teardown, encoding='utf-8',
             checker=doctest_checker,
             optionflags=doctest.REPORT_ONLY_FIRST_FAILURE))

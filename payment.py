@@ -77,6 +77,13 @@ class Payment(BankMixin):
             return self.journal.payment_type.id
         return None
 
+    @fields.depends('party', 'journal', 'company', 'account_bank_from')
+    def on_change_journal(self):
+        self.payment_type = self.on_change_with_payment_type()
+        self.account_bank = self.on_change_with_account_bank()
+        self.account_bank_from = self.on_change_with_account_bank_from()
+        self.bank_account = self.on_change_with_bank_account()
+
     @classmethod
     def get_sepa_mandates(cls, payments):
         mandates = super(Payment, cls).get_sepa_mandates(payments)

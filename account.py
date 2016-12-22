@@ -112,10 +112,7 @@ class BankMixin(object):
         'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
-            If(Eval('account_bank_from', None) == None,
-                ('id', '=', -1),
-                ('owners.id', '=', Eval('account_bank_from')),
-                ),
+            ('owners.id', '=', Eval('account_bank_from')),
             ],
         states={
                 'invisible': ~Bool(Eval('account_bank_from')),
@@ -131,27 +128,33 @@ class BankMixin(object):
     def _get_bank_account(self):
         pattern = {}
         parties = []
+        if not self.payment_type:
+            return None
         if self.party:
             parties.append(self.party)
-        if self.payment_type:
-            if self.payment_type.account_bank == 'none':
-                return None
-            pattern['payment_type'] = self.payment_type.id
-            if self.payment_type.kind != 'both':
-                pattern['kind'] = self.payment_type.kind
-            if self.account_bank_from:
-                pattern['bank_account_owner'] = self.account_bank_from.id
-            if hasattr(self, 'company'):
-                pattern['company'] = self.company.id if self.company else None
-                if self.payment_type.account_bank == 'company':
-                    parties.append(self.company.party)
-            if self.payment_type.account_bank == 'other':
-                parties.append(self.payment_type.party)
+        if self.payment_type.account_bank == 'none':
+            return None
+        pattern['payment_type'] = self.payment_type.id
+        if self.payment_type.kind != 'both':
+            pattern['kind'] = self.payment_type.kind
+        if self.account_bank_from:
+            pattern['bank_account_owner'] = self.account_bank_from.id
+        if self.company:
+            pattern['company'] = self.company.id if self.company else None
+            if self.payment_type.account_bank == 'company':
+                parties.append(self.company.party)
+        if self.payment_type.account_bank == 'other':
+            parties.append(self.payment_type.party)
         for party in parties:
             bank_account = party.get_default_bank_account(pattern=pattern)
             if bank_account:
                 return bank_account.id
         return None
+
+    @fields.depends('party', 'payment_type', 'company', 'account_bank_from')
+    def on_change_payment_type(self):
+        self.account_bank_from = self.on_change_with_account_bank_from()
+        self.bank_account = self.on_change_with_bank_account()
 
     @fields.depends('party', 'payment_type', 'company', 'account_bank_from')
     def on_change_with_bank_account(self):
@@ -181,6 +184,7 @@ class BankMixin(object):
                         return Company(company).party.id
             elif payment_type.account_bank == 'other':
                 return payment_type.party.id
+        return None
 
 
 class Invoice(BankMixin):
@@ -231,7 +235,7 @@ class Invoice(BankMixin):
             values.update(cls.compute_default_bank_account(values))
         return super(Invoice, cls).create(vlist)
 
-    @fields.depends('payment_type', 'party', 'company')
+    @fields.depends('payment_type', 'party', 'company', 'account_bank_from')
     def on_change_party(self):
         '''
         Add account bank to invoice line when changes party.

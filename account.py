@@ -70,9 +70,9 @@ class BankAccount:
                 ('account.invoice', 'bank_account'),
                 ])
         cls._error_messages.update({
-                'modifiy_with_related_model': ('It is not possible to modify '
+                'modify_with_related_model': ('It is not possible to modify '
                     'the owner of bank account "%(account)s" as it is used on '
-                    'en el %(field)s del %(model)s "%(name)s"'),
+                    'the %(field)s of %(model)s "%(name)s"'),
                 })
 
     @classmethod
@@ -110,7 +110,7 @@ class BankAccount:
                         'field': field.field_description,
                         'name': record.rec_name,
                         }
-                    cls.raise_user_error('modifiy_with_related_model',
+                    cls.raise_user_error('modify_with_related_model',
                         error_args)
 
 

@@ -77,7 +77,7 @@ msgstr "No puede modificar apuntes del asiento \"%s\" porque ya está confirmado
 msgctxt "error:bank.account:"
 msgid ""
 "It is not possible to modify the owner of bank account \"%(account)s\" as it"
-" is used on en el %(field)s del %(model)s \"%(name)s\""
+" is used on the %(field)s of %(model)s \"%(name)s\""
 msgstr ""
 "No se puede modificar el titular de la cuenta bancaria \"%(account)s\" que "
 "ya se usa a %(field)s del %(model)s \"%(name)s\"."

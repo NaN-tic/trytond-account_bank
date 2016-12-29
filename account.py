@@ -214,8 +214,9 @@ class BankMixin(object):
             if payment_type.account_bank == 'party':
                 return party.id
             elif payment_type.account_bank == 'company':
-                company = Transaction().context.get('company', False)
-                return Company(company).party.id
+                company = Transaction().context.get('company')
+                if company:
+                    return Company(company).party.id
             elif payment_type.account_bank == 'other':
                 return payment_type.party.id
 

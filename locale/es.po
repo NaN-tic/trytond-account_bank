@@ -4,6 +4,22 @@ msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "error:account.invoice:"
 msgid ""
+"%s has no any %s bank account.\n"
+"Please set up one if you want to use this payment type."
+msgstr ""
+"%s no tiene ninguna cuenta bancaria %s.\n"
+"Por favor establezca una si quiere utilizar este tipo de pago."
+
+msgctxt "error:account.invoice:"
+msgid ""
+"Invoice \"%(invoice)s\" cannot be moved to \"Draft\" state because it is "
+"already used in statement line \"%(statement_line)s\"."
+msgstr ""
+"La factura \"%(invoice)s\" no se puede pasar a estado \"Borrador\" porqué se"
+" utiliza en la línea de extracto \"%(statement_line)s\"."
+
+msgctxt "error:account.invoice:"
+msgid ""
 "Invoice \"%(invoice)s\" has no bank account associated but payment type "
 "\"%(payment_type)s\" requires it."
 msgstr ""
@@ -58,21 +74,13 @@ msgctxt "error:account.move.line:"
 msgid "You can not modify lines of move \"%s\" because it is already posted."
 msgstr "No puede modificar apuntes del asiento \"%s\" porque ya está confirmado."
 
-msgctxt "error:account.payment:"
-msgid ""
-"No valid mandate for payment \"%(payment)s\" of party \"%(party)s\" with "
-"amount \"%(amount)s\"."
-msgstr ""
-"No existe ningún mandato valido para el pago \"%(payment)s\" del tercero "
-"\"%(party)s\" con importe \"%(amount)s\"."
-
 msgctxt "error:bank.account:"
 msgid ""
 "It is not possible to modify the owner of bank account \"%(account)s\" as it"
-" is used on the \"%(field)s\" of %(model)s \"%(name)s\"."
+" is used on en el %(field)s del %(model)s \"%(name)s\""
 msgstr ""
-"No se puede modificar el propietario de la cuenta banaria \"%(account)s\" "
-"porque se utiliza en el \"%(field)s\" del %(model)s \"%(name)s\"."
+"No se puede modificar el titular de la cuenta bancaria \"%(account)s\" que "
+"ya se usa a %(field)s del %(model)s \"%(name)s\"."
 
 msgctxt "field:account.invoice,account_bank:"
 msgid "Account Bank"
@@ -110,70 +118,21 @@ msgctxt "field:account.move.line,netting_moves:"
 msgid "With Netting Moves"
 msgstr "Con movimientos a compensar"
 
-msgctxt "field:account.move.line,payment_blocked:"
-msgid "Blocked"
-msgstr "Bloqueada"
-
 msgctxt "field:account.move.line,reverse_moves:"
 msgid "With Reverse Moves"
 msgstr "Con apuntes inversos"
-
-msgctxt "field:account.move.line,second_currency_required:"
-msgid "Second Currency Required"
-msgstr "Segona moneda obligatoria"
-
-msgctxt "field:account.payment,account_bank:"
-msgid "Account Bank"
-msgstr "Cuenta bancaria"
-
-msgctxt "field:account.payment,account_bank_from:"
-msgid "Account Bank From"
-msgstr "Cuenta bancaria de"
-
-msgctxt "field:account.payment,bank_account:"
-msgid "Bank Account"
-msgstr "Cuenta bancaria"
-
-msgctxt "field:account.payment,payment_type:"
-msgid "Payment Type"
-msgstr "Tipo de pago"
-
-msgctxt "field:account.payment.group,amount:"
-msgid "Total"
-msgstr "Total"
-
-msgctxt "field:account.payment.group,currency_digits:"
-msgid "Currency Digits"
-msgstr "Decimals de la moneda"
-
-msgctxt "field:account.payment.journal,party:"
-msgid "Party"
-msgstr "Tercero"
 
 msgctxt "field:account.payment.type,account_bank:"
 msgid "Account Bank Kind"
 msgstr "Tipo cuenta bancaria"
 
+msgctxt "field:account.payment.type,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
+
 msgctxt "field:account.payment.type,party:"
 msgid "Party"
 msgstr "Tercero"
-
-msgctxt "field:party.party,company_default_bank_accounts:"
-msgid "Default Bank Accounts"
-msgstr "Cuentas bancarias por defecto"
-
-msgctxt "field:party.party,currency_digits:"
-msgid "Currency Digits"
-msgstr "Decimals de la moneda"
-
-msgctxt "field:party.party.default.bank_account,payment_type:"
-msgid "Payment Type"
-msgstr "Tipo de pago"
-
-msgctxt "help:account.payment.journal,party:"
-msgid ""
-"The party who sends the payment group, if it is different from the company."
-msgstr "El tercero que envia el grupo de pago, si es distinto de la empresa."
 
 msgctxt "model:account.move.compensation_move.start,name:"
 msgid "Create Compensation Move Start"
@@ -214,22 +173,6 @@ msgctxt "selection:account.invoice,account_bank:"
 msgid "Party"
 msgstr "Tercero"
 
-msgctxt "selection:account.payment,account_bank:"
-msgid "Company"
-msgstr "Empresa"
-
-msgctxt "selection:account.payment,account_bank:"
-msgid "None"
-msgstr "Ninguno"
-
-msgctxt "selection:account.payment,account_bank:"
-msgid "Other"
-msgstr "Otro"
-
-msgctxt "selection:account.payment,account_bank:"
-msgid "Party"
-msgstr "Terceros"
-
 msgctxt "selection:account.payment.type,account_bank:"
 msgid "Company"
 msgstr "Empresa"
@@ -249,14 +192,6 @@ msgstr "Tercero"
 msgctxt "view:account.move.compensation_move.start:"
 msgid "Create Compensation Move"
 msgstr "Crear efecto de compensación"
-
-msgctxt "view:account.move.line:"
-msgid "Total Credit"
-msgstr "Total haber"
-
-msgctxt "view:account.move.line:"
-msgid "Total Debit"
-msgstr "Total debe"
 
 msgctxt "view:account.payment.journal:"
 msgid "Sender data"

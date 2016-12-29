@@ -4,15 +4,13 @@
 from trytond.pool import Pool
 from .account import *
 from . import payment
-from . import party
 
 
 def register():
     Pool.register(
         PaymentType,
         BankAccount,
-        party.Party,
-        party.PartyDefaultBankAccount,
+        Party,
         Invoice,
         Reconciliation,
         Line,
@@ -20,8 +18,8 @@ def register():
         payment.Journal,
         payment.Group,
         payment.Payment,
+        payment.PayLine,
         module='account_bank', type_='model')
     Pool.register(
         CompensationMove,
-        payment.PayLine,
         module='account_bank', type_='wizard')

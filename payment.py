@@ -83,6 +83,13 @@ class Payment:
             cls.line.on_change.add('kind')
         if 'party' not in cls.line.on_change:
             cls.line.on_change.add('party')
+        readonly = Eval('state') != 'draft'
+        previous_readonly = cls.bank_account.states.get('readonly')
+        if previous_readonly:
+            readonly = readonly | previous_readonly
+        cls.bank_account.states.update({
+                'readonly': readonly,
+                })
         cls._error_messages.update({
                 'no_mandate_for_party': ('No valid mandate for payment '
                     '"%(payment)s" of party "%(party)s" with amount '

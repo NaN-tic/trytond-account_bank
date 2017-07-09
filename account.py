@@ -274,13 +274,6 @@ class Invoice(BankMixin):
                 if invoice.bank_account else None
         return changes
 
-    @classmethod
-    def create(cls, vlist):
-        vlist = [x.copy() for x in vlist]
-        for values in vlist:
-            values.update(cls.compute_default_bank_account(values))
-        return super(Invoice, cls).create(vlist)
-
     @fields.depends('payment_type', 'party', 'company')
     def on_change_party(self):
         '''
@@ -297,16 +290,20 @@ class Invoice(BankMixin):
         Check up invoices that requires bank account because its payment type,
         has one
         '''
+        to_save = []
         for invoice in invoices:
             account_bank = (invoice.payment_type and
                 invoice.payment_type.account_bank or 'none')
             if (invoice.payment_type and account_bank != 'none'
                     and not invoice.bank_account):
-                cls.raise_user_error('invoice_without_bank_account', {
-                        'invoice': invoice.rec_name,
-                        'payment_type': invoice.payment_type.rec_name,
-                        })
-
+                invoice._get_bank_account()
+                if not invoice.bank_account:
+                    cls.raise_user_error('invoice_without_bank_account', {
+                            'invoice': invoice.rec_name,
+                            'payment_type': invoice.payment_type.rec_name,
+                            })
+                to_save.append(invoice)
+        cls.save(to_save)
         super(Invoice, cls).post(invoices)
 
 

@@ -1,16 +1,12 @@
 # This file is part of account_bank module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from sql import Cast
-from sql.operators import Concat
-from sql.conditionals import Case
 from decimal import Decimal
 
 from trytond.model import ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
-from trytond.tools import grouped_slice, reduce_ids
 from trytond.wizard import Wizard, StateTransition, StateView, Button
 
 __all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',

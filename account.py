@@ -246,10 +246,10 @@ class Invoice(BankMixin):
         '''
         Add account bank to move line when post invoice.
         '''
-        res = super(Invoice, self)._get_move_line(date, amount)
+        line = super(Invoice, self)._get_move_line(date, amount)
         if self.bank_account:
-            res['bank_account'] = self.bank_account
-        return res
+            line.bank_account = self.bank_account
+        return line
 
     @classmethod
     def compute_default_bank_account(cls, values):
@@ -415,7 +415,7 @@ class Line(BankMixin):
         return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
     def get_netting_moves(self, name):
-        if (not self.account or not self.account.kind in
+        if (not self.account or self.account.kind not in
                 ['receivable', 'payable']):
             return False
         if not self.account.party_required:

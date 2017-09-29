@@ -280,7 +280,8 @@ class Invoice(BankMixin):
                             'payment_type': invoice.payment_type.rec_name,
                             })
                 to_save.append(invoice)
-        cls.save(to_save)
+        if to_save:
+            cls.save(to_save)
         super(Invoice, cls).post(invoices)
 
 

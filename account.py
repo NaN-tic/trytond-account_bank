@@ -251,29 +251,6 @@ class Invoice(BankMixin):
             line.bank_account = self.bank_account
         return line
 
-    @classmethod
-    def compute_default_bank_account(cls, values):
-        pool = Pool()
-        Party = pool.get('party.party')
-        Company = pool.get('company.company')
-        PaymentType = pool.get('account.payment.type')
-
-        payment_type = values.get('payment_type')
-        bank_account = values.get('bank_account')
-        party = values.get('party')
-        company = values.get('company', Transaction().context.get('company'))
-
-        changes = {}
-        if not bank_account and payment_type and party and company:
-            invoice = cls()
-            invoice.party = Party(party)
-            invoice.company = Company(company)
-            invoice.payment_type = PaymentType(payment_type)
-            invoice._get_bank_account()
-            changes['bank_account'] = invoice.bank_account.id \
-                if invoice.bank_account else None
-        return changes
-
     @fields.depends('payment_type', 'party', 'company')
     def on_change_party(self):
         '''

@@ -240,6 +240,9 @@ class Invoice(BankMixin):
                 'invoice_without_bank_account': ('Invoice "%(invoice)s" has '
                     'no bank account associated but payment type '
                     '"%(payment_type)s" requires it.'),
+                'bank_account_without_party': ('Account "%(account)s" has '
+                    'no party required but payment type '
+                    '"%(payment_type)s" requires a party.'),
                 })
 
     def _get_move_line(self, date, amount):
@@ -247,6 +250,14 @@ class Invoice(BankMixin):
         Add account bank to move line when post invoice.
         '''
         line = super(Invoice, self)._get_move_line(date, amount)
+
+        if (self.bank_account and self.payment_type
+                and self.payment_type.account_bank == 'party'
+                and not hasattr(line, 'party')):
+            self.raise_user_error('bank_account_without_party', {
+                    'account': self.account.rec_name,
+                    'payment_type': self.payment_type.rec_name,
+                    })
         if self.bank_account:
             line.bank_account = self.bank_account
         return line

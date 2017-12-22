@@ -12,10 +12,9 @@ try:
 except ImportError:
     from ConfigParser import ConfigParser
 
-MODULE2PREFIX = {
-    'company_bank': 'trytonspain',
-    'account_payment_type': 'trytonspain',
-    }
+MODULE = 'account_bank'
+PREFIX = 'trytonspain'
+MODULE2PREFIX = {}
 
 
 def read(fname):
@@ -43,8 +42,6 @@ version = info.get('version', '0.0.1')
 major_version, minor_version, _ = version.split('.', 2)
 major_version = int(major_version)
 minor_version = int(minor_version)
-name = 'trytonspain_account_bank'
-download_url = 'https://bitbucket.org/trytonspain/trytond-account_bank'
 
 requires = []
 for dep in info.get('depends', []):
@@ -59,22 +56,22 @@ if minor_version % 2:
     # Add development index for testing with proteus
     dependency_links.append('https://trydevpi.tryton.org/')
 
-setup(name=name,
+setup(name='%s_%s' % (PREFIX, MODULE),
     version=version,
     description='Tryton Account Bank Module',
     long_description=read('README'),
     author='TrytonSpain',
     author_email='info@trytonspain.com',
     url='https://bitbucket.org/trytonspain/',
-    download_url=download_url,
+    download_url="https://bitbucket.org/trytonspain/trytond-%s" % MODULE,
     keywords='',
-    package_dir={'trytond.modules.account_bank': '.'},
+    package_dir={'trytond.modules.%s' % MODULE: '.'},
     packages=[
-        'trytond.modules.account_bank',
-        'trytond.modules.account_bank.tests',
+        'trytond.modules.%s' % MODULE,
+        'trytond.modules.%s.tests' % MODULE,
         ],
     package_data={
-        'trytond.modules.account_bank': (info.get('xml', [])
+        'trytond.modules.%s' % MODULE: (info.get('xml', [])
             + ['tryton.cfg', 'view/*.xml', 'locale/*.po', '*.odt',
                 'icons/*.svg', 'tests/*.rst']),
         },
@@ -101,9 +98,9 @@ setup(name=name,
         'Natural Language :: Spanish',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Office/Business',
@@ -114,11 +111,13 @@ setup(name=name,
     zip_safe=False,
     entry_points="""
     [trytond.modules]
-    account_bank = trytond.modules.account_bank
-    """,
+    %s = trytond.modules.%s
+    """ % (MODULE, MODULE),
     test_suite='tests',
     test_loader='trytond.test_loader:Loader',
     tests_require=tests_require,
     use_2to3=True,
-    convert_2to3_doctests=['tests/scenario_compensation_move.rst'],
+    convert_2to3_doctests=[
+        'tests/scenario_compensation_move.rst',
+        ],
     )

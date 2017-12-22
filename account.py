@@ -570,7 +570,7 @@ class CompensationMove(Wizard):
                 origins[line.origin] += abs(line_amount)
 
         if not account or not party:
-            ([], None)
+            return ([], None)
 
         extra_line = Line()
         extra_line.account = account

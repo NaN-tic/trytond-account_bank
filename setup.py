@@ -60,13 +60,13 @@ if minor_version % 2:
 else:
     branch = series
 dependency_links = [
-    ('hg+ssh://hg@bitbucket.org/trytonspain/'
+    ('hg+https://bitbucket.org/trytonspain/'
         'trytond-account_payment_type@%(branch)s'
         '#egg=trytonspain-account_payment_type-%(series)s' % {
             'branch': branch,
             'series': series,
             }),
-    ('hg+ssh://hg@bitbucket.org/trytonspain/'
+    ('hg+https://bitbucket.org/trytonspain/'
         'trytond-company_bank@%(branch)s'
         '#egg=trytonspain-company_bank-%(series)s' % {
             'branch': branch,

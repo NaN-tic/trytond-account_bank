@@ -14,7 +14,10 @@ except ImportError:
 
 MODULE = 'account_bank'
 PREFIX = 'trytonspain'
-MODULE2PREFIX = {}
+MODULE2PREFIX = {
+    'account_payment_type': 'trytonspain',
+    'company_bank': 'trytonspain',
+    }
 
 
 def read(fname):
@@ -51,7 +54,25 @@ for dep in info.get('depends', []):
 requires.append(get_require_version('trytond'))
 
 tests_require = [get_require_version('proteus')]
-dependency_links = []
+series = '%s.%s' % (major_version, minor_version)
+if minor_version % 2:
+    branch = 'default'
+else:
+    branch = series
+dependency_links = [
+    ('hg+ssh://hg@bitbucket.org/trytonspain/'
+        'trytond-account_payment_type@%(branch)s'
+        '#egg=trytonspain-account_payment_type-%(series)s' % {
+            'branch': branch,
+            'series': series,
+            }),
+    ('hg+ssh://hg@bitbucket.org/trytonspain/'
+        'trytond-company_bank@%(branch)s'
+        '#egg=trytonspain-company_bank-%(series)s' % {
+            'branch': branch,
+            'series': series,
+            }),
+    ]
 if minor_version % 2:
     # Add development index for testing with proteus
     dependency_links.append('https://trydevpi.tryton.org/')

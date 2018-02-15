@@ -192,8 +192,6 @@ class BankMixin(object):
         '''
         Add account bank when changes payment_type or party.
         '''
-        if hasattr(self, 'on_change_with_payment_type'):
-            self.payment_type = self.on_change_with_payment_type()
         self._get_bank_account()
         return self.bank_account.id if self.bank_account else None
 
@@ -202,11 +200,8 @@ class BankMixin(object):
         '''
         Sets the party where get bank account for this move line.
         '''
-        pool = Pool()
-        Company = pool.get('company.company')
+        Company = Pool().get('company.company')
 
-        if hasattr(self, 'on_change_with_payment_type'):
-            self.payment_type = self.on_change_with_payment_type()
         if self.payment_type and self.party:
             payment_type = self.payment_type
             party = self.party

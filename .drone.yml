@@ -13,6 +13,12 @@ pipeline:
         commands:
             - pip install tox
             - tox -e "${TOXENV}-${DATABASE}"
+    notify:
+        image: drillster/drone-email
+        from: drone
+        host: smtp
+        port: 25
+        skip_verify: true
 
 services:
     postgresql:

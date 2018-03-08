@@ -15,7 +15,7 @@ pipeline:
             - tox -e "${TOXENV}-${DATABASE}"
     notify:
         image: drillster/drone-email
-        from: drone
+        from: drone@localhost
         host: smtp
         port: 25
         skip_verify: true

@@ -18,8 +18,8 @@ def register():
         payment.Journal,
         payment.Group,
         payment.Payment,
-        payment.PayLine,
         module='account_bank', type_='model')
     Pool.register(
+        payment.PayLine,
         account.CompensationMove,
         module='account_bank', type_='wizard')

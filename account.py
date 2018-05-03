@@ -192,8 +192,6 @@ class BankMixin(object):
         '''
         Add account bank when changes payment_type or party.
         '''
-        if hasattr(self, 'on_change_with_payment_type'):
-            self.payment_type = self.on_change_with_payment_type()
         self._get_bank_account()
         return self.bank_account.id if self.bank_account else None
 
@@ -202,11 +200,8 @@ class BankMixin(object):
         '''
         Sets the party where get bank account for this move line.
         '''
-        pool = Pool()
-        Company = pool.get('company.company')
+        Company = Pool().get('company.company')
 
-        if hasattr(self, 'on_change_with_payment_type'):
-            self.payment_type = self.on_change_with_payment_type()
         if self.payment_type and self.party:
             payment_type = self.payment_type
             party = self.party
@@ -240,36 +235,6 @@ class Invoice(BankMixin):
                     '"%(payment_type)s" requires it.'),
                 })
 
-    @classmethod
-    def compute_default_bank_account(cls, values):
-        pool = Pool()
-        Party = pool.get('party.party')
-        Company = pool.get('company.company')
-        PaymentType = pool.get('account.payment.type')
-
-        payment_type = values.get('payment_type')
-        bank_account = values.get('bank_account')
-        party = values.get('party')
-        company = values.get('company', Transaction().context.get('company'))
-
-        changes = {}
-        if not bank_account and payment_type and party and company:
-            invoice = cls()
-            invoice.party = Party(party)
-            invoice.company = Company(company)
-            invoice.payment_type = PaymentType(payment_type)
-            invoice._get_bank_account()
-            changes['bank_account'] = invoice.bank_account.id \
-                if invoice.bank_account else None
-        return changes
-
-    @classmethod
-    def create(cls, vlist):
-        vlist = [x.copy() for x in vlist]
-        for values in vlist:
-            values.update(cls.compute_default_bank_account(values))
-        return super(Invoice, cls).create(vlist)
-
     @fields.depends('payment_type', 'party', 'company')
     def on_change_party(self):
         '''
@@ -286,16 +251,21 @@ class Invoice(BankMixin):
         Check up invoices that requires bank account because its payment type,
         has one
         '''
+        to_save = []
         for invoice in invoices:
             account_bank = (invoice.payment_type and
                 invoice.payment_type.account_bank or 'none')
             if (invoice.payment_type and account_bank != 'none'
                     and not invoice.bank_account):
-                cls.raise_user_error('invoice_without_bank_account', {
-                        'invoice': invoice.rec_name,
-                        'payment_type': invoice.payment_type.rec_name,
-                        })
-
+                invoice._get_bank_account()
+                if not invoice.bank_account:
+                    cls.raise_user_error('invoice_without_bank_account', {
+                            'invoice': invoice.rec_name,
+                            'payment_type': invoice.payment_type.rec_name,
+                            })
+                to_save.append(invoice)
+        if to_save:
+            cls.save(to_save)
         super(Invoice, cls).post(invoices)
 
 
@@ -595,7 +565,7 @@ class CompensationMove(Wizard):
                 origins[line.origin] += abs(line_amount)
 
         if not account or not party:
-            ([], None)
+            return ([], None)
 
         extra_line = Line()
         extra_line.account = account

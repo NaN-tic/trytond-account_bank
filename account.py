@@ -458,6 +458,7 @@ class CompensationMoveStart(ModelView, BankMixin):
             ('kind', '=', Eval('payment_kind'))
             ],
         depends=['payment_kind'])
+    description = fields.Char('Description')
 
     @classmethod
     def __setup__(cls):
@@ -610,6 +611,7 @@ class CompensationMove(Wizard):
         move.period = Period(period_id)
         move.journal = lines[0].move.journal
         move.date = Date.today()
+        move.description = self.start.description
 
         return move
 
@@ -643,6 +645,7 @@ class CompensationMove(Wizard):
         extra_line.maturity_date = self.start.maturity_date
         extra_line.payment_type = self.start.payment_type
         extra_line.bank_account = self.start.bank_account
+        extra_line.description = self.start.description
         extra_line.credit = extra_line.debit = Decimal('0.0')
         if amount > 0:
             extra_line.debit = amount

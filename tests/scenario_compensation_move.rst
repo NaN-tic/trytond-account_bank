@@ -181,14 +181,12 @@ Create a move that pays the pending amount::
     >>> move.period = period
     >>> move.date = today
     >>> move.journal = lines[0].move.journal
-    >>> line = MoveLine()
-    >>> move.lines.append(line)
+    >>> line = move.lines.new()
     >>> line.account = receivable
     >>> line.credit = Decimal('196.0')
     >>> line.debit = Decimal('0.0')
     >>> line.party = party
-    >>> line = MoveLine()
-    >>> move.lines.append(line)
+    >>> line = move.lines.new()
     >>> line.account = cash
     >>> line.debit = Decimal('196.0')
     >>> line.credit = Decimal('0.0')

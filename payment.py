@@ -11,8 +11,7 @@ __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 _ZERO = Decimal('0.0')
 
 
-class Journal:
-    __metaclass__ = PoolMeta
+class Journal(metaclass=PoolMeta):
     __name__ = 'account.payment.journal'
 
     payment_type = fields.Many2One('account.payment.type', 'Payment Type',
@@ -22,8 +21,7 @@ class Journal:
         'the company.'))
 
 
-class Group:
-    __metaclass__ = PoolMeta
+class Group(metaclass=PoolMeta):
     __name__ = 'account.payment.group'
 
     payment_type = fields.Function(fields.Many2One('account.payment.type',
@@ -60,8 +58,7 @@ class Group:
             return amount
 
 
-class Payment:
-    __metaclass__ = PoolMeta
+class Payment(metaclass=PoolMeta):
     __name__ = 'account.payment'
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         states={
@@ -149,8 +146,7 @@ class Payment:
         return mandates2
 
 
-class PayLine:
-    __metaclass__ = PoolMeta
+class PayLine(metaclass=PoolMeta):
     __name__ = 'account.move.line.pay'
 
     def get_payment(self, line, journals):

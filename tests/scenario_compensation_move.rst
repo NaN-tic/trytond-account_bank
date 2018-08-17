@@ -125,7 +125,7 @@ Create invoice::
     >>> Invoice.post([invoice.id], config.context)
     >>> invoice.reload()
     >>> invoice.state
-    u'posted'
+    'posted'
     >>> invoice.amount_to_pay == Decimal(240)
     True
 
@@ -153,7 +153,7 @@ Create credit note::
     >>> Invoice.post([credit_note.id], config.context)
     >>> credit_note.reload()
     >>> credit_note.state
-    u'posted'
+    'posted'
     >>> credit_note.amount_to_pay == Decimal(-44)
     True
 
@@ -213,4 +213,4 @@ Create a move that pays the pending amount::
     >>> invoice.amount_to_pay
     Decimal('0.0')
     >>> invoice.state
-    u'paid'
+    'paid'

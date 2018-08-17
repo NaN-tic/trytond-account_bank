@@ -2,8 +2,8 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from trytond.pool import Pool
-import account
-import payment
+from . import account
+from . import payment
 
 
 def register():

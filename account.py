@@ -23,8 +23,7 @@ ACCOUNT_BANK_KIND = [
     ]
 
 
-class PaymentType:
-    __metaclass__ = PoolMeta
+class PaymentType(metaclass=PoolMeta):
     __name__ = 'account.payment.type'
     account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank Kind',
         select=True, required=True)
@@ -58,8 +57,7 @@ class PaymentType:
         return 'none'
 
 
-class BankAccount:
-    __metaclass__ = PoolMeta
+class BankAccount(metaclass=PoolMeta):
     __name__ = 'bank.account'
 
     @classmethod
@@ -114,8 +112,7 @@ class BankAccount:
                         error_args)
 
 
-class Party:
-    __metaclass__ = PoolMeta
+class Party(metaclass=PoolMeta):
     __name__ = 'party.party'
 
     @classmethod
@@ -217,8 +214,7 @@ class BankMixin(object):
                 return payment_type.party.id
 
 
-class Invoice(BankMixin):
-    __metaclass__ = PoolMeta
+class Invoice(BankMixin, metaclass=PoolMeta):
     __name__ = 'account.invoice'
 
     @classmethod
@@ -271,8 +267,7 @@ class Invoice(BankMixin):
         super(Invoice, cls).post(invoices)
 
 
-class Reconciliation:
-    __metaclass__ = PoolMeta
+class Reconciliation(metaclass=PoolMeta):
     __name__ = 'account.move.reconciliation'
 
     @classmethod
@@ -307,8 +302,7 @@ class Reconciliation:
             Invoice.process(invoices)
 
 
-class Line:
-    __metaclass__ = PoolMeta
+class Line(metaclass=PoolMeta):
     __name__ = 'account.move.line'
 
     reverse_moves = fields.Function(fields.Boolean('With Reverse Moves'),
@@ -580,7 +574,7 @@ class CompensationMove(Wizard):
             extra_line.credit = abs(amount)
 
         origin = None
-        for line_origin, line_amount in sorted(origins.iteritems(),
+        for line_origin, line_amount in sorted(origins.items(),
                 key=lambda x: x[1]):
             if abs(amount) < line_amount:
                 origin = line_origin

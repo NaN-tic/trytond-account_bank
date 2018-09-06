@@ -399,6 +399,7 @@ class CompensationMoveStart(ModelView):
     account = fields.Many2One('account.account', 'Account', required=True)
     date = fields.Date('Date')
     maturity_date = fields.Date('Maturity Date')
+    description = fields.Char('Description')
 
     @classmethod
     def __setup__(cls):
@@ -542,6 +543,7 @@ class CompensationMove(Wizard):
         move.period = Period(period_id)
         move.journal = lines[0].move.journal
         move.date = Date.today()
+        move.description = self.start.description
 
         return move
 
@@ -567,6 +569,7 @@ class CompensationMove(Wizard):
         extra_line.account = account
         extra_line.party = party
         extra_line.maturity_date = self.start.maturity_date
+        extra_line.description = self.start.description
         extra_line.credit = extra_line.debit = Decimal('0.0')
         if amount > 0:
             extra_line.debit = amount

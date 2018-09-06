@@ -307,11 +307,11 @@ class Reconciliation:
         moves = set()
         for reconciliation in reconciliations:
             moves |= set(l.move for l in reconciliation.lines)
-        invoices = []
+        invoices = set()
         for move in moves:
             if (move.origin and isinstance(move.origin, Invoice)
                     and move.origin.state == 'posted'):
-                invoices.append(move.origin)
+                invoices.add(move.origin)
         if invoices:
             Invoice.process(invoices)
         return reconciliations

@@ -10,4 +10,6 @@
     <field name="date"/>
     <label name="maturity_date"/>
     <field name="maturity_date"/>
+    <label name="description"/>
+    <field name="description"/>
 </form>

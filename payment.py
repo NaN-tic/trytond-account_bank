@@ -150,6 +150,8 @@ class PayLine:
         pool = Pool()
         Invoice = pool.get('account.invoice')
         payment = super(PayLine, self).get_payment(line, journals)
-        if isinstance(line.origin, Invoice):
+        if hasattr(line, 'bank_account') and line.bank_account:
+            payment.bank_account = line.bank_account
+        elif isinstance(line.origin, Invoice):
             payment.bank_account = line.origin.bank_account
         return payment

@@ -67,6 +67,7 @@ class BankAccount:
         super(BankAccount, cls).__setup__()
         cls._check_owners_fields = set(['owners'])
         cls._check_owners_related_models = set([
+                ('account.move.line', 'bank_account'),
                 ('account.invoice', 'bank_account'),
                 ])
         cls._error_messages.update({
@@ -268,6 +269,13 @@ class Invoice(BankMixin):
             cls.save(to_save)
         super(Invoice, cls).post(invoices)
 
+    def _get_move_line(self, date, amount):
+        '''Add account bank to move line when post invoice.'''
+        line = super(Invoice, self)._get_move_line(date, amount)
+        if self.bank_account:
+            line.bank_account = self.bank_account
+        return line
+
 
 class Reconciliation:
     __metaclass__ = PoolMeta
@@ -305,7 +313,7 @@ class Reconciliation:
             Invoice.process(invoices)
 
 
-class Line:
+class Line(BankMixin):
     __metaclass__ = PoolMeta
     __name__ = 'account.move.line'
 
@@ -313,6 +321,38 @@ class Line:
         'get_reverse_moves', searcher='search_reverse_moves')
     netting_moves = fields.Function(fields.Boolean('With Netting Moves'),
         'get_netting_moves', searcher='search_netting_moves')
+
+    @classmethod
+    def __setup__(cls):
+        super(Line, cls).__setup__()
+        if hasattr(cls, '_check_modify_exclude'):
+            cls._check_modify_exclude.add('bank_account')
+        readonly = Bool(Eval('reconciliation'))
+        previous_readonly = cls.bank_account.states.get('readonly')
+        if previous_readonly:
+            readonly = readonly | previous_readonly
+        cls.bank_account.states.update({
+                'readonly': readonly,
+                })
+
+    @fields.depends('party', 'payment_type')
+    def on_change_party(self):
+        '''Add account bank to account move line when changes party.'''
+        try:
+            super(Line, self).on_change_party()
+        except AttributeError:
+            pass
+        if self.payment_type and self.party:
+            self._get_bank_account()
+
+    @classmethod
+    def copy(cls, lines, default=None):
+        if default is None:
+            default = {}
+        if (Transaction().context.get('cancel_move')
+                and 'bank_account' not in default):
+            default['bank_account'] = None
+        return super(Line, cls).copy(lines, default)
 
     def get_reverse_moves(self, name):
         if (not self.account
@@ -396,14 +436,26 @@ class Line:
         return [('party', operator, query)]
 
 
-class CompensationMoveStart(ModelView):
+class CompensationMoveStart(ModelView, BankMixin):
     'Create Compensation Move Start'
     __name__ = 'account.move.compensation_move.start'
     party = fields.Many2One('party.party', 'Party', readonly=True)
-    account = fields.Many2One('account.account', 'Account', required=True)
+    account = fields.Many2One('account.account', 'Account',
+        domain=[('kind', 'in', ['payable', 'receivable'])],
+        required=True)
     date = fields.Date('Date')
     maturity_date = fields.Date('Maturity Date')
     description = fields.Char('Description')
+    payment_kind = fields.Selection([
+            ('both', 'Both'),
+            ('payable', 'Payable'),
+            ('receivable', 'Receivable'),
+            ], 'Payment Kind')
+    payment_type = fields.Many2One('account.payment.type', 'Payment Type',
+        domain=[
+            ('kind', '=', Eval('payment_kind'))
+            ],
+        depends=['payment_kind'])
 
     @classmethod
     def __setup__(cls):
@@ -430,6 +482,7 @@ class CompensationMoveStart(ModelView):
     def default_get(cls, fields, with_rec_name=True):
         pool = Pool()
         Line = pool.get('account.move.line')
+        PaymentType = pool.get('account.payment.type')
 
         defaults = super(CompensationMoveStart, cls).default_get(fields,
             with_rec_name)
@@ -451,8 +504,31 @@ class CompensationMoveStart(ModelView):
         if (company and company.currency.is_zero(amount)
                 and len(set([x.account for x in lines])) == 1):
             cls.raise_user_error('normal_reconcile')
+        if amount > 0:
+            defaults['payment_kind'] = 'receivable'
+        else:
+            defaults['payment_kind'] = 'payable'
+        defaults['bank_account'] = None
         if party:
             defaults['party'] = party.id
+            if (defaults['payment_kind'] in ['receivable', 'both']
+                    and party.customer_payment_type):
+                defaults['payment_type'] = party.customer_payment_type.id
+            elif (defaults['payment_kind'] in ['payable', 'both']
+                    and party.supplier_payment_type):
+                defaults['payment_type'] = party.supplier_payment_type.id
+            if defaults.get('payment_type'):
+                payment_type = PaymentType(defaults['payment_type'])
+                defaults['account_bank'] = payment_type.account_bank
+
+                self = cls()
+                self.payment_type = payment_type
+                self.party = party
+                self._get_bank_account()
+                defaults['account_bank_from'] = (
+                    self.on_change_with_account_bank_from())
+                defaults['bank_account'] = (self.bank_account.id
+                    if self.bank_account else None)
             if amount > 0:
                 defaults['account'] = (party.account_receivable.id
                     if party.account_receivable else None)
@@ -492,7 +568,6 @@ class CompensationMove(Wizard):
         move = self.get_move(lines)
         extra_lines, origin = self.get_extra_lines(lines, self.start.account,
             self.start.party)
-
         if origin:
             move.origin = origin
         move.lines = move_lines + extra_lines
@@ -517,7 +592,9 @@ class CompensationMove(Wizard):
         " Returns true if both lines are equal"
         return (line.debit == extra_line.debit and
             line.credit == extra_line.credit and
-            line.maturity_date == extra_line.maturity_date)
+            line.maturity_date == extra_line.maturity_date and
+            line.payment_type == extra_line.payment_type and
+            line.bank_account == extra_line.bank_account)
 
     def get_counterpart_line(self, line):
         'Returns the counterpart line to create from line'
@@ -573,6 +650,8 @@ class CompensationMove(Wizard):
         extra_line.account = account
         extra_line.party = party
         extra_line.maturity_date = self.start.maturity_date
+        extra_line.payment_type = self.start.payment_type
+        extra_line.bank_account = self.start.bank_account
         extra_line.description = self.start.description
         extra_line.credit = extra_line.debit = Decimal('0.0')
         if amount > 0:

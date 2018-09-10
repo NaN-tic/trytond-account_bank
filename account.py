@@ -341,6 +341,18 @@ class Line(BankMixin, metaclass=PoolMeta):
         if self.payment_type and self.party:
             self._get_bank_account()
 
+    @fields.depends('party', 'debit', 'credit', 'move')
+    def on_change_with_payment_type(self, name=None):
+        if self.party:
+            if self.credit > 0 or self.debit < 0:
+                name = 'supplier_payment_type'
+            elif self.debit > 0 or self.credit < 0:
+                name = 'customer_payment_type'
+            payment_type = getattr(self.party, name)
+            if payment_type:
+                return payment_type.id
+        return None
+
     @classmethod
     def copy(cls, lines, default=None):
         if default is None:
@@ -532,6 +544,9 @@ class CompensationMoveStart(ModelView, BankMixin):
                 defaults['account'] = (party.account_payable.id
                     if party.account_payable else None)
         return defaults
+
+    def on_change_with_payment_type(self, name=None):
+        pass
 
 
 class CompensationMove(Wizard):

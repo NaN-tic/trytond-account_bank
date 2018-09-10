@@ -147,8 +147,8 @@ Create invoice::
     >>> invoice.bank_account = bank_account
     >>> invoice.save()
     >>> invoice.click('post')
-    >>> invoice.state
-    u'posted'
+    >>> invoice.state == 'posted'
+    True
     >>> invoice.amount_to_pay == Decimal(240)
     True
     >>> line1, line2, _, _ = invoice.move.lines
@@ -184,8 +184,8 @@ Create credit note::
     >>> credit_note.save()
     >>> Invoice.post([credit_note.id], config.context)
     >>> credit_note.reload()
-    >>> credit_note.state
-    u'posted'
+    >>> credit_note.state == 'posted'
+    True
     >>> credit_note.amount_to_pay == Decimal(-44)
     True
 
@@ -244,5 +244,5 @@ Create a move that pays the pending amount::
     >>> invoice.reload()
     >>> invoice.amount_to_pay
     Decimal('0.0')
-    >>> invoice.state
-    u'paid'
+    >>> invoice.state == 'paid'
+    True

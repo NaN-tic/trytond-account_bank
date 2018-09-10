@@ -4,14 +4,6 @@ msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "error:account.invoice:"
 msgid ""
-"Invoice \"%(invoice)s\" cannot be moved to \"Draft\" state because it is "
-"already used in statement line \"%(statement_line)s\"."
-msgstr ""
-"La factura \"%(invoice)s\" no se puede pasar a estado \"Borrador\" porqué se"
-" utiliza en la línea de extracto \"%(statement_line)s\"."
-
-msgctxt "error:account.invoice:"
-msgid ""
 "Invoice \"%(invoice)s\" has no bank account associated but payment type "
 "\"%(payment_type)s\" requires it."
 msgstr ""
@@ -98,9 +90,25 @@ msgctxt "field:account.move.compensation_move.start,account:"
 msgid "Account"
 msgstr "Cuenta"
 
+msgctxt "field:account.move.compensation_move.start,account_bank:"
+msgid "Account Bank"
+msgstr "Tercero"
+
+msgctxt "field:account.move.compensation_move.start,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Cuenta bancaria de"
+
+msgctxt "field:account.move.compensation_move.start,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
+
 msgctxt "field:account.move.compensation_move.start,date:"
 msgid "Date"
 msgstr "Fecha"
+
+msgctxt "field:account.move.compensation_move.start,description:"
+msgid "Description"
+msgstr "Descripción"
 
 msgctxt "field:account.move.compensation_move.start,id:"
 msgid "ID"
@@ -113,6 +121,26 @@ msgstr "Fecha de vencimiento"
 msgctxt "field:account.move.compensation_move.start,party:"
 msgid "Party"
 msgstr "Tercero"
+
+msgctxt "field:account.move.compensation_move.start,payment_kind:"
+msgid "Payment Kind"
+msgstr "Clase de pago"
+
+msgctxt "field:account.move.compensation_move.start,payment_type:"
+msgid "Payment Type"
+msgstr "Tipo de pago"
+
+msgctxt "field:account.move.line,account_bank:"
+msgid "Account Bank"
+msgstr "Cuenta bancaria"
+
+msgctxt "field:account.move.line,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Cuenta bancaria de"
+
+msgctxt "field:account.move.line,bank_account:"
+msgid "Bank Account"
+msgstr "Cuenta bancaria"
 
 msgctxt "field:account.move.line,netting_moves:"
 msgid "With Netting Moves"
@@ -199,6 +227,50 @@ msgid "Other"
 msgstr "Otro"
 
 msgctxt "selection:account.invoice,account_bank:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Party"
+msgstr "Tercero"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Both"
+msgstr "Ambos"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Payable"
+msgstr "A pagar"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Receivable"
+msgstr "A cobrar"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Company"
+msgstr "Empresa"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "None"
+msgstr "Ninguno"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Other"
+msgstr "Otro"
+
+msgctxt "selection:account.move.line,account_bank:"
 msgid "Party"
 msgstr "Tercero"
 

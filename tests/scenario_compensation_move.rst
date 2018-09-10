@@ -52,6 +52,28 @@ Create party::
     >>> party = Party(name='Party')
     >>> party.save()
 
+Create bank account::
+
+    >>> Bank = Model.get('bank')
+    >>> BankAccount = Model.get('bank.account')
+    >>> BankNumber = Model.get('bank.account.number')
+    >>> bparty = Party()
+    >>> bparty.name = 'Bank'
+    >>> bparty.save()
+    >>> bank = Bank(party=bparty)
+    >>> bank.save()
+    >>> bank_account = BankAccount()
+    >>> bank_account.bank = bank
+    >>> bank_number = bank_account.numbers.new()
+    >>> bank_number.type = 'iban'
+    >>> bank_number.number = 'BE82068896274468'
+    >>> bank_number = bank_account.numbers.new()
+    >>> bank_number.type = 'other'
+    >>> bank_number.number = 'not IBAN'
+    >>> bank_account.save()
+    >>> party.bank_accounts.append(bank_account)
+    >>> party.save()
+
 Create account category::
 
     >>> ProductCategory = Model.get('product.category')
@@ -90,6 +112,7 @@ Create payment type and link to party::
     >>> payable_payment_type = PaymentType(name='Type', kind='payable')
     >>> payable_payment_type.save()
     >>> receivable_payment_type = PaymentType(name='Type', kind='receivable')
+    >>> receivable_payment_type.account_bank = 'party'
     >>> receivable_payment_type.save()
     >>> party.customer_payment_type = receivable_payment_type
     >>> party.supplier_payment_type = payable_payment_type
@@ -121,12 +144,21 @@ Create invoice::
     Decimal('240.00')
     >>> invoice.payment_type == receivable_payment_type
     True
+    >>> invoice.bank_account = bank_account
     >>> invoice.save()
-    >>> Invoice.post([invoice.id], config.context)
-    >>> invoice.reload()
+    >>> invoice.click('post')
     >>> invoice.state
-    'posted'
+    u'posted'
     >>> invoice.amount_to_pay == Decimal(240)
+    True
+    >>> line1, line2, _, _ = invoice.move.lines
+    >>> line1.payment_type == receivable_payment_type
+    True
+    >>> line1.bank_account == bank_account
+    True
+    >>> line2.payment_type == None
+    True
+    >>> line2.bank_account == None
     True
 
 Create credit note::
@@ -153,10 +185,9 @@ Create credit note::
     >>> Invoice.post([credit_note.id], config.context)
     >>> credit_note.reload()
     >>> credit_note.state
-    'posted'
+    u'posted'
     >>> credit_note.amount_to_pay == Decimal(-44)
     True
-
 
 Partialy reconcile both lines::
 
@@ -167,6 +198,8 @@ Partialy reconcile both lines::
     ...     models=lines)
     >>> compensation_move.form.maturity_date = today
     >>> compensation_move.form.account = receivable
+    >>> compensation_move.form.payment_type = receivable_payment_type
+    >>> compensation_move.form.bank_account = None
     >>> compensation_move.execute('create_move')
     >>> credit_note.reload()
     >>> credit_note.amount_to_pay
@@ -174,7 +207,6 @@ Partialy reconcile both lines::
     >>> invoice.reload()
     >>> invoice.amount_to_pay
     Decimal('0.0')
-
 
 Create a move that pays the pending amount::
 
@@ -213,4 +245,4 @@ Create a move that pays the pending amount::
     >>> invoice.amount_to_pay
     Decimal('0.0')
     >>> invoice.state
-    'paid'
+    u'paid'

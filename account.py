@@ -304,10 +304,10 @@ class Reconciliation:
         moves = set()
         for reconciliation in reconciliations:
             moves |= set(l.move for l in reconciliation.lines)
-        invoices = []
+        invoices = set()
         for move in moves:
             if move.origin and isinstance(move.origin, Invoice):
-                invoices.append(move.origin)
+                invoices.add(move.origin)
         super(Reconciliation, cls).delete(reconciliations)
         if invoices:
             Invoice.process(invoices)

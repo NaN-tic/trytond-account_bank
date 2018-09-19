@@ -348,10 +348,12 @@ class Line(BankMixin, metaclass=PoolMeta):
                 name = 'supplier_payment_type'
             elif self.debit > 0 or self.credit < 0:
                 name = 'customer_payment_type'
+            else:
+                return
             payment_type = getattr(self.party, name)
             if payment_type:
                 return payment_type.id
-        return None
+        return
 
     @classmethod
     def copy(cls, lines, default=None):

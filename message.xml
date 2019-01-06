@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+    <data group="1">
+        <record model="ir.message" id="no_mandate_for_party">
+            <field name="text">No valid mandate for payment "%(payment)s" of party "%(party)s" with amount "%(amount)s".</field>
+        </record>
+        <record model="ir.message" id="invoice_without_bank_account">
+            <field name="text">Invoice "%(invoice)s" has no bank account associated but payment type "%(payment_type)s" requires it.</field>
+        </record>
+        <record model="ir.message" id="normal_reconcile">
+            <field name="text">Selected moves are balanced. Use concile wizard instead of creating a compensation move.</field>
+        </record>
+        <record model="ir.message" id="different_parties">
+            <field name="text">Parties can not be mixed to create a compensation move. Party "%(party)s" in line "%(line)s" is different from previous party "%(party)s"</field>
+        </record>
+        <record model="ir.message" id="modify_with_related_model">
+            <field name="text">It is not possible to modify the owner of bank account "%(account)s" as it is used on the %(field)s of %(model)s "%(name)s"</field>
+        </record>
+      </data>
+</tryton>

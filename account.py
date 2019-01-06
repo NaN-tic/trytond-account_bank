@@ -11,6 +11,8 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateTransition, StateView, Button
+from trytond.i18n import gettext
+from trytond.exceptions import UserWarning
 
 __all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',
     'Line', 'CompensationMoveStart', 'CompensationMove']
@@ -68,11 +70,6 @@ class BankAccount(metaclass=PoolMeta):
                 ('account.move.line', 'bank_account'),
                 ('account.invoice', 'bank_account'),
                 ])
-        cls._error_messages.update({
-                'modify_with_related_model': ('It is not possible to modify '
-                    'the owner of bank account "%(account)s" as it is used on '
-                    'the %(field)s of %(model)s "%(name)s"'),
-                })
 
     @classmethod
     def write(cls, *args):
@@ -104,14 +101,12 @@ class BankAccount(metaclass=PoolMeta):
                     target = record.account_bank_from
                     account = getattr(record, field_name)
                     if target not in account.owners:
-                        error_args = {
-                            'account': account.rec_name,
-                            'model': model.name,
-                            'field': field.field_description,
-                            'name': record.rec_name,
-                            }
-                        cls.raise_user_error('modify_with_related_model',
-                            error_args)
+                        raise UserError(gettext(
+                            'account_bank.modify_with_related_model',
+                            account=account.rec_name,
+                            model=model.name,
+                            field=field.field_description,
+                            name=record.rec_name))
 
 
 class Party(metaclass=PoolMeta):
@@ -229,11 +224,6 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
-        cls._error_messages.update({
-                'invoice_without_bank_account': ('Invoice "%(invoice)s" has '
-                    'no bank account associated but payment type '
-                    '"%(payment_type)s" requires it.'),
-                })
 
     @fields.depends('payment_type', 'party', 'company')
     def on_change_party(self):
@@ -259,10 +249,11 @@ class Invoice(BankMixin, metaclass=PoolMeta):
                     and not invoice.bank_account):
                 invoice._get_bank_account()
                 if not invoice.bank_account:
-                    cls.raise_user_error('invoice_without_bank_account', {
-                            'invoice': invoice.rec_name,
-                            'payment_type': invoice.payment_type.rec_name,
-                            })
+                    raise UserError(gettext(
+                        'account_bank.invoice_without_bank_account',
+                            invoice=invoice.rec_name,
+                            payment_type=invoice.payment_type.rec_name))
+
                 to_save.append(invoice)
         if to_save:
             cls.save(to_save)
@@ -468,17 +459,6 @@ class CompensationMoveStart(ModelView, BankMixin):
             ],
         depends=['payment_kind'])
 
-    @classmethod
-    def __setup__(cls):
-        super(CompensationMoveStart, cls).__setup__()
-        cls._error_messages.update({
-                'normal_reconcile': ('Selected moves are balanced. Use '
-                    'concile wizard instead of creating a compensation move.'),
-                'different_parties': ('Parties can not be mixed to create a '
-                    'compensation move. Party "%s" in line "%s" is different '
-                    'from previous party "%s"'),
-                })
-
     @staticmethod
     def default_date():
         pool = Pool()
@@ -508,13 +488,14 @@ class CompensationMoveStart(ModelView, BankMixin):
             if not party:
                 party = line.party
             elif party != line.party:
-                cls.raise_user_error('different_parties', (line.party.rec_name,
-                        line.rec_name, party.rec_name))
+                raise UserError(gettext('account_bank.different_parties',
+                    party=line.party.rec_name,
+                    line=line.rec_name))
             if not company:
                 company = line.account.company
         if (company and company.currency.is_zero(amount)
                 and len(set([x.account for x in lines])) == 1):
-            cls.raise_user_error('normal_reconcile')
+            raise UserError(gettext('account_bank.normal_reconcile'))
         if amount > 0:
             defaults['payment_kind'] = 'receivable'
         else:

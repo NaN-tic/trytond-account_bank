@@ -5,6 +5,8 @@ from decimal import Decimal
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
+from trytond.i18n import gettext
+from trytond.exceptions import UserWarning
 
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
@@ -87,11 +89,6 @@ class Payment(metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
-        cls._error_messages.update({
-                'no_mandate_for_party': ('No valid mandate for payment '
-                    '"%(payment)s" of party "%(party)s" with amount '
-                    '"%(amount)s".'),
-                })
 
     @fields.depends('party', 'kind')
     def on_change_kind(self):
@@ -129,11 +126,10 @@ class Payment(metaclass=PoolMeta):
         mandates2 = []
         for payment, mandate in zip(payments, mandates):
             if not mandate:
-                cls.raise_user_error('no_mandate_for_party', {
-                        'payment': payment.rec_name,
-                        'party': payment.party.rec_name,
-                        'amount': payment.amount,
-                        })
+                raise UserError(gettext('account_bank.no_mandate_for_party',
+                        payment=payment.rec_name,
+                        party=payment.party.rec_name,
+                        amount=payment.amount))
             if payment.bank_account != mandate.account_number.account:
                 mandate = None
                 for mandate2 in payment.party.sepa_mandates:

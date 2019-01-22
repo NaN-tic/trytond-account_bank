@@ -4,6 +4,7 @@
 from trytond.pool import Pool
 from . import account
 from . import payment
+from . import party
 
 
 def register():
@@ -22,4 +23,5 @@ def register():
     Pool.register(
         payment.PayLine,
         account.CompensationMove,
+        party.PartyReplace,
         module='account_bank', type_='wizard')

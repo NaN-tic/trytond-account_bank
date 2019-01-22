@@ -2,8 +2,9 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from trytond.pool import Pool
-import account
-import payment
+from . import account
+from . import payment
+from . import party
 
 
 def register():
@@ -22,4 +23,5 @@ def register():
     Pool.register(
         payment.PayLine,
         account.CompensationMove,
+        party.PartyReplace,
         module='account_bank', type_='wizard')

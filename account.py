@@ -68,9 +68,9 @@ class BankAccount:
                 ('account.invoice', 'bank_account'),
                 ])
         cls._error_messages.update({
-                'modifiy_with_related_model': ('It is not possible to modify '
+                'modify_with_related_model': ('It is not possible to modify '
                     'the owner of bank account "%(account)s" as it is used on '
-                    'en el %(field)s del %(model)s "%(name)s"'),
+                    'the %(field)s of %(model)s "%(name)s"'),
                 })
 
     @classmethod
@@ -85,31 +85,32 @@ class BankAccount:
 
     @classmethod
     def check_owners(cls, accounts):
-        pool = Pool()
-        IrModel = pool.get('ir.model')
-        Field = pool.get('ir.model.field')
-        account_ids = [a.id for a in accounts]
-        for value in cls._check_owners_related_models:
-            model_name, field_name = value
-            Model = pool.get(model_name)
-            records = Model.search([(field_name, 'in', account_ids)])
-            model, = IrModel.search([('model', '=', model_name)])
-            field, = Field.search([
-                    ('model.model', '=', model_name),
-                    ('name', '=', field_name),
-                    ], limit=1)
-            for record in records:
-                target = record.account_bank_from
-                account = getattr(record, field_name)
-                if target not in account.owners:
-                    error_args = {
-                        'account': account.rec_name,
-                        'model': model.name,
-                        'field': field.field_description,
-                        'name': record.rec_name,
-                        }
-                    cls.raise_user_error('modifiy_with_related_model',
-                        error_args)
+        with Transaction().set_context(_check_access=False):
+            pool = Pool()
+            IrModel = pool.get('ir.model')
+            Field = pool.get('ir.model.field')
+            account_ids = [a.id for a in accounts]
+            for value in cls._check_owners_related_models:
+                model_name, field_name = value
+                Model = pool.get(model_name)
+                records = Model.search([(field_name, 'in', account_ids)])
+                model, = IrModel.search([('model', '=', model_name)])
+                field, = Field.search([
+                        ('model.model', '=', model_name),
+                        ('name', '=', field_name),
+                        ], limit=1)
+                for record in records:
+                    target = record.account_bank_from
+                    account = getattr(record, field_name)
+                    if target not in account.owners:
+                        error_args = {
+                            'account': account.rec_name,
+                            'model': model.name,
+                            'field': field.field_description,
+                            'name': record.rec_name,
+                            }
+                        cls.raise_user_error('modify_with_related_model',
+                            error_args)
 
 
 class Party:
@@ -147,7 +148,7 @@ class BankMixin(object):
         states={
                 'readonly': Eval('account_bank') == 'other',
                 'invisible': ~Bool(Eval('account_bank_from')),
-            },
+        },
         depends=['party', 'payment_type', 'account_bank_from', 'account_bank'],
         ondelete='RESTRICT')
 

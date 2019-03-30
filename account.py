@@ -358,7 +358,8 @@ class Line(BankMixin, metaclass=PoolMeta):
 
     def get_reverse_moves(self, name):
         if (not self.account
-                or self.account.kind not in ['receivable', 'payable']):
+                or (self.account.type.receivable == False and
+                    self.account.type.payable == False)):
             return False
         domain = [
             ('account', '=', self.account.id),
@@ -402,7 +403,8 @@ class Line(BankMixin, metaclass=PoolMeta):
 
     def get_netting_moves(self, name):
         if (not self.account
-                or self.account.kind not in ['receivable', 'payable']):
+                or (self.account.type.receivable == False and
+                    self.account.type.payable == False)):
             return False
         if not self.account.party_required:
             return False
@@ -443,7 +445,8 @@ class CompensationMoveStart(ModelView, BankMixin):
     __name__ = 'account.move.compensation_move.start'
     party = fields.Many2One('party.party', 'Party', readonly=True)
     account = fields.Many2One('account.account', 'Account',
-        domain=[('kind', 'in', ['payable', 'receivable'])],
+        domain=['OR', ('type.receivable', '=', True),
+                ('type.payable','=', True)],
         required=True)
     date = fields.Date('Date')
     maturity_date = fields.Date('Maturity Date')
@@ -552,7 +555,8 @@ class CompensationMove(Wizard):
         lines = Line.browse(Transaction().context.get('active_ids'))
 
         for line in lines:
-            if (line.account.kind not in ('payable', 'receivable')
+            if ((line.account.type.receivable == False and
+                    line.account.type.payable == False)
                     or line.reconciliation):
                 continue
             move_lines.append(self.get_counterpart_line(line))

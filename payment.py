@@ -6,7 +6,7 @@ from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.i18n import gettext
-from trytond.exceptions import UserWarning
+from trytond.exceptions import UserError
 
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 

@@ -12,7 +12,7 @@ from trytond.pyson import Eval, Bool, If
 from trytond.transaction import Transaction
 from trytond.wizard import Wizard, StateTransition, StateView, Button
 from trytond.i18n import gettext
-from trytond.exceptions import UserWarning
+from trytond.exceptions import UserError
 
 __all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',
     'Line', 'CompensationMoveStart', 'CompensationMove']

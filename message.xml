@@ -2,7 +2,7 @@
 <!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
 this repository contains the full copyright notices and license terms. -->
 <tryton>
-    <data group="1">
+    <data grouped="1">
         <record model="ir.message" id="no_mandate_for_party">
             <field name="text">No valid mandate for payment "%(payment)s" of party "%(party)s" with amount "%(amount)s".</field>
         </record>

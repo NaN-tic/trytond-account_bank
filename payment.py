@@ -4,9 +4,10 @@ from decimal import Decimal
 
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
-from trytond.pyson import Eval
+from trytond.pyson import Eval, If
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
+from trytond.transaction import Transaction
 
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
@@ -62,14 +63,39 @@ class Group(metaclass=PoolMeta):
 
 class Payment(metaclass=PoolMeta):
     __name__ = 'account.payment'
+    account_bank_from = fields.Function(fields.Many2One('party.party',
+            'Account Bank From'),
+        'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         states={
             'readonly': Eval('state') != 'draft',
             },
         domain=[
-            ('owners', '=', Eval('party'))
+            If(Eval('account_bank_from', None) == None,
+                ('id', '=', -1),
+                ('owners.id', '=', Eval('account_bank_from')),
+                ),
             ],
-        depends=['party', 'kind'])
+        depends=['account_bank_from'])
+
+    @fields.depends('journal', 'party')
+    def on_change_with_account_bank_from(self, name=None):
+        '''
+        Sets the party where get bank account for this account payment.
+        '''
+        Company = Pool().get('company.company')
+
+        if self.journal and self.journal.payment_type and self.party:
+            payment_type = self.journal.payment_type
+            party = self.party
+            if payment_type.account_bank == 'party':
+                return party.id
+            elif payment_type.account_bank == 'company':
+                company = Transaction().context.get('company')
+                if company:
+                    return Company(company).party.id
+            elif payment_type.account_bank == 'other':
+                return payment_type.party.id
 
     @classmethod
     def __setup__(cls):

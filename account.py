@@ -333,19 +333,15 @@ class Line(BankMixin, metaclass=PoolMeta):
         if self.payment_type and self.party:
             self._get_bank_account()
 
-    @fields.depends('party', 'debit', 'credit', 'move', '_parent_move.id')
+    @fields.depends('party', 'account_kind', 'move', '_parent_move.id')
     def on_change_with_payment_type(self, name=None):
         if self.party:
-            if self.credit > 0 or self.debit < 0:
-                name = 'supplier_payment_type'
-            elif self.debit > 0 or self.credit < 0:
-                name = 'customer_payment_type'
-            else:
-                return
-            payment_type = getattr(self.party, name)
-            if payment_type:
-                return payment_type.id
-        return
+            if self.account_kind == 'payable':
+                return (self.party.supplier_payment_type.id
+                    if self.party.supplier_payment_type else None)
+            elif self.account_kind == 'receivable':
+                return (self.party.customer_payment_type.id
+                    if self.party.customer_payment_type else None)
 
     @classmethod
     def copy(cls, lines, default=None):

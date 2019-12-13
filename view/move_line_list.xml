@@ -8,4 +8,18 @@
     <xpath expr="/tree/field[@name='credit']" position="replace_attributes">
         <field name="credit" sum="Total Credit"/>
     </xpath>
+    <xpath expr="/tree/button[@name='payment_block']" position="replace_attributes">
+        <button name="payment_block" tree_invisible="1"/>
+    </xpath>
+    <xpath expr="/tree/button[@name='payment_unblock']" position="replace_attributes">
+        <button name="payment_unblock" tree_invisible="1"/>
+    </xpath>
+    <xpath expr="/tree/field[@name='payment_type']" position="after">
+        <field name="bank_account"/>
+    </xpath>
+    <xpath expr="/tree/field[@name='amount_second_currency']" position="replace">
+    </xpath>
+    <xpath expr="/tree/field[@name='second_currency']" position="before">
+        <field name="amount_second_currency"/>
+    </xpath>
 </data>

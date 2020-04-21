@@ -182,7 +182,7 @@ class BankMixin(object):
                         return
 
     @fields.depends('party', 'payment_type', 'payment_type_kind',
-        methods=['on_change_with_payment_type'])
+        'bank_account', methods=['on_change_with_payment_type'])
     def on_change_with_bank_account(self):
         '''
         Add account bank when changes payment_type or party.

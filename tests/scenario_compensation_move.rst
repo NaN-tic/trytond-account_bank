@@ -202,11 +202,11 @@ Partialy reconcile both lines::
     >>> compensation_move.form.bank_account = None
     >>> compensation_move.execute('create_move')
     >>> credit_note.reload()
-    >>> credit_note.amount_to_pay
-    Decimal('0.0')
+    >>> credit_note.amount_to_pay == Decimal(0)
+    True
     >>> invoice.reload()
-    >>> invoice.amount_to_pay
-    Decimal('0.0')
+    >>> invoice.amount_to_pay == Decimal(0)
+    True
 
 Create a move that pays the pending amount::
 
@@ -232,8 +232,8 @@ Create a move that pays the pending amount::
     >>> line.credit = Decimal('0.0')
     >>> move.click('post')
     >>> invoice.reload()
-    >>> invoice.amount_to_pay
-    Decimal('0.0')
+    >>> invoice.amount_to_pay == Decimal(0)
+    True
     >>> lines = MoveLine.find([
     ...     ('account', '=', receivable.id)])
     >>> to_reconcile = [l for l in lines if not l.reconciliation]
@@ -242,7 +242,7 @@ Create a move that pays the pending amount::
     >>> reconcile_lines.state == 'end'
     True
     >>> invoice.reload()
-    >>> invoice.amount_to_pay
-    Decimal('0.0')
+    >>> invoice.amount_to_pay == Decimal(0)
+    True
     >>> invoice.state == 'paid'
     True

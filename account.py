@@ -181,8 +181,8 @@ class BankMixin(object):
                         self.bank_account = default_bank
                         return
 
-    @fields.depends('party', 'payment_type', 'payment_type_kind',
-        'bank_account', methods=['on_change_with_payment_type'])
+    @fields.depends('party', 'payment_type', 'bank_account',
+        methods=['on_change_with_payment_type'])
     def on_change_with_bank_account(self):
         '''
         Add account bank when changes payment_type or party.
@@ -230,6 +230,7 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:
             readonly = readonly | previous_readonly
+        cls.bank_account.on_change_with.add('payment_type_kind')
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })

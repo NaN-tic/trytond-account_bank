@@ -181,22 +181,13 @@ class BankMixin(object):
                         self.bank_account = default_bank
                         return
 
-    @fields.depends('party', 'payment_type', 'bank_account', 'payment_type_kind',
+    @fields.depends('party', 'payment_type', 'bank_account',
         methods=['on_change_with_payment_type'])
     def on_change_with_bank_account(self):
         '''
         Add account bank when changes payment_type or party.
         '''
-        pool = Pool()
-        Invoice = pool.get('account.invoice')
-
-        if isinstance(self, Invoice):
-            if not self.payment_type or (self.payment_type
-                    and self.payment_type.kind != self.payment_type_kind):
-                self._get_bank_account()
-        else:
-            self._get_bank_account()
-
+        self._get_bank_account()
         return self.bank_account.id if self.bank_account else None
 
     @fields.depends('payment_type', 'party',
@@ -244,6 +235,13 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         self.bank_account = None
         if self.payment_type:
             self._get_bank_account()
+
+    @fields.depends('bank_account', 'payment_type', 'payment_type_kind')
+    def on_change_with_bank_account(self):
+        if not self.payment_type or (self.payment_type
+                and self.payment_type.kind != self.payment_type_kind):
+            return super().on_change_with_bank_account()
+        return self.bank_account.id if self.bank_account else None
 
     @classmethod
     def post(cls, invoices):

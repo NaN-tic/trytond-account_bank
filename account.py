@@ -504,8 +504,8 @@ class CompensationMoveStart(ModelView, BankMixin):
                 party = line.party
             elif party != line.party:
                 raise UserError(gettext('account_bank.different_parties',
-                    party=line.party.rec_name,
-                    line=line.rec_name))
+                        party=line.party.rec_name, line=line.rec_name,
+                        previous_party=party.rec_name))
             if not company:
                 company = line.account.company
         if (company and company.currency.is_zero(amount)

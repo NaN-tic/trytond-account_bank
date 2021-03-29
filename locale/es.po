@@ -148,7 +148,7 @@ msgid ""
 "in line \"%(line)s\" is different from previous party \"%(party)s\""
 msgstr ""
 "No se pueden mezclar terceros al crear un efecto de compensación. El tercero"
-" \"%s\" del apunte \"%s\" es distinto del tercero anterior \"%s\"."
+" \"%(party)s\" del apunte \"%(line)s\" es distinto del tercero anterior \"%(previous_party)s\"."
 
 msgctxt "model:ir.message,text:invoice_without_bank_account"
 msgid ""

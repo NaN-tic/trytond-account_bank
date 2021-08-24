@@ -8,6 +8,7 @@ from trytond.pyson import Eval, If
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.transaction import Transaction
+from trytond.modules.currency.fields import Monetary
 
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
@@ -30,26 +31,20 @@ class Group(metaclass=PoolMeta):
     payment_type = fields.Function(fields.Many2One('account.payment.type',
             'Payment Type'),
         'on_change_with_payment_type')
-    currency_digits = fields.Function(fields.Integer('Currency Digits'),
-        'on_change_with_currency_digits')
-    amount = fields.Function(fields.Numeric('Total', digits=(16,
-                Eval('currency_digits', 2)), depends=['currency_digits']),
-        'get_amount')
-
-    @classmethod
-    def default_currency_digits(cls):
-        return 2
+    currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
+        'on_change_with_currency')
+    amount = fields.Function(Monetary('Total',
+        digits='currency', currency='currency'), 'get_amount')
 
     @fields.depends('journal')
     def on_change_with_payment_type(self, name=None):
         if self.journal and self.journal.payment_type:
             return self.journal.payment_type.id
 
-    @fields.depends('journal')
-    def on_change_with_currency_digits(self, name=None):
+    @fields.depends('journal', '_parent_journal.currency')
+    def on_change_with_currency(self, name=None):
         if self.journal and self.journal.currency:
-            return self.journal.currency.digits
-        return 2
+            return self.journal.currency.id
 
     def get_amount(self, name):
         amount = _ZERO

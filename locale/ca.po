@@ -86,9 +86,9 @@ msgctxt "field:account.payment.group,amount:"
 msgid "Total"
 msgstr "Total"
 
-msgctxt "field:account.payment.group,currency_digits:"
-msgid "Currency Digits"
-msgstr "Dígits de la moneda"
+msgctxt "field:account.payment.group,currency:"
+msgid "Currency"
+msgstr "Moneda"
 
 msgctxt "field:account.payment.group,payment_type:"
 msgid "Payment Type"

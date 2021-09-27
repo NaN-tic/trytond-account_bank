@@ -127,6 +127,7 @@ class Party(metaclass=PoolMeta):
 
 
 class BankMixin(object):
+    __slots__ = ()
     account_bank = fields.Function(fields.Selection(ACCOUNT_BANK_KIND,
             'Account Bank'),
         'on_change_with_account_bank')

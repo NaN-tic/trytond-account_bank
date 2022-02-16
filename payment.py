@@ -131,7 +131,7 @@ class Payment(metaclass=PoolMeta):
             self.bank_account = (default_bank_account and
                 default_bank_account.id or None)
 
-    @fields.depends('party', 'line')
+    @fields.depends('party', 'line', 'kind')
     def on_change_line(self):
         super(Payment, self).on_change_line()
         self.bank_account = None

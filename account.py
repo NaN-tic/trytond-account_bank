@@ -2,7 +2,7 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from sql import Null
-from sql.aggregate import BoolOr
+from sql.aggregate import BoolOr, Count
 from sql.operators import In
 from decimal import Decimal
 
@@ -440,8 +440,9 @@ class Line(BankMixin, metaclass=PoolMeta):
                     where=(account.reconcile
                         & (move_line.reconciliation == Null)),
                     group_by=(move_line.account, move_line.party),
-                    having=((BoolOr((move_line.debit) != Decimal(0)))
+                    having=(((BoolOr((move_line.debit) != Decimal(0)))
                         | (BoolOr((move_line.credit) != Decimal(0))))
+                        & (Count(move_line.account) > 1))
                     )
         query = lines.select(lines.id, where=(
                 In((lines.account, lines.party), netting)))

@@ -2,7 +2,7 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from sql import Null
-from sql.aggregate import BoolOr
+from sql.aggregate import BoolOr, Count
 from sql.operators import In
 from decimal import Decimal
 
@@ -416,11 +416,11 @@ class Line(BankMixin, metaclass=PoolMeta):
         domain = [
             ('party', '=', self.party.id),
             ('reconciliation', '=', None),
+            ['OR',
+                ('debit', '!=', 0),
+                ('credit', '!=', 0),
+                ]
             ]
-        if self.credit > Decimal('0.0'):
-            domain.append(('debit', '>', 0))
-        if self.debit > Decimal('0.0'):
-            domain.append(('credit', '>', 0))
         moves = self.search(domain, limit=1)
         return len(moves) > 0
 
@@ -430,19 +430,27 @@ class Line(BankMixin, metaclass=PoolMeta):
         Account = pool.get('account.account')
         MoveLine = pool.get('account.move.line')
         operator = 'in' if clause[2] else 'not in'
-
+        lines = MoveLine.__table__()
         move_line = MoveLine.__table__()
         account = Account.__table__()
-        query = move_line.join(account, condition=(
+        cursor = Transaction().connection.cursor()
+
+        netting = move_line.join(account, condition=(
                 account.id == move_line.account)).select(
-                    move_line.party,
+                    move_line.account, move_line.party,
                     where=(account.reconcile
                         & (move_line.reconciliation == Null)),
-                    group_by=(move_line.party,),
-                    having=((BoolOr((move_line.debit) != Decimal(0)))
-                        & (BoolOr((move_line.credit) != Decimal(0))))
+                    group_by=(move_line.account, move_line.party),
+                    having=(((BoolOr((move_line.debit) != Decimal(0)))
+                        | (BoolOr((move_line.credit) != Decimal(0))))
+                        & (Count(move_line.account) > 1))
                     )
-        return [('party', operator, query)]
+        query = lines.select(lines.id, where=(
+                In((lines.account, lines.party), netting)))
+        # Fetch the data otherwise its too slow
+        cursor.execute(*query)
+
+        return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
     @fields.depends('_parent_move.id')
     def on_change_with_account_bank_from(self, name=None):

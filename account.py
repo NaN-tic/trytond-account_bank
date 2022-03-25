@@ -225,6 +225,8 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
+        cls.account_bank_from.context = {'company': Eval('company')}
+        cls.account_bank_from.depends = ['company']
 
     @fields.depends('payment_type', 'party', 'company')
     def on_change_party(self):

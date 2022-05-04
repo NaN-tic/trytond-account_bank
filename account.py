@@ -190,7 +190,7 @@ class BankMixin(object):
             self.bank_account = None
             return
 
-    @fields.depends('party', 'payment_type',
+    @fields.depends('party', 'payment_type', 'bank_account',
         methods=['on_change_with_payment_type'])
     def on_change_payment_type(self):
         self._get_bank_account()
@@ -232,7 +232,7 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         cls.account_bank_from.context = {'company': Eval('company')}
         cls.account_bank_from.depends = ['company']
 
-    @fields.depends('payment_type', 'party', 'company')
+    @fields.depends('payment_type', 'party', 'company', 'bank_account')
     def on_change_party(self):
         '''
         Add account bank to invoice line when changes party.
@@ -330,7 +330,7 @@ class Line(BankMixin, metaclass=PoolMeta):
                 'readonly': readonly,
                 })
 
-    @fields.depends('party', 'payment_type')
+    @fields.depends('party', 'payment_type', 'bank_account')
     def on_change_party(self):
         '''Add account bank to account move line when changes party.'''
         try:

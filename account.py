@@ -34,7 +34,10 @@ class PaymentType(metaclass=PoolMeta):
             'required': Eval('account_bank') == 'other',
             'invisible': Eval('account_bank') != 'other',
             },
-        depends=['account_bank'])
+        context={
+            'company': Eval('company'),
+            },
+        depends=['account_bank', 'company'])
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
             If(Eval('party', None) == None,
@@ -332,6 +335,8 @@ class Line(BankMixin, metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
+        cls.account_bank_from.context = {'company': Eval('company')}
+        cls.account_bank_from.depends.append('company')
 
     @fields.depends('party', 'payment_type')
     def on_change_party(self):

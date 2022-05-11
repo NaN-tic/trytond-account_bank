@@ -160,7 +160,6 @@ class BankMixin(object):
         pool = Pool()
         Party = pool.get('party.party')
 
-        self.bank_account = None
         if self.party and self.payment_type:
             if self.payment_type.account_bank == 'other':
                 self.bank_account = self.payment_type.bank_account
@@ -169,6 +168,10 @@ class BankMixin(object):
                 if hasattr(Party, party_fname):
                     account_bank = self.payment_type.account_bank
                     if account_bank == 'company':
+                        available_banks = getattr(self.company.party,
+                            'bank_accounts', [])
+                        if self.bank_account in available_banks:
+                            return
                         party_company_fname = ('%s_company_bank_account' %
                             self.payment_type.kind)
                         company_bank = getattr(self.party, party_company_fname,
@@ -182,17 +185,19 @@ class BankMixin(object):
                         return
                     elif account_bank == 'party' and self.party:
                         default_bank = getattr(self.party, party_fname)
+                        if (hasattr(self, 'bank_account') and self.bank_account
+                                and self.bank_account == default_bank):
+                            return
                         self.bank_account = default_bank
                         return
+        else:
+            self.bank_account = None
+            return
 
     @fields.depends('party', 'payment_type', 'bank_account',
         methods=['on_change_with_payment_type'])
-    def on_change_with_bank_account(self):
-        '''
-        Add account bank when changes payment_type or party.
-        '''
+    def on_change_payment_type(self):
         self._get_bank_account()
-        return self.bank_account.id if self.bank_account else None
 
     @fields.depends('payment_type', 'party',
         methods=['on_change_with_payment_type'])
@@ -225,14 +230,13 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:
             readonly = readonly | previous_readonly
-        cls.bank_account.on_change_with.add('payment_type_kind')
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
         cls.account_bank_from.context = {'company': Eval('company')}
         cls.account_bank_from.depends = ['company']
 
-    @fields.depends('payment_type', 'party', 'company')
+    @fields.depends('payment_type', 'party', 'company', 'bank_account')
     def on_change_party(self):
         '''
         Add account bank to invoice line when changes party.
@@ -241,13 +245,6 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         self.bank_account = None
         if self.payment_type:
             self._get_bank_account()
-
-    @fields.depends('bank_account', 'payment_type', 'payment_type_kind')
-    def on_change_with_bank_account(self):
-        if not self.payment_type or (self.payment_type
-                and self.payment_type.kind != self.payment_type_kind):
-            return super().on_change_with_bank_account()
-        return self.bank_account.id if self.bank_account else None
 
     @classmethod
     def post(cls, invoices):
@@ -339,7 +336,7 @@ class Line(BankMixin, metaclass=PoolMeta):
         cls.account_bank_from.context = {'company': Eval('company')}
         cls.account_bank_from.depends.add('company')
 
-    @fields.depends('party', 'payment_type')
+    @fields.depends('party', 'payment_type', 'bank_account')
     def on_change_party(self):
         '''Add account bank to account move line when changes party.'''
         try:
@@ -462,10 +459,6 @@ class Line(BankMixin, metaclass=PoolMeta):
     @fields.depends('_parent_move.id')
     def on_change_with_account_bank_from(self, name=None):
         return super().on_change_with_account_bank_from(name)
-
-    @fields.depends('_parent_move.id')
-    def on_change_with_bank_account(self):
-        return super().on_change_with_bank_account()
 
 
 class CompensationMoveStart(ModelView, BankMixin):

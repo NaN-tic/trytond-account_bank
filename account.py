@@ -457,8 +457,11 @@ class CompensationMoveStart(ModelView, BankMixin):
     __name__ = 'account.move.compensation_move.start'
     party = fields.Many2One('party.party', 'Party', readonly=True)
     account = fields.Many2One('account.account', 'Account',
-        domain=['OR', ('type.receivable', '=', True),
-                ('type.payable','=', True)],
+        domain=[
+            ('company', '=', Eval('context', {}).get('company', -1)),
+            ['OR',
+                ('type.receivable', '=', True),
+                ('type.payable','=', True)]],
         required=True)
     date = fields.Date('Date')
     maturity_date = fields.Date('Maturity Date')

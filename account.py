@@ -190,6 +190,9 @@ class BankMixin(object):
                             return
                         self.bank_account = default_bank
                         return
+                    else:
+                        self.bank_account = None
+                        return
         else:
             self.bank_account = None
             return

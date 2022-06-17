@@ -425,7 +425,12 @@ class Line(BankMixin, metaclass=PoolMeta):
             ['OR',
                 ('debit', '!=', 0),
                 ('credit', '!=', 0),
-                ]
+            ],
+            ['OR',
+                ('account.type.receivable', '=', True),
+                ('account.type.payable', '=', True)
+            ]
+            ('move.company', '=', self.move.company)
             ]
         moves = self.search(domain, limit=1)
         return len(moves) > 0
@@ -435,24 +440,40 @@ class Line(BankMixin, metaclass=PoolMeta):
         pool = Pool()
         Account = pool.get('account.account')
         MoveLine = pool.get('account.move.line')
+        Move = pool.get('account.move')
+        AccountType = pool.get('account.account.type')
+        Rule = pool.get('ir.rule')
         operator = 'in' if clause[2] else 'not in'
         lines = MoveLine.__table__()
+        move = Move.__table__()
         move_line = MoveLine.__table__()
         account = Account.__table__()
+        account_type = AccountType.__table__()
         cursor = Transaction().connection.cursor()
 
+        companies = Rule._get_context().get('companies')
+        if companies:
+            company_filter = move.company.in_(companies)
+        else:
+            company_filter = False
+
         netting = move_line.join(account, condition=(
-                account.id == move_line.account)).select(
-                    move_line.account, move_line.party,
+                account.id == move_line.account)).join(move, condition=(
+                    move.id == move_line.move)).join(account_type, condition=(
+                        account_type.id == account.type)).select(
+                    move.company, move_line.party,
                     where=(account.reconcile
-                        & (move_line.reconciliation == Null)),
-                    group_by=(move_line.account, move_line.party),
-                    having=(((BoolOr((move_line.debit) != Decimal(0)))
-                        | (BoolOr((move_line.credit) != Decimal(0))))
-                        & (Count(move_line.account) > 1))
+                        & (move_line.reconciliation == Null)
+                        & (move.state == 'posted')
+                        & (account_type.receivable | account_type.payable)
+                        & (move_line.party != Null))
+                        & company_filter,
+                    group_by=(move_line.party, move.company),
+                    having=((BoolOr((move_line.debit) != Decimal(0)))
+                        & (BoolOr((move_line.credit) != Decimal(0))))
                     )
-        query = lines.select(lines.id, where=(
-                In((lines.account, lines.party), netting)))
+        query = lines.join(move, condition=(move.id == lines.move)).select(lines.id, where=(
+                In((move.company, lines.party), netting)))
         # Fetch the data otherwise its too slow
         cursor.execute(*query)
 

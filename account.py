@@ -429,7 +429,7 @@ class Line(BankMixin, metaclass=PoolMeta):
             ['OR',
                 ('account.type.receivable', '=', True),
                 ('account.type.payable', '=', True)
-            ]
+            ],
             ('move.company', '=', self.move.company)
             ]
         moves = self.search(domain, limit=1)

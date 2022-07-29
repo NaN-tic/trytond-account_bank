@@ -11,8 +11,7 @@ MODULE = 'account_bank'
 PREFIX = 'trytonspain'
 MODULE2PREFIX = {'account_payment_type': 'trytonspain', 'company_bank': 'trytonspain'}
 OWNER = {
-    'nantic':'NaN-tic',
-    'trytonzz':'nanticzz',
+    'trytonspain': 'NaN-tic',
 }
 
 

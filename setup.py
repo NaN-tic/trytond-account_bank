@@ -9,7 +9,7 @@ from configparser import ConfigParser
 
 MODULE = 'account_bank'
 PREFIX = 'trytonspain'
-MODULE2PREFIX = {'account_payment_type': 'trytonspain', 'company_bank': 'trytonspain'}
+MODULE2PREFIX = {'account_payment_type': 'nan-tic', 'company_bank': 'trytonspain'}
 OWNER = {
     'trytonspain': 'NaN-tic',
 }

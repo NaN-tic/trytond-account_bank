@@ -167,10 +167,11 @@ class BankMixin(object):
                 if hasattr(Party, party_fname):
                     account_bank = self.payment_type.account_bank
                     if account_bank == 'company':
-                        available_banks = getattr(self.company.party,
-                            'bank_accounts', [])
-                        if self.bank_account in available_banks:
-                            return
+                        if hasattr(self, 'company') and self.company:
+                            available_banks = getattr(self.company.party,
+                                'bank_accounts', [])
+                            if self.bank_account in available_banks:
+                                return
                         party_company_fname = ('%s_company_bank_account' %
                             self.payment_type.kind)
                         company_bank = getattr(self.party, party_company_fname,

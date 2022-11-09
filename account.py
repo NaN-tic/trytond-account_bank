@@ -28,7 +28,7 @@ ACCOUNT_BANK_KIND = [
 class PaymentType(metaclass=PoolMeta):
     __name__ = 'account.payment.type'
     account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank Kind',
-        select=True, required=True)
+        required=True)
     party = fields.Many2One('party.party', 'Party',
         states={
             'required': Eval('account_bank') == 'other',

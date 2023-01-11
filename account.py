@@ -655,7 +655,8 @@ class CompensationMove(Wizard):
         new_line.credit = line.debit
         new_line.description = line.description
         new_line.second_currency = line.second_currency
-        new_line.amount_second_currency = line.amount_second_currency
+        if line.second_currency:
+            new_line.amount_second_currency = -line.amount_second_currency
         new_line.party = line.party
 
         return new_line

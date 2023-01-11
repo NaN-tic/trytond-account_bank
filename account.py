@@ -2,7 +2,7 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from sql import Null
-from sql.aggregate import BoolOr
+from sql.aggregate import BoolOr, Count
 from sql.operators import In
 from decimal import Decimal
 
@@ -28,13 +28,16 @@ ACCOUNT_BANK_KIND = [
 class PaymentType(metaclass=PoolMeta):
     __name__ = 'account.payment.type'
     account_bank = fields.Selection(ACCOUNT_BANK_KIND, 'Account Bank Kind',
-        select=True, required=True)
+        required=True)
     party = fields.Many2One('party.party', 'Party',
         states={
             'required': Eval('account_bank') == 'other',
             'invisible': Eval('account_bank') != 'other',
             },
-        depends=['account_bank'])
+        context={
+            'company': Eval('company'),
+            },
+        depends=['account_bank', 'company'])
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
             If(Eval('party', None) == None,
@@ -127,6 +130,7 @@ class Party(metaclass=PoolMeta):
 
 
 class BankMixin(object):
+    __slots__ = ()
     account_bank = fields.Function(fields.Selection(ACCOUNT_BANK_KIND,
             'Account Bank'),
         'on_change_with_account_bank')
@@ -156,7 +160,6 @@ class BankMixin(object):
         pool = Pool()
         Party = pool.get('party.party')
 
-        self.bank_account = None
         if self.party and self.payment_type:
             if self.payment_type.account_bank == 'other':
                 self.bank_account = self.payment_type.bank_account
@@ -165,6 +168,11 @@ class BankMixin(object):
                 if hasattr(Party, party_fname):
                     account_bank = self.payment_type.account_bank
                     if account_bank == 'company':
+                        if hasattr(self, 'company') and self.company:
+                            available_banks = getattr(self.company.party,
+                                'bank_accounts', [])
+                            if self.bank_account in available_banks:
+                                return
                         party_company_fname = ('%s_company_bank_account' %
                             self.payment_type.kind)
                         company_bank = getattr(self.party, party_company_fname,
@@ -178,17 +186,22 @@ class BankMixin(object):
                         return
                     elif account_bank == 'party' and self.party:
                         default_bank = getattr(self.party, party_fname)
+                        if (hasattr(self, 'bank_account') and self.bank_account
+                                and self.bank_account == default_bank):
+                            return
                         self.bank_account = default_bank
                         return
+                    else:
+                        self.bank_account = None
+                        return
+        else:
+            self.bank_account = None
+            return
 
     @fields.depends('party', 'payment_type', 'bank_account',
         methods=['on_change_with_payment_type'])
-    def on_change_with_bank_account(self):
-        '''
-        Add account bank when changes payment_type or party.
-        '''
+    def on_change_payment_type(self):
         self._get_bank_account()
-        return self.bank_account.id if self.bank_account else None
 
     @fields.depends('payment_type', 'party',
         methods=['on_change_with_payment_type'])
@@ -221,12 +234,15 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:
             readonly = readonly | previous_readonly
-        cls.bank_account.on_change_with.add('payment_type_kind')
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
+        cls.account_bank_from.context = {'company': Eval('company')}
+        cls.account_bank_from.depends = ['company']
+        # allow process or paid invoices when is posted
+        cls._check_modify_exclude.add('bank_account')
 
-    @fields.depends('payment_type', 'party', 'company')
+    @fields.depends('payment_type', 'party', 'company', 'bank_account')
     def on_change_party(self):
         '''
         Add account bank to invoice line when changes party.
@@ -235,13 +251,6 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         self.bank_account = None
         if self.payment_type:
             self._get_bank_account()
-
-    @fields.depends('bank_account', 'payment_type', 'payment_type_kind')
-    def on_change_with_bank_account(self):
-        if not self.payment_type or (self.payment_type
-                and self.payment_type.kind != self.payment_type_kind):
-            return super().on_change_with_bank_account()
-        return self.bank_account.id if self.bank_account else None
 
     @classmethod
     def post(cls, invoices):
@@ -330,8 +339,10 @@ class Line(BankMixin, metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
+        cls.account_bank_from.context = {'company': Eval('company')}
+        cls.account_bank_from.depends.add('company')
 
-    @fields.depends('party', 'payment_type')
+    @fields.depends('party', 'payment_type', 'bank_account')
     def on_change_party(self):
         '''Add account bank to account move line when changes party.'''
         try:
@@ -415,11 +426,16 @@ class Line(BankMixin, metaclass=PoolMeta):
         domain = [
             ('party', '=', self.party.id),
             ('reconciliation', '=', None),
+            ['OR',
+                ('debit', '!=', 0),
+                ('credit', '!=', 0),
+            ],
+            ['OR',
+                ('account.type.receivable', '=', True),
+                ('account.type.payable', '=', True)
+            ],
+            ('move.company', '=', self.move.company)
             ]
-        if self.credit > Decimal('0.0'):
-            domain.append(('debit', '>', 0))
-        if self.debit > Decimal('0.0'):
-            domain.append(('credit', '>', 0))
         moves = self.search(domain, limit=1)
         return len(moves) > 0
 
@@ -428,28 +444,48 @@ class Line(BankMixin, metaclass=PoolMeta):
         pool = Pool()
         Account = pool.get('account.account')
         MoveLine = pool.get('account.move.line')
+        Move = pool.get('account.move')
+        AccountType = pool.get('account.account.type')
+        Rule = pool.get('ir.rule')
         operator = 'in' if clause[2] else 'not in'
-
+        lines = MoveLine.__table__()
+        move = Move.__table__()
         move_line = MoveLine.__table__()
         account = Account.__table__()
-        query = move_line.join(account, condition=(
-                account.id == move_line.account)).select(
-                    move_line.party,
+        account_type = AccountType.__table__()
+        cursor = Transaction().connection.cursor()
+
+        companies = Rule._get_context().get('companies')
+        if companies:
+            company_filter = move.company.in_(companies)
+        else:
+            company_filter = False
+
+        netting = move_line.join(account, condition=(
+                account.id == move_line.account)).join(move, condition=(
+                    move.id == move_line.move)).join(account_type, condition=(
+                        account_type.id == account.type)).select(
+                    move.company, move_line.party,
                     where=(account.reconcile
-                        & (move_line.reconciliation == Null)),
-                    group_by=(move_line.party,),
+                        & (move_line.reconciliation == Null)
+                        & (move.state == 'posted')
+                        & (account_type.receivable | account_type.payable)
+                        & (move_line.party != Null))
+                        & company_filter,
+                    group_by=(move_line.party, move.company),
                     having=((BoolOr((move_line.debit) != Decimal(0)))
                         & (BoolOr((move_line.credit) != Decimal(0))))
                     )
-        return [('party', operator, query)]
+        query = lines.join(move, condition=(move.id == lines.move)).select(lines.id, where=(
+                In((move.company, lines.party), netting)))
+        # Fetch the data otherwise its too slow
+        cursor.execute(*query)
+
+        return [('id', operator, [x[0] for x in cursor.fetchall()])]
 
     @fields.depends('_parent_move.id')
     def on_change_with_account_bank_from(self, name=None):
         return super().on_change_with_account_bank_from(name)
-
-    @fields.depends('_parent_move.id')
-    def on_change_with_bank_account(self):
-        return super().on_change_with_bank_account()
 
 
 class CompensationMoveStart(ModelView, BankMixin):
@@ -457,8 +493,11 @@ class CompensationMoveStart(ModelView, BankMixin):
     __name__ = 'account.move.compensation_move.start'
     party = fields.Many2One('party.party', 'Party', readonly=True)
     account = fields.Many2One('account.account', 'Account',
-        domain=['OR', ('type.receivable', '=', True),
-                ('type.payable','=', True)],
+        domain=[
+            ('company', '=', Eval('context', {}).get('company', -1)),
+            ['OR',
+                ('type.receivable', '=', True),
+                ('type.payable','=', True)]],
         required=True)
     date = fields.Date('Date')
     maturity_date = fields.Date('Maturity Date')
@@ -504,8 +543,8 @@ class CompensationMoveStart(ModelView, BankMixin):
                 party = line.party
             elif party != line.party:
                 raise UserError(gettext('account_bank.different_parties',
-                    party=line.party.rec_name,
-                    line=line.rec_name))
+                        party=line.party.rec_name, line=line.rec_name,
+                        previous_party=party.rec_name))
             if not company:
                 company = line.account.company
         if (company and company.currency.is_zero(amount)

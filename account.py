@@ -2,7 +2,7 @@
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 from sql import Null
-from sql.aggregate import BoolOr, Count
+from sql.aggregate import BoolOr
 from sql.operators import In
 from decimal import Decimal
 
@@ -574,7 +574,7 @@ class CompensationMoveStart(ModelView, BankMixin):
                 defaults['account_bank_from'] = (
                     self.on_change_with_account_bank_from())
                 defaults['bank_account'] = (self.bank_account.id
-                    if self.bank_account else None)
+                    if hasattr(self, 'bank_account') and self.bank_account else None)
             if amount > 0:
                 defaults['account'] = (party.account_receivable.id
                     if party.account_receivable else None)

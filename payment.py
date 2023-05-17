@@ -102,14 +102,6 @@ class Payment(metaclass=PoolMeta):
     @classmethod
     def __setup__(cls):
         super(Payment, cls).__setup__()
-        if 'party' not in cls.kind.on_change:
-            cls.kind.on_change.add('party')
-        if 'kind' not in cls.party.on_change:
-            cls.party.on_change.add('kind')
-        if 'kind' not in cls.line.on_change:
-            cls.line.on_change.add('kind')
-        if 'party' not in cls.line.on_change:
-            cls.line.on_change.add('party')
         readonly = Eval('state') != 'draft'
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:

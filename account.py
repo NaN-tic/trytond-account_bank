@@ -280,6 +280,13 @@ class Invoice(BankMixin, metaclass=PoolMeta):
             line.bank_account = self.bank_account
         return line
 
+    @fields.depends('payment_type', 'party', 'company', 'bank_account')
+    def on_change_lines(self):
+        super().on_change_lines()
+        self.bank_account = None
+        if self.payment_type:
+            self._get_bank_account()
+
 
 class Reconciliation(metaclass=PoolMeta):
     __name__ = 'account.move.reconciliation'

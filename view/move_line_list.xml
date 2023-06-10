@@ -3,10 +3,10 @@
     copyright notices and license terms. -->
 <data>
     <xpath expr="/tree/field[@name='debit']" position="replace_attributes">
-        <field name="debit" sum="Total Debit"/>
+        <field name="debit" sum="1"/>
     </xpath>
     <xpath expr="/tree/field[@name='credit']" position="replace_attributes">
-        <field name="credit" sum="Total Credit"/>
+        <field name="credit" sum="1"/>
     </xpath>
     <xpath expr="/tree/button[@name='payment_block']" position="replace_attributes">
         <button name="payment_block" tree_invisible="1"/>

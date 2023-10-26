@@ -495,6 +495,7 @@ class Line(BankMixin, metaclass=PoolMeta):
         return super().on_change_with_account_bank_from(name)
 
     def get_payment_kind(self, name):
+        # From https://discuss.tryton.org/t/field-amount-to-pay-in-account-payment/6561/7
         kind = super().get_payment_kind(name)
         if not kind:
             if self.account.type.receivable:

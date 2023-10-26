@@ -494,6 +494,15 @@ class Line(BankMixin, metaclass=PoolMeta):
     def on_change_with_account_bank_from(self, name=None):
         return super().on_change_with_account_bank_from(name)
 
+    def get_payment_kind(self, name):
+        kind = super().get_payment_kind(name)
+        if not kind:
+            if self.account.type.receivable:
+                kind = 'receivable'
+            elif self.account.type.payable:
+                kind = 'payable'
+        return kind
+
 
 class CompensationMoveStart(ModelView, BankMixin):
     'Create Compensation Move Start'

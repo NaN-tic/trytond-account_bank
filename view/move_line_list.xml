@@ -16,5 +16,6 @@
     </xpath>
     <xpath expr="/tree/field[@name='payment_type']" position="after">
         <field name="bank_account"/>
+        <field name="payment_kind" optional="1"/>
     </xpath>
 </data>

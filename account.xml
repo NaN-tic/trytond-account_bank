@@ -22,17 +22,21 @@ copyright notices and license terms. -->
         <!-- account.move.line -->
         <record model="ir.ui.view" id="move_line_view_form">
             <field name="model">account.move.line</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="account.move_line_view_form"/>
             <field name="priority" eval="40"/>
             <field name="name">move_line_form</field>
         </record>
         <record model="ir.ui.view" id="move_line_view_form_move">
             <field name="model">account.move.line</field>
-            <field name="type" eval="None"/>
             <field name="inherit" ref="account.move_line_view_form_move"/>
             <field name="priority" eval="45"/>
             <field name="name">move_line_form</field>
+        </record>
+        <record model="ir.ui.view" id="move_line_view_list">
+            <field name="model">account.move.line</field>
+            <field name="inherit" ref="account_payment.move_line_view_list"/>
+            <field name="priority" eval="20"/>
+            <field name="name">move_line_list</field>
         </record>
 
         <!-- account.invoice -->
@@ -58,12 +62,6 @@ copyright notices and license terms. -->
             <field name="keyword">form_action</field>
             <field name="model">account.move.line,-1</field>
             <field name="action" ref="act_compensation_move_lines"/>
-        </record>
-        <record model="ir.ui.view" id="move_line_view_list">
-            <field name="model">account.move.line</field>
-            <field name="priority" eval="20"/>
-            <field name="inherit" ref="account_payment.move_line_view_list"/>
-            <field name="name">move_line_list</field>
         </record>
     </data>
 </tryton>

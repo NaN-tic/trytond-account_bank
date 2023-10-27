@@ -463,7 +463,7 @@ class Line(BankMixin, metaclass=PoolMeta):
         cursor = Transaction().connection.cursor()
 
         companies = Rule._get_context().get('companies')
-        if companies:
+        if not companies:
             companies = [-1]
         company_filter = move.company.in_(companies)
 

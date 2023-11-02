@@ -462,7 +462,7 @@ class Line(BankMixin, metaclass=PoolMeta):
         account_type = AccountType.__table__()
         cursor = Transaction().connection.cursor()
 
-        companies = Rule._get_context().get('companies')
+        companies = Rule._get_context(cls.__name__).get('companies')
         if not companies:
             companies = [-1]
         company_filter = move.company.in_(companies)

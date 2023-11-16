@@ -24,7 +24,7 @@ class Journal(metaclass=PoolMeta):
         help=('The party who sends the payment group, if it is different from '
         'the company.'),
         context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
 
@@ -64,7 +64,7 @@ class Payment(metaclass=PoolMeta):
     __name__ = 'account.payment'
     account_bank_from = fields.Function(fields.Many2One('party.party',
             'Account Bank From', context={
-                'company': Eval('company'),
+                'company': Eval('company', -1),
             },
             depends=['company']),
         'on_change_with_account_bank_from')

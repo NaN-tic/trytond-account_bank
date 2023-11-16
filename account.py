@@ -35,7 +35,7 @@ class PaymentType(metaclass=PoolMeta):
             'invisible': Eval('account_bank') != 'other',
             },
         context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['account_bank', 'company'])
     bank_account = fields.Many2One('bank.account', 'Bank Account',
@@ -237,7 +237,7 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
-        cls.account_bank_from.context = {'company': Eval('company')}
+        cls.account_bank_from.context = {'company': Eval('company', -1)}
         cls.account_bank_from.depends = ['company']
         # allow process or paid invoices when is posted
         cls._check_modify_exclude.add('bank_account')
@@ -346,7 +346,7 @@ class Line(BankMixin, metaclass=PoolMeta):
         cls.bank_account.states.update({
                 'readonly': readonly,
                 })
-        cls.account_bank_from.context = {'company': Eval('company')}
+        cls.account_bank_from.context = {'company': Eval('company', -1)}
         cls.account_bank_from.depends.add('company')
 
     @fields.depends('party', 'payment_type', 'bank_account')

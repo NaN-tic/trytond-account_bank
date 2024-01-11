@@ -25,8 +25,7 @@ class Journal(metaclass=PoolMeta):
         'the company.'),
         context={
             'company': Eval('company', -1),
-            },
-        depends=['company'])
+            }, depends=['company'])
 
 
 class Group(metaclass=PoolMeta):
@@ -65,8 +64,7 @@ class Payment(metaclass=PoolMeta):
     account_bank_from = fields.Function(fields.Many2One('party.party',
             'Account Bank From', context={
                 'company': Eval('company', -1),
-            },
-            depends=['company']),
+            }, depends=['company']),
         'on_change_with_account_bank_from')
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         states={
@@ -77,8 +75,7 @@ class Payment(metaclass=PoolMeta):
                 ('id', '=', -1),
                 ('owners.id', '=', Eval('account_bank_from')),
                 ),
-            ],
-        depends=['account_bank_from'])
+            ])
 
     @fields.depends('journal', 'party')
     def on_change_with_account_bank_from(self, name=None):

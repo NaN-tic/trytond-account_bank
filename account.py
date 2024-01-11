@@ -37,7 +37,7 @@ class PaymentType(metaclass=PoolMeta):
         context={
             'company': Eval('company', -1),
             },
-        depends=['account_bank', 'company'])
+        depends=['company'])
     bank_account = fields.Many2One('bank.account', 'Bank Account',
         domain=[
             If(Eval('party', None) == None,
@@ -48,8 +48,7 @@ class PaymentType(metaclass=PoolMeta):
         states={
             'required': Eval('account_bank') == 'other',
             'invisible': Eval('account_bank') != 'other',
-            },
-        depends=['party', 'account_bank'])
+            })
 
     @classmethod
     def __setup__(cls):
@@ -147,9 +146,7 @@ class BankMixin(object):
         states={
                 'readonly': Eval('account_bank') == 'other',
                 'invisible': ~Bool(Eval('account_bank_from')),
-        },
-        depends=['party', 'payment_type', 'account_bank_from', 'account_bank'],
-        ondelete='RESTRICT')
+        }, ondelete='RESTRICT')
 
     @fields.depends('payment_type')
     def on_change_with_account_bank(self, name=None):
@@ -526,8 +523,7 @@ class CompensationMoveStart(ModelView, BankMixin):
     payment_type = fields.Many2One('account.payment.type', 'Payment Type',
         domain=[
             ('kind', '=', Eval('payment_kind'))
-            ],
-        depends=['payment_kind'])
+            ])
 
     @staticmethod
     def default_date():

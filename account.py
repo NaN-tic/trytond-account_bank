@@ -697,7 +697,7 @@ class CompensationMove(Wizard):
 
         return move
 
-    def get_extra_lines(self, lines, account, party):
+    def get_extra_lines(self, lines, account, party=None):
         'Returns extra lines to balance move and move origin'
         pool = Pool()
         Line = pool.get('account.move.line')
@@ -712,7 +712,7 @@ class CompensationMove(Wizard):
                     origins[line.origin] = Decimal('0.0')
                 origins[line.origin] += abs(line_amount)
 
-        if not account or not party:
+        if not account:
             return ([], None)
 
         extra_line = Line()

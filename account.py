@@ -386,9 +386,9 @@ class Line(BankMixin, metaclass=PoolMeta):
             ]
         if self.party:
             domain.append(('party', '=', self.party.id))
-        if self.credit > Decimal('0.0'):
+        if self.credit > Decimal(0):
             domain.append(('debit', '>', 0))
-        if self.debit > Decimal('0.0'):
+        if self.debit > Decimal(0):
             domain.append(('credit', '>', 0))
         moves = self.search(domain, limit=1)
         return len(moves) > 0
@@ -546,7 +546,7 @@ class CompensationMoveStart(ModelView, BankMixin):
 
         party = None
         company = None
-        amount = Decimal('0.0')
+        amount = Decimal(0)
 
         lines = Line.browse(Transaction().context.get('active_ids', []))
         for line in lines:
@@ -697,14 +697,14 @@ class CompensationMove(Wizard):
         pool = Pool()
         Line = pool.get('account.move.line')
 
-        amount = Decimal('0.0')
+        amount = Decimal(0)
         origins = {}
         for line in lines:
             line_amount = line.debit - line.credit
             amount += line_amount
             if line.origin:
                 if line.origin not in origins:
-                    origins[line.origin] = Decimal('0.0')
+                    origins[line.origin] = Decimal(0)
                 origins[line.origin] += abs(line_amount)
 
         if not account:
@@ -717,7 +717,7 @@ class CompensationMove(Wizard):
         extra_line.payment_type = self.start.payment_type
         extra_line.bank_account = self.start.bank_account
         extra_line.description = self.start.description
-        extra_line.credit = extra_line.debit = Decimal('0.0')
+        extra_line.credit = extra_line.debit = Decimal(0)
         if amount > 0:
             extra_line.debit = amount
         else:

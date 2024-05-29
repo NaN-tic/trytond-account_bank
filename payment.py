@@ -12,7 +12,7 @@ from trytond.modules.currency.fields import Monetary
 
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
-_ZERO = Decimal('0.0')
+_ZERO = Decimal(0)
 
 
 class Journal(metaclass=PoolMeta):

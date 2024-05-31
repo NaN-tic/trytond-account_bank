@@ -151,14 +151,14 @@ Create invoice::
     True
     >>> invoice.amount_to_pay == Decimal(240)
     True
-    >>> line1, line2, _, _ = sorted(invoice.move.lines, key=lambda x: x.id)
-    >>> line1.payment_type == None
+    >>> line1, line2, _, _ = invoice.move.lines
+    >>> line1.payment_type == receivable_payment_type
     True
-    >>> line1.bank_account == None
+    >>> line1.bank_account == bank_account
     True
-    >>> line2.payment_type == receivable_payment_type
+    >>> line2.payment_type == None
     True
-    >>> line2.bank_account == bank_account
+    >>> line2.bank_account == None
     True
 
 Create credit note::

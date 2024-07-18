@@ -9,7 +9,6 @@ from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.transaction import Transaction
 from trytond.modules.currency.fields import Monetary
-
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
 _ZERO = Decimal(0)
@@ -36,8 +35,6 @@ class Group(metaclass=PoolMeta):
         'on_change_with_payment_type')
     currency = fields.Function(fields.Many2One('currency.currency', 'Currency'),
         'on_change_with_currency')
-    amount = fields.Function(Monetary('Total',
-        digits='currency', currency='currency'), 'get_amount')
 
     @fields.depends('journal')
     def on_change_with_payment_type(self, name=None):
@@ -48,15 +45,6 @@ class Group(metaclass=PoolMeta):
     def on_change_with_currency(self, name=None):
         if self.journal and self.journal.currency:
             return self.journal.currency.id
-
-    def get_amount(self, name):
-        amount = _ZERO
-        for payment in self.payments:
-            amount += payment.amount
-        if self.journal and self.journal.currency:
-            return self.journal.currency.round(amount)
-        else:
-            return amount
 
 
 class Payment(metaclass=PoolMeta):

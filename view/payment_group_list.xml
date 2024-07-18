@@ -6,6 +6,5 @@ copyright notices and license terms. -->
     <xpath expr="/tree/field[@name=&quot;kind&quot;]"
             position="after">
         <field name="payment_type"/>
-        <field name="amount"/>
     </xpath>
 </data>

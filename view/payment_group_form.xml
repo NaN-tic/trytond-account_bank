@@ -7,8 +7,6 @@ copyright notices and license terms. -->
             position="after">
         <label name="payment_type"/>
         <field name="payment_type"/>
-        <label name="amount"/>
-        <field name="amount"/>
         <field name="payments" colspan="4"/>
     </xpath>
 </data>

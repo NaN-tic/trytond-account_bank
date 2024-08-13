@@ -135,17 +135,17 @@ class Test(unittest.TestCase):
         self.assertEqual(invoice.untaxed_amount, Decimal('220.00'))
         self.assertEqual(invoice.tax_amount, Decimal('20.00'))
         self.assertEqual(invoice.total_amount, Decimal('240.00'))
-        self.assertEqual(invoice.payment_type == receivable_payment_type, True)
+        self.assertEqual(invoice.payment_type, receivable_payment_type)
         invoice.bank_account = bank_account
         invoice.save()
         invoice.click('post')
-        self.assertEqual(invoice.state == 'posted', True)
+        self.assertEqual(invoice.state, 'posted')
         self.assertEqual(invoice.amount_to_pay, Decimal(240))
         line1, line2, _, _ = invoice.move.lines
-        self.assertEqual(line1.payment_type == receivable_payment_type, True)
-        self.assertEqual(line1.bank_account == bank_account, True)
-        self.assertEqual(line2.payment_type == None, True)
-        self.assertEqual(line2.bank_account == None, True)
+        self.assertEqual(line1.payment_type, receivable_payment_type)
+        self.assertEqual(line1.bank_account, bank_account)
+        self.assertEqual(line2.payment_type, None)
+        self.assertEqual(line2.bank_account, None)
 
         # Create credit note
         Invoice = Model.get('account.invoice')
@@ -166,7 +166,7 @@ class Test(unittest.TestCase):
         credit_note.save()
         Invoice.post([credit_note.id], config.context)
         credit_note.reload()
-        self.assertEqual(credit_note.state == 'posted', True)
+        self.assertEqual(credit_note.state, 'posted')
         self.assertEqual(credit_note.amount_to_pay, Decimal(-44))
 
         # Partialy reconcile both lines
@@ -211,7 +211,7 @@ class Test(unittest.TestCase):
         lines = MoveLine.find([('account', '=', receivable.id)])
         to_reconcile = [l for l in lines if not l.reconciliation]
         reconcile_lines = Wizard('account.move.reconcile_lines', to_reconcile)
-        self.assertEqual(reconcile_lines.state == 'end', True)
+        self.assertEqual(reconcile_lines.state, 'end')
         invoice.reload()
         self.assertEqual(invoice.amount_to_pay, Decimal('0'))
-        self.assertEqual(invoice.state == 'paid', True)
+        self.assertEqual(invoice.state, 'paid')

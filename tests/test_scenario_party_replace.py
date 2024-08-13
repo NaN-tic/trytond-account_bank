@@ -119,4 +119,4 @@ class Test(unittest.TestCase):
 
         # Check fields have been replaced
         payment_type.reload()
-        self.assertEqual(payment_type.party == party2, True)
+        self.assertEqual(payment_type.party, party2)

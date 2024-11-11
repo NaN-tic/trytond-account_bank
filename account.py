@@ -101,6 +101,9 @@ class BankAccount(metaclass=PoolMeta):
                         ], limit=1)
                 for record in records:
                     target = record.account_bank_from
+                    if (not target or (record.payment_type
+                            and record.payment_type.account_bank != 'party')):
+                        continue
                     account = getattr(record, field_name)
                     if target not in account.owners:
                         raise UserError(gettext(

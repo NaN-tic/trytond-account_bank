@@ -155,6 +155,7 @@ class BankMixin(object):
     def on_change_with_account_bank(self, name=None):
         if self.payment_type:
             return self.payment_type.account_bank
+        return 'none'
 
     def _get_bank_account(self):
         pool = Pool()

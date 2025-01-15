@@ -709,10 +709,11 @@ class CompensationMove(Wizard):
         for line in lines:
             line_amount = line.debit - line.credit
             amount += line_amount
-            if line.origin:
-                if line.origin not in origins:
-                    origins[line.origin] = Decimal('0.0')
-                origins[line.origin] += abs(line_amount)
+            move_origin = line.move_origin
+            if move_origin:
+                if move_origin not in origins:
+                    origins[move_origin] = Decimal('0.0')
+                origins[move_origin] += abs(line_amount)
 
         if not account:
             return ([], None)

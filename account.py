@@ -94,9 +94,9 @@ class BankAccount(metaclass=PoolMeta):
                 model_name, field_name = value
                 Model = pool.get(model_name)
                 records = Model.search([(field_name, 'in', account_ids)])
-                model, = IrModel.search([('model', '=', model_name)])
+                model, = IrModel.search([('name', '=', model_name)])
                 field, = Field.search([
-                        ('model.model', '=', model_name),
+                        ('model.name', '=', model_name),
                         ('name', '=', field_name),
                         ], limit=1)
                 for record in records:

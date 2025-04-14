@@ -78,9 +78,9 @@ class Payment(metaclass=PoolMeta):
             if payment_type.account_bank == 'party':
                 return party.id
             elif payment_type.account_bank == 'company':
-                company = Transaction().context.get('company')
-                if company:
-                    return Company(company).party.id
+                company_id = Transaction().context.get('company')
+                if company_id is not None and company_id >= 0:
+                    return Company(company_id).party.id
             elif payment_type.account_bank == 'other':
                 return payment_type.party.id
 

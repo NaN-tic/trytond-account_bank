@@ -9,7 +9,10 @@ from configparser import ConfigParser
 
 MODULE = 'account_bank'
 PREFIX = 'nantic'
-MODULE2PREFIX = {}
+MODULE2PREFIX = {
+    'account_payment_type',
+    'company_bank',
+}
 
 
 def read(fname):
@@ -64,12 +67,12 @@ if minor_version % 2:
 
 setup(name='%s_%s' % (PREFIX, MODULE),
     version=version,
-    description='',
+    description='%s' % MODULE,
     long_description=read('README'),
     author='NaN·tic',
     author_email='info@nan-tic.com',
     url='http://www.nan-tic.com/',
-    download_url="https://bitbucket.org/nantic/trytond-%s" % MODULE,
+    download_url="https://github.com/Nan-tic/trytond-%s" % MODULE,
     package_dir={'trytond.modules.%s' % MODULE: '.'},
     packages=[
         'trytond.modules.%s' % MODULE,

@@ -242,6 +242,11 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         cls.account_bank_from.depends = ['company']
         # allow process or paid invoices when is posted
         cls._check_modify_exclude.add('bank_account')
+        cls.bank_account.domain = [
+            If(Eval('state').in_(['draft', 'validated']),
+               cls.bank_account.domain,
+               ())
+            ]
 
     @fields.depends('payment_type', 'party', 'company', 'bank_account')
     def on_change_party(self):

@@ -14,9 +14,6 @@ from trytond.wizard import Wizard, StateTransition, StateView, Button
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 
-__all__ = ['PaymentType', 'BankAccount', 'Party', 'Invoice', 'Reconciliation',
-    'Line', 'CompensationMoveStart', 'CompensationMove']
-
 ACCOUNT_BANK_KIND = [
     ('none', 'None'),
     ('party', 'Party'),
@@ -295,41 +292,6 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         self.bank_account = None
         if self.payment_type:
             self._get_bank_account()
-
-
-class Reconciliation(metaclass=PoolMeta):
-    __name__ = 'account.move.reconciliation'
-
-    @classmethod
-    def create(cls, vlist):
-        Invoice = Pool().get('account.invoice')
-        reconciliations = super(Reconciliation, cls).create(vlist)
-        moves = set()
-        for reconciliation in reconciliations:
-            moves |= set(l.move for l in reconciliation.lines)
-        invoices = set()
-        for move in moves:
-            if (move.origin and isinstance(move.origin, Invoice)
-                    and move.origin.state == 'posted'):
-                invoices.add(move.origin)
-        if invoices:
-            Invoice.process(invoices)
-        return reconciliations
-
-    @classmethod
-    def delete(cls, reconciliations):
-        Invoice = Pool().get('account.invoice')
-
-        moves = set()
-        for reconciliation in reconciliations:
-            moves |= set(l.move for l in reconciliation.lines)
-        invoices = set()
-        for move in moves:
-            if move.origin and isinstance(move.origin, Invoice):
-                invoices.add(move.origin)
-        super(Reconciliation, cls).delete(reconciliations)
-        if invoices:
-            Invoice.process(invoices)
 
 
 class Line(BankMixin, metaclass=PoolMeta):

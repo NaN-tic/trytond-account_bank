@@ -13,7 +13,6 @@ def register():
         account.BankAccount,
         account.Party,
         account.Invoice,
-        account.Reconciliation,
         account.Line,
         account.CompensationMoveStart,
         payment.Journal,

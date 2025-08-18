@@ -8,7 +8,6 @@ from trytond.pyson import Eval, If
 from trytond.i18n import gettext
 from trytond.exceptions import UserError
 from trytond.transaction import Transaction
-from trytond.modules.currency.fields import Monetary
 __all__ = ['Journal', 'Group', 'Payment', 'PayLine']
 
 _ZERO = Decimal(0)

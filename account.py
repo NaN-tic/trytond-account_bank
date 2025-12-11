@@ -159,7 +159,9 @@ class BankMixin(object):
         Party = pool.get('party.party')
 
         if self.party and self.payment_type:
-            if self.payment_type.account_bank == 'other':
+            if self.payment_type.account_bank == 'none':
+                self.bank_account = None
+            elif self.payment_type.account_bank == 'other':
                 self.bank_account = self.payment_type.bank_account
             else:
                 party_fname = '%s_bank_account' % self.payment_type.kind

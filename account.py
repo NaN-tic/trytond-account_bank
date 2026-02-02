@@ -398,7 +398,7 @@ class Line(BankMixin, metaclass=PoolMeta):
                 or (self.account.type.receivable == False and
                     self.account.type.payable == False)):
             return False
-        if not self.account.party_required:
+        if not self.account.party_required or not self.party:
             return False
         domain = [
             ('party', '=', self.party.id),

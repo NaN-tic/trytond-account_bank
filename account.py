@@ -49,7 +49,7 @@ class PaymentType(metaclass=PoolMeta):
 
     @classmethod
     def __setup__(cls):
-        super(PaymentType, cls).__setup__()
+        super().__setup__()
         cls._check_modify_fields |= set(['account_bank', 'party',
                 'bank_account'])
 
@@ -63,7 +63,7 @@ class BankAccount(metaclass=PoolMeta):
 
     @classmethod
     def __setup__(cls):
-        super(BankAccount, cls).__setup__()
+        super().__setup__()
         cls._check_owners_fields = set(['owners'])
         cls._check_owners_related_models = set([
                 ('account.move.line', 'bank_account'),
@@ -77,7 +77,7 @@ class BankAccount(metaclass=PoolMeta):
         for accounts, values in zip(actions, actions):
             if set(values.keys()) & cls._check_owners_fields:
                 all_accounts += accounts
-        super(BankAccount, cls).write(*args)
+        super().write(*args)
         cls.check_owners(all_accounts)
 
     @classmethod
@@ -124,7 +124,7 @@ class Party(metaclass=PoolMeta):
             if set(values.keys()) & set(['bank_accounts']):
                 all_accounts += list(set(
                         [a for p in parties for a in p.bank_accounts]))
-        super(Party, cls).write(*args)
+        super().write(*args)
         BankAccount.check_owners(all_accounts)
 
 
@@ -229,7 +229,7 @@ class Invoice(BankMixin, metaclass=PoolMeta):
 
     @classmethod
     def __setup__(cls):
-        super(Invoice, cls).__setup__()
+        super().__setup__()
         readonly = ~Eval('state').in_(['draft', 'validated'])
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:
@@ -252,7 +252,7 @@ class Invoice(BankMixin, metaclass=PoolMeta):
         '''
         Add account bank to invoice line when changes party.
         '''
-        super(Invoice, self).on_change_party()
+        super().on_change_party()
         self.bank_account = None
         if self.payment_type:
             self._get_bank_account()
@@ -279,11 +279,11 @@ class Invoice(BankMixin, metaclass=PoolMeta):
                 to_save.append(invoice)
         if to_save:
             cls.save(to_save)
-        super(Invoice, cls).post(invoices)
+        super().post(invoices)
 
     def _get_move_line(self, date, amount):
         '''Add account bank to move line when post invoice.'''
-        line = super(Invoice, self)._get_move_line(date, amount)
+        line = super()._get_move_line(date, amount)
         if self.bank_account:
             line.bank_account = self.bank_account
         return line
@@ -306,7 +306,7 @@ class Line(BankMixin, metaclass=PoolMeta):
 
     @classmethod
     def __setup__(cls):
-        super(Line, cls).__setup__()
+        super().__setup__()
         if hasattr(cls, '_check_modify_exclude'):
             cls._check_modify_exclude.add('bank_account')
         readonly = Bool(Eval('reconciliation'))
@@ -323,7 +323,7 @@ class Line(BankMixin, metaclass=PoolMeta):
     def on_change_party(self):
         '''Add account bank to account move line when changes party.'''
         try:
-            super(Line, self).on_change_party()
+            super().on_change_party()
         except AttributeError:
             pass
         if self.payment_type and self.party:
@@ -346,7 +346,7 @@ class Line(BankMixin, metaclass=PoolMeta):
         if (Transaction().context.get('cancel_move')
                 and 'bank_account' not in default):
             default['bank_account'] = None
-        return super(Line, cls).copy(lines, default)
+        return super().copy(lines, default)
 
     def get_reverse_moves(self, name):
         if (not self.account

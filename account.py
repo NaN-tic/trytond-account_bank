@@ -107,7 +107,7 @@ class BankAccount(metaclass=PoolMeta):
                             'account_bank.modify_with_related_model',
                             account=account.rec_name,
                             model=model.name,
-                            field=field.field_description,
+                            field=field.string,
                             name=record.rec_name))
 
 

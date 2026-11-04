@@ -1,0 +1,283 @@
+#
+msgid ""
+msgstr ""
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:account.invoice,account_bank:"
+msgid "Account Bank"
+msgstr "银行科目"
+
+msgctxt "field:account.invoice,account_bank_from:"
+msgid "Account Bank From"
+msgstr "来源银行科目"
+
+msgctxt "field:account.invoice,bank_account:"
+msgid "Bank Account"
+msgstr "银行账户"
+
+msgctxt "field:account.move.compensation_move.start,account:"
+msgid "Account"
+msgstr "账户"
+
+msgctxt "field:account.move.compensation_move.start,account_bank:"
+msgid "Account Bank"
+msgstr "银行科目"
+
+msgctxt "field:account.move.compensation_move.start,account_bank_from:"
+msgid "Account Bank From"
+msgstr "来源银行科目"
+
+msgctxt "field:account.move.compensation_move.start,bank_account:"
+msgid "Bank Account"
+msgstr "银行账户"
+
+msgctxt "field:account.move.compensation_move.start,date:"
+msgid "Date"
+msgstr "日期"
+
+msgctxt "field:account.move.compensation_move.start,description:"
+msgid "Description"
+msgstr "描述"
+
+msgctxt "field:account.move.compensation_move.start,maturity_date:"
+msgid "Maturity Date"
+msgstr "到期日"
+
+msgctxt "field:account.move.compensation_move.start,party:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "field:account.move.compensation_move.start,payment_kind:"
+msgid "Payment Kind"
+msgstr "收付款类别"
+
+msgctxt "field:account.move.compensation_move.start,payment_type:"
+msgid "Payment Type"
+msgstr "付款方式"
+
+msgctxt "field:account.move.line,account_bank:"
+msgid "Account Bank"
+msgstr "银行科目"
+
+msgctxt "field:account.move.line,account_bank_from:"
+msgid "Account Bank From"
+msgstr "来源银行科目"
+
+msgctxt "field:account.move.line,bank_account:"
+msgid "Bank Account"
+msgstr "银行账户"
+
+msgctxt "field:account.move.line,netting_moves:"
+msgid "With Netting Moves"
+msgstr "包含抵销凭证"
+
+msgctxt "field:account.move.line,reverse_moves:"
+msgid "With Reverse Moves"
+msgstr "包含冲销凭证"
+
+msgctxt "field:account.payment,account_bank_from:"
+msgid "Account Bank From"
+msgstr "来源银行科目"
+
+msgctxt "field:account.payment,bank_account:"
+msgid "Bank Account"
+msgstr "银行账户"
+
+msgctxt "field:account.payment.group,amount:"
+msgid "Total"
+msgstr "合计"
+
+msgctxt "field:account.payment.group,currency:"
+msgid "Currency"
+msgstr "货币"
+
+msgctxt "field:account.payment.group,payment_type:"
+msgid "Payment Type"
+msgstr "付款方式"
+
+msgctxt "field:account.payment.journal,party:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "field:account.payment.journal,payment_type:"
+msgid "Payment Type"
+msgstr "付款方式"
+
+msgctxt "field:account.payment.type,account_bank:"
+msgid "Account Bank Kind"
+msgstr "银行科目类别"
+
+msgctxt "field:account.payment.type,bank_account:"
+msgid "Bank Account"
+msgstr "银行账户"
+
+msgctxt "field:account.payment.type,party:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "help:account.payment.journal,party:"
+msgid ""
+"The party who sends the payment group, if it is different from the company."
+msgstr "如果付款批次的发送方与公司不同，请填写发送方。"
+
+msgctxt "model:account.move.compensation_move.start,name:"
+msgid "Create Compensation Move Start"
+msgstr "创建抵销凭证：开始"
+
+msgctxt "model:ir.action,name:act_compensation_move_lines"
+msgid "Create compensation move"
+msgstr "创建抵销凭证"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_netting"
+msgid "Netting"
+msgstr "抵销"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_payable_with_reverse"
+msgid "Payable with reverse moves"
+msgstr "包含冲销凭证的应付账款"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_receivable_with_reverse"
+msgid "Receivable with reverse moves"
+msgstr "包含冲销凭证的应收账款"
+
+#, python-format
+msgctxt "model:ir.message,text:different_parties"
+msgid ""
+"Parties can not be mixed to create a compensation move. Party \"%(party)s\" "
+"in line \"%(line)s\" is different from previous party \"%(previous_party)s\""
+msgstr ""
+"创建抵销凭证时不能混用往来单位。分录“%(line)s”的往来单位“%(party)s”与之前的往来单位“%(previous_party)s”不同。"
+
+#, python-format
+msgctxt "model:ir.message,text:invoice_without_bank_account"
+msgid ""
+"Invoice \"%(invoice)s\" has no bank account associated but payment type "
+"\"%(payment_type)s\" requires it."
+msgstr "发票“%(invoice)s”未关联银行账户，但付款方式“%(payment_type)s”要求提供银行账户。"
+
+#, python-format
+msgctxt "model:ir.message,text:modify_with_related_model"
+msgid ""
+"It is not possible to modify the owner of bank account \"%(account)s\" as it"
+" is used on the %(field)s of %(model)s \"%(name)s\""
+msgstr "无法修改银行账户“%(account)s”的所有者，因为该账户已用于%(model)s“%(name)s”的%(field)s字段。"
+
+#, python-format
+msgctxt "model:ir.message,text:no_mandate_for_party"
+msgid ""
+"No valid mandate for payment \"%(payment)s\" of party \"%(party)s\" with "
+"amount \"%(amount)s\"."
+msgstr "往来单位“%(party)s”的付款“%(payment)s”（金额为“%(amount)s”）没有有效的授权书。"
+
+msgctxt "model:ir.message,text:normal_reconcile"
+msgid ""
+"Selected moves are balanced. Use concile wizard instead of creating a "
+"compensation move."
+msgstr "所选凭证已平衡。请使用核销向导，而不是创建抵销凭证。"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "None"
+msgstr "无"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Other"
+msgstr "其它"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "None"
+msgstr "无"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Other"
+msgstr "其它"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Both"
+msgstr "两个都有"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Payable"
+msgstr "应付账款"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Receivable"
+msgstr "应收账款"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "None"
+msgstr "无"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Other"
+msgstr "其它"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Company"
+msgstr "公司"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "None"
+msgstr "无"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Other"
+msgstr "其它"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Party"
+msgstr "参与者"
+
+msgctxt "view:account.move.compensation_move.start:"
+msgid "Create Compensation Move"
+msgstr "创建抵销凭证"
+
+msgctxt "view:account.move.line:"
+msgid "Total Credit"
+msgstr "贷方合计"
+
+msgctxt "view:account.move.line:"
+msgid "Total Debit"
+msgstr "借方合计"
+
+msgctxt "view:account.payment.journal:"
+msgid "Sender data"
+msgstr "发送方信息"
+
+msgctxt "wizard_button:account.move.compensation_move,start,create_move:"
+msgid "Create"
+msgstr "创建"
+
+msgctxt "wizard_button:account.move.compensation_move,start,end:"
+msgid "Cancel"
+msgstr "取消"

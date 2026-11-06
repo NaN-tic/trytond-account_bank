@@ -296,6 +296,18 @@ class Invoice(BankMixin, metaclass=PoolMeta):
             self._get_bank_account()
 
 
+class Move(metaclass=PoolMeta):
+    __name__ = 'account.move'
+
+    is_compensation = fields.Boolean('Compensation', readonly=True)
+
+    @classmethod
+    def copy(cls, moves, default=None):
+        default = dict(default or {})
+        default.setdefault('is_compensation', False)
+        return super().copy(moves, default=default)
+
+
 class Line(BankMixin, metaclass=PoolMeta):
     __name__ = 'account.move.line'
 
@@ -303,12 +315,16 @@ class Line(BankMixin, metaclass=PoolMeta):
         'get_reverse_moves', searcher='search_reverse_moves')
     netting_moves = fields.Function(fields.Boolean('With Netting Moves'),
         'get_netting_moves', searcher='search_netting_moves')
+    compensation_reconciliation = fields.Many2One(
+        'account.move.reconciliation', 'Compensation Reconciliation',
+        readonly=True, ondelete='SET NULL')
 
     @classmethod
     def __setup__(cls):
         super().__setup__()
         if hasattr(cls, '_check_modify_exclude'):
             cls._check_modify_exclude.add('bank_account')
+        cls._check_modify_exclude.add('compensation_reconciliation')
         readonly = Bool(Eval('reconciliation'))
         previous_readonly = cls.bank_account.states.get('readonly')
         if previous_readonly:
@@ -341,8 +357,8 @@ class Line(BankMixin, metaclass=PoolMeta):
 
     @classmethod
     def copy(cls, lines, default=None):
-        if default is None:
-            default = {}
+        default = dict(default or {})
+        default.setdefault('compensation_reconciliation', None)
         if (Transaction().context.get('cancel_move')
                 and 'bank_account' not in default):
             default['bank_account'] = None
@@ -626,6 +642,11 @@ class CompensationMove(Wizard):
                 to_reconcile.setdefault(line.account.id, []).append(line)
         for lines_to_reconcile in to_reconcile.values():
             Line.reconcile(lines_to_reconcile)
+        for line in move.lines:
+            if line.reconciliation:
+                Line.write([line], {
+                        'compensation_reconciliation': line.reconciliation.id,
+                        })
         return 'end'
 
     def is_extra_line(self, line, extra_line):
@@ -662,6 +683,7 @@ class CompensationMove(Wizard):
 
         period_id = Period.find(lines[0].account.company.id)
         move = Move()
+        move.is_compensation = True
         move.period = Period(period_id)
         move.journal = lines[0].move.journal
         move.date = Date.today()
@@ -708,3 +730,49 @@ class CompensationMove(Wizard):
                 origin = line_origin
                 break
         return [extra_line], origin
+
+
+class UndoCompensationMove(Wizard):
+    'Undo Compensation Move'
+    __name__ = 'account.move.undo_compensation'
+    start = StateTransition()
+
+    def transition_start(self):
+        pool = Pool()
+        Move = pool.get('account.move')
+        Reconciliation = pool.get('account.move.reconciliation')
+
+        if self.model == Move:
+            moves = self.records
+        else:
+            moves = list({line.move for line in self.records})
+        for move in moves:
+            if not move.is_compensation:
+                raise UserError(gettext('account_bank.msg_not_compensation',
+                        move=move.rec_name))
+            if move.period.state != 'open':
+                raise UserError(gettext(
+                        'account_bank.msg_compensation_closed_period',
+                        move=move.rec_name))
+            if (move.state != 'draft'
+                    and (not hasattr(Move, 'draft') or not move.allow_draft)):
+                raise UserError(gettext(
+                        'account_bank.msg_compensation_cannot_draft',
+                        move=move.rec_name))
+            for line in move.lines:
+                if ((line.reconciliation
+                            and line.reconciliation
+                            != line.compensation_reconciliation)
+                        or any(p.state != 'failed' for p in line.payments)):
+                    raise UserError(gettext(
+                            'account_bank.msg_compensation_in_use',
+                            move=move.rec_name))
+
+        for move in moves:
+            reconciliations = {line.compensation_reconciliation
+                for line in move.lines if line.compensation_reconciliation}
+            Reconciliation.delete(list(reconciliations))
+            if move.state != 'draft':
+                Move.draft([move])
+            Move.delete([move])
+        return 'end'

@@ -19,6 +19,18 @@ copyright notices and license terms. -->
             <field name="name">account_payment_type_form_view</field>
         </record>
 
+        <!-- account.move -->
+        <record model="ir.ui.view" id="move_view_form">
+            <field name="model">account.move</field>
+            <field name="inherit" ref="account.move_view_form"/>
+            <field name="name">move_form</field>
+        </record>
+        <record model="ir.ui.view" id="move_view_tree">
+            <field name="model">account.move</field>
+            <field name="inherit" ref="account.move_view_tree"/>
+            <field name="name">move_tree</field>
+        </record>
+
         <!-- account.move.line -->
         <record model="ir.ui.view" id="move_line_view_form">
             <field name="model">account.move.line</field>
@@ -62,6 +74,26 @@ copyright notices and license terms. -->
             <field name="keyword">form_action</field>
             <field name="model">account.move.line,-1</field>
             <field name="action" ref="act_compensation_move_lines"/>
+        </record>
+        <record model="ir.action.wizard" id="act_undo_compensation_move">
+            <field name="name">Undo compensation</field>
+            <field name="wiz_name">account.move.undo_compensation</field>
+            <field name="model">account.move.line</field>
+        </record>
+        <record model="ir.action.keyword" id="act_undo_compensation_move_keyword">
+            <field name="keyword">form_action</field>
+            <field name="model">account.move.line,-1</field>
+            <field name="action" ref="act_undo_compensation_move"/>
+        </record>
+        <record model="ir.action.wizard" id="act_undo_compensation">
+            <field name="name">Undo compensation</field>
+            <field name="wiz_name">account.move.undo_compensation</field>
+            <field name="model">account.move</field>
+        </record>
+        <record model="ir.action.keyword" id="act_undo_compensation_keyword">
+            <field name="keyword">form_action</field>
+            <field name="model">account.move,-1</field>
+            <field name="action" ref="act_undo_compensation"/>
         </record>
     </data>
 </tryton>

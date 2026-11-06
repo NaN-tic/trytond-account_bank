@@ -3,6 +3,7 @@ import unittest
 from decimal import Decimal
 
 from proteus import Model, Wizard
+from trytond.exceptions import UserError
 from trytond.modules.account.tests.tools import (create_chart,
                                                  create_fiscalyear, create_tax,
                                                  get_accounts)
@@ -28,7 +29,7 @@ class Test(unittest.TestCase):
         today = datetime.date.today()
 
         # Install account_bank Module
-        config = activate_modules('account_bank')
+        config = activate_modules(['account_bank', 'account_common'])
 
         # Create company
         _ = create_company()
@@ -184,6 +185,55 @@ class Test(unittest.TestCase):
         invoice.reload()
         self.assertEqual(invoice.amount_to_pay, Decimal('0'))
 
+        # Undo the compensation, including its original reconciliation.
+        Move = Model.get('account.move')
+        compensation, = Move.find([('is_compensation', '=', True)])
+        self.assertEqual(compensation.origin, invoice)
+        for line in lines:
+            line.reload()
+        reconciliation_ids = {l.reconciliation.id for l in lines
+            if l.reconciliation}
+        self.assertTrue(reconciliation_ids)
+        residual, = [l for l in compensation.lines if not l.reconciliation]
+        Wizard('account.move.undo_compensation', models=[residual])
+        self.assertFalse(Move.find([('id', '=', compensation.id)]))
+        Reconciliation = Model.get('account.move.reconciliation')
+        self.assertFalse(Reconciliation.find([
+                    ('id', 'in', list(reconciliation_ids))]))
+        invoice.reload()
+        credit_note.reload()
+        self.assertEqual(invoice.amount_to_pay, Decimal('240'))
+        self.assertEqual(credit_note.amount_to_pay, Decimal('-44'))
+        for line in lines:
+            line.reload()
+            self.assertIsNone(line.reconciliation)
+
+        # Ordinary invoice moves cannot be undone as compensations.
+        with self.assertRaises(UserError):
+            Wizard('account.move.undo_compensation', models=lines)
+
+        # Undo from the move too, then recreate it for settlement.
+        for undo_from_move in [True, False]:
+            compensation_move = Wizard('account.move.compensation_move',
+                models=lines)
+            compensation_move.form.maturity_date = today
+            compensation_move.form.account = receivable
+            compensation_move.form.payment_type = receivable_payment_type
+            compensation_move.form.bank_account = None
+            compensation_move.execute('create_move')
+            compensation, = Move.find([('is_compensation', '=', True)])
+            if undo_from_move:
+                Wizard('account.move.undo_compensation', models=[compensation])
+                self.assertFalse(Move.find([('id', '=', compensation.id)]))
+                invoice.reload()
+                credit_note.reload()
+                self.assertEqual(invoice.amount_to_pay, Decimal('240'))
+                self.assertEqual(credit_note.amount_to_pay, Decimal('-44'))
+                for line in lines:
+                    line.reload()
+                    self.assertIsNone(line.reconciliation)
+        residual, = [l for l in compensation.lines if not l.reconciliation]
+
         # Create a move that pays the pending amount
         Period = Model.get('account.period')
         Move = Model.get('account.move')
@@ -215,3 +265,12 @@ class Test(unittest.TestCase):
         invoice.reload()
         self.assertEqual(invoice.amount_to_pay, Decimal('0'))
         self.assertEqual(invoice.state, 'paid')
+
+        # A subsequent settlement must not be removed by undoing compensation.
+        residual.reload()
+        settlement = residual.reconciliation
+        with self.assertRaises(UserError):
+            Wizard('account.move.undo_compensation', models=[residual])
+        residual.reload()
+        self.assertEqual(residual.reconciliation, settlement)
+        self.assertTrue(Move.find([('id', '=', compensation.id)]))

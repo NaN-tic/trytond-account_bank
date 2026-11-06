@@ -2,6 +2,38 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "field:account.move,is_compensation:"
+msgid "Compensation"
+msgstr "Compensació"
+
+msgctxt "field:account.move.line,compensation_reconciliation:"
+msgid "Compensation Reconciliation"
+msgstr "Conciliació de la compensació"
+
+msgctxt "model:ir.action,name:act_undo_compensation_move"
+msgid "Undo compensation"
+msgstr "Desfés la compensació"
+
+msgctxt "model:ir.action,name:act_undo_compensation"
+msgid "Undo compensation"
+msgstr "Desfés la compensació"
+
+msgctxt "model:ir.message,text:msg_not_compensation"
+msgid "Move \"%(move)s\" is not an active compensation move."
+msgstr "L'assentament \"%(move)s\" no és una compensació activa."
+
+msgctxt "model:ir.message,text:msg_compensation_in_use"
+msgid "Undo the subsequent reconciliation or payment of compensation \"%(move)s\" first."
+msgstr "Desfés primer la conciliació o el pagament posterior de la compensació \"%(move)s\"."
+
+msgctxt "model:ir.message,text:msg_compensation_closed_period"
+msgid "Compensation \"%(move)s\" cannot be deleted because its period is not open."
+msgstr "No es pot eliminar la compensació \"%(move)s\" perquè el seu període no està obert."
+
+msgctxt "model:ir.message,text:msg_compensation_cannot_draft"
+msgid "Compensation \"%(move)s\" cannot be deleted because its move cannot be reset to draft."
+msgstr "No es pot eliminar la compensació \"%(move)s\" perquè el seu assentament no es pot passar a esborrany."
+
 msgctxt "field:account.invoice,account_bank:"
 msgid "Account Bank"
 msgstr "Compte bancari"

@@ -13,6 +13,7 @@ def register():
         account.BankAccount,
         account.Party,
         account.Invoice,
+        account.Move,
         account.Line,
         account.CompensationMoveStart,
         payment.Journal,
@@ -22,5 +23,6 @@ def register():
     Pool.register(
         payment.PayLine,
         account.CompensationMove,
+        account.UndoCompensationMove,
         party.PartyReplace,
         module='account_bank', type_='wizard')

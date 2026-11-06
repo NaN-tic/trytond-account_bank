@@ -3,6 +3,18 @@
 this repository contains the full copyright notices and license terms. -->
 <tryton>
     <data grouped="1">
+        <record model="ir.message" id="msg_compensation_closed_period">
+            <field name="text">Compensation "%(move)s" cannot be deleted because its period is not open.</field>
+        </record>
+        <record model="ir.message" id="msg_compensation_cannot_draft">
+            <field name="text">Compensation "%(move)s" cannot be deleted because its move cannot be reset to draft.</field>
+        </record>
+        <record model="ir.message" id="msg_not_compensation">
+            <field name="text">Move "%(move)s" is not an active compensation move.</field>
+        </record>
+        <record model="ir.message" id="msg_compensation_in_use">
+            <field name="text">Undo the subsequent reconciliation or payment of compensation "%(move)s" first.</field>
+        </record>
         <record model="ir.message" id="no_mandate_for_party">
             <field name="text">No valid mandate for payment "%(payment)s" of party "%(party)s" with amount "%(amount)s".</field>
         </record>

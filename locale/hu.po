@@ -1,0 +1,339 @@
+#
+msgid ""
+msgstr ""
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "field:account.invoice,account_bank:"
+msgid "Account Bank"
+msgstr "Bankszámla forrása"
+
+msgctxt "field:account.invoice,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Bankszámla tulajdonosa"
+
+msgctxt "field:account.invoice,bank_account:"
+msgid "Bank Account"
+msgstr "Bankszámlaszám"
+
+msgctxt "field:account.move.compensation_move.start,account:"
+msgid "Account"
+msgstr "Számla"
+
+msgctxt "field:account.move.compensation_move.start,account_bank:"
+msgid "Account Bank"
+msgstr "Bankszámla forrása"
+
+msgctxt "field:account.move.compensation_move.start,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Bankszámla tulajdonosa"
+
+msgctxt "field:account.move.compensation_move.start,bank_account:"
+msgid "Bank Account"
+msgstr "Bankszámlaszám"
+
+msgctxt "field:account.move.compensation_move.start,date:"
+msgid "Date"
+msgstr "Dátum"
+
+msgctxt "field:account.move.compensation_move.start,description:"
+msgid "Description"
+msgstr "Leírás"
+
+msgctxt "field:account.move.compensation_move.start,maturity_date:"
+msgid "Maturity Date"
+msgstr "Esedékesség"
+
+msgctxt "field:account.move.compensation_move.start,party:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "field:account.move.compensation_move.start,payment_kind:"
+msgid "Payment Kind"
+msgstr "Fizetés jellege"
+
+msgctxt "field:account.move.compensation_move.start,payment_type:"
+msgid "Payment Type"
+msgstr "Fizetési mód"
+
+msgctxt "field:account.move.line,account_bank:"
+msgid "Account Bank"
+msgstr "Bankszámla forrása"
+
+msgctxt "field:account.move.line,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Bankszámla tulajdonosa"
+
+msgctxt "field:account.move.line,bank_account:"
+msgid "Bank Account"
+msgstr "Bankszámlaszám"
+
+msgctxt "field:account.move.line,netting_moves:"
+msgid "With Netting Moves"
+msgstr "Beszámítási tételekkel"
+
+msgctxt "field:account.move.line,reverse_moves:"
+msgid "With Reverse Moves"
+msgstr "Sztornótételekkel"
+
+msgctxt "field:account.payment,account_bank_from:"
+msgid "Account Bank From"
+msgstr "Bankszámla tulajdonosa"
+
+msgctxt "field:account.payment,bank_account:"
+msgid "Bank Account"
+msgstr "Bankszámlaszám"
+
+msgctxt "field:account.payment.group,amount:"
+msgid "Total"
+msgstr "Összesen"
+
+msgctxt "field:account.payment.group,currency:"
+msgid "Currency"
+msgstr "Pénznem"
+
+msgctxt "field:account.payment.group,payment_type:"
+msgid "Payment Type"
+msgstr "Fizetési mód"
+
+msgctxt "field:account.payment.journal,party:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "field:account.payment.journal,payment_type:"
+msgid "Payment Type"
+msgstr "Fizetési mód"
+
+msgctxt "field:account.payment.type,account_bank:"
+msgid "Account Bank Kind"
+msgstr "Bankszámla forrásának típusa"
+
+msgctxt "field:account.payment.type,bank_account:"
+msgid "Bank Account"
+msgstr "Bankszámlaszám"
+
+msgctxt "field:account.payment.type,party:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "help:account.payment.journal,party:"
+msgid ""
+"The party who sends the payment group, if it is different from the company."
+msgstr "A fizetési csoportot küldő partner, ha eltér a vállalattól."
+
+msgctxt "model:account.move.compensation_move.start,name:"
+msgid "Create Compensation Move Start"
+msgstr "Kompenzációs tétel létrehozása: indítás"
+
+msgctxt "model:ir.action,name:act_compensation_move_lines"
+msgid "Create compensation move"
+msgstr "Kompenzációs tétel létrehozása"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_netting"
+msgid "Netting"
+msgstr "Beszámítás"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_payable_with_reverse"
+msgid "Payable with reverse moves"
+msgstr "Kötelezettségek sztornótételekkel"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_receivable_with_reverse"
+msgid "Receivable with reverse moves"
+msgstr "Követelések sztornótételekkel"
+
+#, python-format
+msgctxt "model:ir.message,text:different_parties"
+msgid ""
+"Parties can not be mixed to create a compensation move. Party \"%(party)s\" "
+"in line \"%(line)s\" is different from previous party \"%(previous_party)s\""
+msgstr ""
+"Kompenzációs tétel létrehozásakor nem keverhetők a partnerek. A(z) "
+"„%(line)s” sor „%(party)s” partnere eltér az előző „%(previous_party)s” "
+"partnertől."
+
+#, python-format
+msgctxt "model:ir.message,text:invoice_without_bank_account"
+msgid ""
+"Invoice \"%(invoice)s\" has no bank account associated but payment type "
+"\"%(payment_type)s\" requires it."
+msgstr ""
+"A(z) „%(invoice)s” számlához nem tartozik bankszámla, pedig a(z) "
+"„%(payment_type)s” fizetési mód megköveteli."
+
+#, python-format
+msgctxt "model:ir.message,text:modify_with_related_model"
+msgid ""
+"It is not possible to modify the owner of bank account \"%(account)s\" as it"
+" is used on the %(field)s of %(model)s \"%(name)s\""
+msgstr ""
+"A(z) „%(account)s” bankszámla tulajdonosa nem módosítható, mert a(z) "
+"%(model)s „%(name)s” rekordjának %(field)s mezőjében használatban van."
+
+#, python-format
+msgctxt "model:ir.message,text:no_mandate_for_party"
+msgid ""
+"No valid mandate for payment \"%(payment)s\" of party \"%(party)s\" with "
+"amount \"%(amount)s\"."
+msgstr ""
+"Nincs érvényes felhatalmazás a(z) „%(party)s” partner „%(payment)s” "
+"fizetéséhez, amelynek összege „%(amount)s”."
+
+msgctxt "model:ir.message,text:normal_reconcile"
+msgid ""
+"Selected moves are balanced. Use concile wizard instead of creating a "
+"compensation move."
+msgstr ""
+"A kiválasztott tételek egyenlege nulla. Kompenzációs tétel létrehozása "
+"helyett használja a kiegyenlítési varázslót."
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "None"
+msgstr "nincs"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Other"
+msgstr "egyéb"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "None"
+msgstr "nincs"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Other"
+msgstr "egyéb"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Both"
+msgstr "mindre"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Payable"
+msgstr "Kötelezettségek"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Receivable"
+msgstr "Követelések"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "None"
+msgstr "nincs"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Other"
+msgstr "egyéb"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Company"
+msgstr "Cég"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "None"
+msgstr "nincs"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Other"
+msgstr "egyéb"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Party"
+msgstr "Ügyfél"
+
+msgctxt "view:account.move.compensation_move.start:"
+msgid "Create Compensation Move"
+msgstr "Kompenzációs tétel létrehozása"
+
+msgctxt "view:account.move.line:"
+msgid "Total Credit"
+msgstr "Követel összesen"
+
+msgctxt "view:account.move.line:"
+msgid "Total Debit"
+msgstr "Tartozik összesen"
+
+msgctxt "view:account.payment.journal:"
+msgid "Sender data"
+msgstr "Küldő adatai"
+
+msgctxt "wizard_button:account.move.compensation_move,start,create_move:"
+msgid "Create"
+msgstr "Létrehozás"
+
+msgctxt "wizard_button:account.move.compensation_move,start,end:"
+msgid "Cancel"
+msgstr "Mégse"
+
+msgctxt "field:account.move,is_compensation:"
+msgid "Compensation"
+msgstr "Kompenzáció"
+
+msgctxt "field:account.move.line,compensation_reconciliation:"
+msgid "Compensation Reconciliation"
+msgstr "Kompenzáció kiegyenlítése"
+
+msgctxt "model:ir.action,name:act_undo_compensation_move"
+msgid "Undo compensation"
+msgstr "Kompenzáció visszavonása"
+
+msgctxt "model:ir.action,name:act_undo_compensation"
+msgid "Undo compensation"
+msgstr "Kompenzáció visszavonása"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_not_compensation"
+msgid "Move \"%(move)s\" is not an active compensation move."
+msgstr "A(z) „%(move)s” tétel nem aktív kompenzációs tétel."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_compensation_in_use"
+msgid ""
+"Undo the subsequent reconciliation or payment of compensation \"%(move)s\" "
+"first."
+msgstr ""
+"Először vonja vissza a(z) „%(move)s” kompenzációt követő kiegyenlítést vagy "
+"fizetést."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_compensation_closed_period"
+msgid ""
+"Compensation \"%(move)s\" cannot be deleted because its period is not open."
+msgstr ""
+"A(z) „%(move)s” kompenzáció nem törölhető, mert az időszaka nincs nyitva."
+
+#, python-format
+msgctxt "model:ir.message,text:msg_compensation_cannot_draft"
+msgid ""
+"Compensation \"%(move)s\" cannot be deleted because its move cannot be reset"
+" to draft."
+msgstr ""
+"A(z) „%(move)s” kompenzáció nem törölhető, mert a könyvelési tétele nem "
+"állítható vissza piszkozatra."

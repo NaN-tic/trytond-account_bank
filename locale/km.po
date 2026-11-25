@@ -1,0 +1,335 @@
+#
+msgid ""
+msgstr ""
+"Language: km\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgctxt "field:account.invoice,account_bank:"
+msgid "Account Bank"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.invoice,account_bank_from:"
+msgid "Account Bank From"
+msgstr "គណនីធនាគារប្រភព"
+
+msgctxt "field:account.invoice,bank_account:"
+msgid "Bank Account"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.move.compensation_move.start,account:"
+msgid "Account"
+msgstr "គណនី"
+
+msgctxt "field:account.move.compensation_move.start,account_bank:"
+msgid "Account Bank"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.move.compensation_move.start,account_bank_from:"
+msgid "Account Bank From"
+msgstr "គណនីធនាគារប្រភព"
+
+msgctxt "field:account.move.compensation_move.start,bank_account:"
+msgid "Bank Account"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.move.compensation_move.start,date:"
+msgid "Date"
+msgstr "កាលបរិច្ឆេទ"
+
+msgctxt "field:account.move.compensation_move.start,description:"
+msgid "Description"
+msgstr "សេចក្តីពិពណ៌នា"
+
+msgctxt "field:account.move.compensation_move.start,maturity_date:"
+msgid "Maturity Date"
+msgstr "កាលបរិច្ឆេទដល់កំណត់"
+
+msgctxt "field:account.move.compensation_move.start,party:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "field:account.move.compensation_move.start,payment_kind:"
+msgid "Payment Kind"
+msgstr "ប្រភេទទូទាត់"
+
+msgctxt "field:account.move.compensation_move.start,payment_type:"
+msgid "Payment Type"
+msgstr "ប្រភេទការទូទាត់"
+
+msgctxt "field:account.move.line,account_bank:"
+msgid "Account Bank"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.move.line,account_bank_from:"
+msgid "Account Bank From"
+msgstr "គណនីធនាគារប្រភព"
+
+msgctxt "field:account.move.line,bank_account:"
+msgid "Bank Account"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.move.line,netting_moves:"
+msgid "With Netting Moves"
+msgstr "មានកំណត់ត្រាកាត់កងសមតុល្យ"
+
+msgctxt "field:account.move.line,reverse_moves:"
+msgid "With Reverse Moves"
+msgstr "មានកំណត់ត្រាបញ្ច្រាស"
+
+msgctxt "field:account.payment,account_bank_from:"
+msgid "Account Bank From"
+msgstr "គណនីធនាគារប្រភព"
+
+msgctxt "field:account.payment,bank_account:"
+msgid "Bank Account"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.payment.group,amount:"
+msgid "Total"
+msgstr "សរុប"
+
+msgctxt "field:account.payment.group,currency:"
+msgid "Currency"
+msgstr "រូបិយប័ណ្ណ"
+
+msgctxt "field:account.payment.group,payment_type:"
+msgid "Payment Type"
+msgstr "ប្រភេទការទូទាត់"
+
+msgctxt "field:account.payment.journal,party:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "field:account.payment.journal,payment_type:"
+msgid "Payment Type"
+msgstr "ប្រភេទការទូទាត់"
+
+msgctxt "field:account.payment.type,account_bank:"
+msgid "Account Bank Kind"
+msgstr "ប្រភេទគណនីធនាគារ"
+
+msgctxt "field:account.payment.type,bank_account:"
+msgid "Bank Account"
+msgstr "គណនីធនាគារ"
+
+msgctxt "field:account.payment.type,party:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "help:account.payment.journal,party:"
+msgid ""
+"The party who sends the payment group, if it is different from the company."
+msgstr "ភាគីដែលផ្ញើក្រុមការទូទាត់ ប្រសិនបើភាគីនោះខុសពីក្រុមហ៊ុន។"
+
+msgctxt "model:account.move.compensation_move.start,name:"
+msgid "Create Compensation Move Start"
+msgstr "ចាប់ផ្ដើមបង្កើតកំណត់ត្រាគណនេយ្យសម្រាប់ការកាត់កង"
+
+msgctxt "model:ir.action,name:act_compensation_move_lines"
+msgid "Create compensation move"
+msgstr "បង្កើតកំណត់ត្រាគណនេយ្យសម្រាប់ការកាត់កង"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_netting"
+msgid "Netting"
+msgstr "ការកាត់កងសមតុល្យ"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_payable_with_reverse"
+msgid "Payable with reverse moves"
+msgstr "គណនីត្រូវទូទាត់ដែលមានកំណត់ត្រាបញ្ច្រាស"
+
+msgctxt ""
+"model:ir.action.act_window.domain,name:act_move_line_form_domain_receivable_with_reverse"
+msgid "Receivable with reverse moves"
+msgstr "គណនីត្រូវទទួលដែលមានកំណត់ត្រាបញ្ច្រាស"
+
+#, python-format
+msgctxt "model:ir.message,text:different_parties"
+msgid ""
+"Parties can not be mixed to create a compensation move. Party \"%(party)s\" "
+"in line \"%(line)s\" is different from previous party \"%(previous_party)s\""
+msgstr ""
+"មិនអាចរួមបញ្ចូលភាគីផ្សេងគ្នាក្នុងកំណត់ត្រាកាត់កងបានទេ។ ភាគី «%(party)s» "
+"ក្នុងបន្ទាត់ «%(line)s» ខុសពីភាគីមុន «%(previous_party)s»។"
+
+#, python-format
+msgctxt "model:ir.message,text:invoice_without_bank_account"
+msgid ""
+"Invoice \"%(invoice)s\" has no bank account associated but payment type "
+"\"%(payment_type)s\" requires it."
+msgstr ""
+"វិក្កយបត្រ «%(invoice)s» គ្មានគណនីធនាគារពាក់ព័ន្ធ ប៉ុន្តែប្រភេទការទូទាត់ "
+"«%(payment_type)s» តម្រូវឱ្យមានគណនីធនាគារ។"
+
+#, python-format
+msgctxt "model:ir.message,text:modify_with_related_model"
+msgid ""
+"It is not possible to modify the owner of bank account \"%(account)s\" as it "
+"is used on the %(field)s of %(model)s \"%(name)s\""
+msgstr ""
+"មិនអាចកែប្រែម្ចាស់គណនីធនាគារ «%(account)s» បានទេ "
+"ពីព្រោះគណនីនេះត្រូវបានប្រើក្នុងវាល %(field)s របស់ %(model)s «%(name)s»។"
+
+#, python-format
+msgctxt "model:ir.message,text:no_mandate_for_party"
+msgid ""
+"No valid mandate for payment \"%(payment)s\" of party \"%(party)s\" with "
+"amount \"%(amount)s\"."
+msgstr ""
+"គ្មានលិខិតអនុញ្ញាតត្រឹមត្រូវសម្រាប់ការទូទាត់ «%(payment)s» របស់ភាគី "
+"«%(party)s» ក្នុងចំនួនទឹកប្រាក់ «%(amount)s»។"
+
+msgctxt "model:ir.message,text:normal_reconcile"
+msgid ""
+"Selected moves are balanced. Use concile wizard instead of creating a "
+"compensation move."
+msgstr ""
+"កំណត់ត្រាដែលបានជ្រើសរើសមានសមតុល្យរួចហើយ។ សូមប្រើជំនួយការផ្ទៀងផ្ទាត់សមតុល្យ។"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "None"
+msgstr "គ្មាន"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Other"
+msgstr "ផ្សេងទៀត"
+
+msgctxt "selection:account.invoice,account_bank:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "None"
+msgstr "គ្មាន"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Other"
+msgstr "ផ្សេងទៀត"
+
+msgctxt "selection:account.move.compensation_move.start,account_bank:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Both"
+msgstr "ទាំងពីរ"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Payable"
+msgstr "ប្រាក់ត្រូវសង"
+
+msgctxt "selection:account.move.compensation_move.start,payment_kind:"
+msgid "Receivable"
+msgstr "ប្រាក់ត្រូវទារ"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "None"
+msgstr "គ្មាន"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Other"
+msgstr "ផ្សេងទៀត"
+
+msgctxt "selection:account.move.line,account_bank:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Company"
+msgstr "ក្រុមហ៊ុន"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "None"
+msgstr "គ្មាន"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Other"
+msgstr "ផ្សេងទៀត"
+
+msgctxt "selection:account.payment.type,account_bank:"
+msgid "Party"
+msgstr "ភាគី"
+
+msgctxt "view:account.move.compensation_move.start:"
+msgid "Create Compensation Move"
+msgstr "បង្កើតកំណត់ត្រាគណនេយ្យសម្រាប់ការកាត់កង"
+
+msgctxt "view:account.move.line:"
+msgid "Total Credit"
+msgstr "ឥណទានសរុប"
+
+msgctxt "view:account.move.line:"
+msgid "Total Debit"
+msgstr "ឥណពន្ធសរុប"
+
+msgctxt "view:account.payment.journal:"
+msgid "Sender data"
+msgstr "ទិន្នន័យអ្នកផ្ញើ"
+
+msgctxt "wizard_button:account.move.compensation_move,start,create_move:"
+msgid "Create"
+msgstr "បង្កើត"
+
+msgctxt "wizard_button:account.move.compensation_move,start,end:"
+msgid "Cancel"
+msgstr "បោះបង់"
+
+msgctxt "field:account.move,is_compensation:"
+msgid "Compensation"
+msgstr "ការកាត់កង"
+
+msgctxt "field:account.move.line,compensation_reconciliation:"
+msgid "Compensation Reconciliation"
+msgstr "ការផ្ទៀងផ្ទាត់សមតុល្យកាត់កង"
+
+msgctxt "model:ir.action,name:act_undo_compensation_move"
+msgid "Undo compensation"
+msgstr "មិនធ្វើការកាត់កងវិញ"
+
+msgctxt "model:ir.action,name:act_undo_compensation"
+msgid "Undo compensation"
+msgstr "មិនធ្វើការកាត់កងវិញ"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_not_compensation"
+msgid "Move \"%(move)s\" is not an active compensation move."
+msgstr "កំណត់ត្រាគណនេយ្យ «%(move)s» មិនមែនជាកំណត់ត្រាកាត់កងសកម្មទេ។"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_compensation_in_use"
+msgid ""
+"Undo the subsequent reconciliation or payment of compensation \"%(move)s\" "
+"first."
+msgstr ""
+"សូមមិនធ្វើការផ្ទៀងផ្ទាត់សមតុល្យ ឬការទូទាត់បន្តបន្ទាប់នៃការកាត់កង «%(move)s» "
+"វិញជាមុនសិន។"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_compensation_closed_period"
+msgid "Compensation \"%(move)s\" cannot be deleted because its period is not open."
+msgstr "មិនអាចលុបការកាត់កង «%(move)s» បានទេ ពីព្រោះគ្រារបស់វាមិនកំពុងបើក។"
+
+#, python-format
+msgctxt "model:ir.message,text:msg_compensation_cannot_draft"
+msgid ""
+"Compensation \"%(move)s\" cannot be deleted because its move cannot be reset "
+"to draft."
+msgstr ""
+"មិនអាចលុបការកាត់កង «%(move)s» បានទេ "
+"ពីព្រោះការកំណត់ត្រារបស់វាមិនអាចកំណត់ត្រឡប់ទៅជាសេចក្តីព្រាងបាន។"
